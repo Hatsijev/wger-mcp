@@ -14,6 +14,8 @@ Follow Clean Architecture principles:
 - **Infrastructure**: External concerns (HTTP clients, MCP transport, logging)
 - Dependencies point inward only
 
+For this project, MCP tool registration is transport code. Keep transport handlers thin: validate input, call an application service or endpoint adapter, then format the MCP response. Do not keep growing large tool files with repeated request/error boilerplate when a shared abstraction would be clearer.
+
 ## TypeScript Rules
 
 - **No `any`**: Use `unknown` only as a last resort with immediate type guards
@@ -37,6 +39,31 @@ Follow Clean Architecture principles:
 - Reuse type definitions across layers
 - Centralize error handling patterns
 
+## MCP Boundary Rules
+
+- Treat every MCP argument as untrusted input.
+- Use reusable schema primitives for positive integer IDs, bounded pagination, ISO dates, time strings, bounded text, and bounded payloads.
+- Return a consistent tool envelope: `{ ok: true, data }` on success and `{ ok: false, error }` on failure.
+- Set MCP error metadata consistently for failures.
+- Register mutating tools only when their feature gate allows them.
+- Destructive, admin, and raw proxy tools require separate gates and should be absent when disabled, not merely documented as disabled.
+- Prefer `PATCH` for partial updates unless Wger requires `PUT`; document intentional full replacements.
+
+## Security Rules
+
+- Never log API tokens.
+- Do not log full Wger error bodies by default; they can contain sensitive workout, nutrition, weight, or gallery data.
+- Add timeouts to HTTP calls when changing client infrastructure.
+- Bound large user-controlled strings, especially images and arbitrary JSON-like config payloads.
+- Avoid raw proxy functionality until allowlists, method restrictions, and response redaction are designed.
+
+## Verification Rules
+
+- `npm run build` is mandatory after code changes.
+- Run `npm run lint` and `npm test` when available.
+- If tests do not exist for changed public behavior, add focused tests or report the gap as unfinished risk.
+- For endpoint work, compare paths, methods, request schemas, and response schemas against `wger.yaml`.
+
 ## Workflow
 
 1. Read existing code to understand patterns
@@ -45,6 +72,7 @@ Follow Clean Architecture principles:
 4. Implement infrastructure adapters
 5. Add tests for all public APIs
 6. Run TypeScript compiler to verify zero errors
+7. Report changed files, verification commands, and remaining risks
 
 ## References
 

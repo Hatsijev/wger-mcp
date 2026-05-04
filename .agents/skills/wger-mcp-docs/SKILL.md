@@ -16,6 +16,7 @@ Maintain accurate, comprehensive documentation in `/docs`. You are aware of code
 3. **Update content**: Rewrite or add sections as needed
 4. **Add diagrams**: Use Mermaid for architecture, flows, and relationships
 5. **Verify**: Ensure docs match current code state
+6. **Report gaps**: Call out missing implementation, unverified behavior, or docs/code mismatches
 
 ## Documentation Structure
 
@@ -45,6 +46,19 @@ Use Mermaid for:
 - Every architectural decision needs an ADR
 - Update CHANGELOG.md for user-visible changes
 - Prefer Mermaid over images
+- Never describe planned safeguards as implemented safeguards
+- Keep README safety claims aligned with source code
+- Mark tool capabilities clearly: read-only, mutating, destructive, admin, or raw proxy
+- Document config gates for every non-read-only capability
+- Document known limitations directly rather than hiding them in roadmap prose
+
+## Verification Rules
+
+- Check changed documentation against current source files.
+- Check endpoint docs against `wger.yaml` for paths and methods.
+- Check public tool lists against actual `registerTool` calls.
+- Check resource docs against actual `registerResource` calls.
+- If a docs update depends on unfinished code, say which code must land before the docs can be final.
 
 ## References
 

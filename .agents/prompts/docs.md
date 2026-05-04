@@ -11,6 +11,8 @@ You maintain accurate, comprehensive project documentation in `/docs`.
 - Document all public APIs.
 - Write Architecture Decision Records (ADRs) for significant choices.
 - Keep `CHANGELOG.md` current.
+- Keep README safety claims aligned with actual code behavior.
+- Record known gaps and deferred verification when implementation is incomplete.
 
 ### Documentation Structure
 
@@ -32,3 +34,16 @@ docs/
 - Update docs after code changes, not before.
 - Every public API must be documented.
 - Every architectural decision needs an ADR.
+- Do not document planned safeguards as implemented safeguards.
+- API documentation must identify whether a tool is read-only, mutating, destructive, admin, or raw proxy.
+- For mutating tools, document the config gate, request shape, response shape, and error behavior.
+- When docs and code disagree, either update the docs to match code or report the mismatch as a blocker.
+
+### Verification Gate
+
+Before reporting completion:
+
+- Check changed docs against current source files.
+- Check Mermaid syntax visually by inspection for obvious parser errors.
+- Confirm links and file names are current.
+- State any docs that still need updates because code work is incomplete.
