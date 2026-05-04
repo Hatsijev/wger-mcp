@@ -147,12 +147,8 @@ export class WgerClient {
   ): Promise<never> {
     const statusCode = response.status;
     const bodyPreview = await this._safePreviewBody(response);
-    this._logger.error("Wger API error response", {
-      method,
-      url,
-      statusCode,
-      bodyPreview,
-    });
+    this._logger.error("Wger API error response", { method, url, statusCode });
+    this._logger.debug("Wger API error response body", { method, url, bodyPreview });
     if (statusCode === 401) {
       throw new WgerAuthError(
         `Authentication failed (${statusCode}). Ensure WGER_API_TOKEN is valid.`,

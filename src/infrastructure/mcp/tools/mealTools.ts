@@ -9,14 +9,17 @@ import {
   paginationLimitSchema,
   paginationOffsetSchema,
   positiveIntegerIdSchema,
+  timeStringSchema,
+  decimalAmountSchema,
+  boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult } from "../toolResult.js";
 
 const listMealsSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  plan: z.number().optional(),
-  order: z.number().optional(),
+  plan: positiveIntegerIdSchema.optional(),
+  order: z.number().int().optional(),
 });
 
 const getMealSchema = z.object({
@@ -44,8 +47,8 @@ const getMealItemNutritionalValuesSchema = z.object({
 
 const createMealSchema = z.object({
   plan: positiveIntegerIdSchema,
-  time: z.string().nullable().optional(),
-  name: z.string().max(25).optional(),
+  time: timeStringSchema.nullable().optional(),
+  name: boundedStringSchema(25).optional(),
 });
 
 const updateMealSchema = z.object({
@@ -59,7 +62,7 @@ const createMealItemSchema = z.object({
   meal: positiveIntegerIdSchema,
   ingredient: positiveIntegerIdSchema,
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
-  amount: z.string(),
+  amount: decimalAmountSchema,
 });
 
 const updateMealItemSchema = z.object({
@@ -67,7 +70,7 @@ const updateMealItemSchema = z.object({
   meal: positiveIntegerIdSchema.optional(),
   ingredient: positiveIntegerIdSchema.optional(),
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
-  amount: z.string().optional(),
+  amount: decimalAmountSchema.optional(),
 });
 
 function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {

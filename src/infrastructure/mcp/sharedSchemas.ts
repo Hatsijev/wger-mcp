@@ -1,14 +1,8 @@
 import { z } from "zod";
-import { JsonValue } from "../../domain/models/Json.types.js";
 
 export const positiveIntegerIdSchema = z.number().int().positive();
 
-export const paginationLimitSchema = z
-  .number()
-  .int()
-  .min(1)
-  .max(100)
-  .optional();
+export const paginationLimitSchema = z.number().int().min(1).max(100).optional();
 
 export const paginationOffsetSchema = z.number().int().min(0).optional();
 
@@ -38,4 +32,19 @@ export function boundedStringSchema(maxLength: number) {
   return z.string().max(maxLength);
 }
 
-export const jsonConfigSchema = z.custom<JsonValue>().nullable().optional();
+import { JsonValue } from "../../domain/models/Json.types.js";
+
+// Recursive JSON value schema for Zod v4.
+// z.record() in Zod v4 requires explicit key type as first argument.
+const jsonValueSchema = z.lazy(() =>
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.null(),
+    z.record(z.string(), jsonValueSchema),
+    z.array(jsonValueSchema),
+  ]),
+) as z.ZodType<JsonValue>;
+
+export const jsonConfigSchema = jsonValueSchema.nullable().optional();

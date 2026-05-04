@@ -12,14 +12,15 @@ import {
   paginationLimitSchema,
   paginationOffsetSchema,
   positiveIntegerIdSchema,
+  boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult } from "../toolResult.js";
 
 const listIngredientsSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  search: z.string().optional(),
-  language: z.number().optional(),
+  search: boundedStringSchema(100).optional(),
+  language: positiveIntegerIdSchema.optional(),
 });
 
 const getIngredientSchema = z.object({
@@ -27,7 +28,7 @@ const getIngredientSchema = z.object({
 });
 
 const searchIngredientsSchema = z.object({
-  term: z.string(),
+  term: boundedStringSchema(100),
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
 });
@@ -39,7 +40,7 @@ const getIngredientValuesSchema = z.object({
 const listIngredientImagesSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  ingredient_id: z.number().optional(),
+  ingredient_id: positiveIntegerIdSchema.optional(),
 });
 
 const getIngredientImageSchema = z.object({

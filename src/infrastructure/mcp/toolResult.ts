@@ -1,6 +1,8 @@
 import { Logger } from "../../application/ports/Logger.js";
 import { WgerValidationError } from "../../domain/errors/WgerError.js";
 
+// Index signatures use `unknown` because the MCP SDK's CallToolResult type
+// requires `{ [x: string]: unknown }`. This is an allowed SDK-boundary exception.
 export interface ToolSuccessResult {
   readonly content: Array<{
     type: "text";
@@ -20,7 +22,7 @@ export interface ToolErrorResult {
 
 export type ToolResult = ToolSuccessResult | ToolErrorResult;
 
-export function successResult(data: unknown): ToolSuccessResult {
+export function successResult<T>(data: T): ToolSuccessResult {
   return {
     content: [
       {

@@ -11,13 +11,14 @@ import {
   positiveIntegerIdSchema,
   isoDateStringSchema,
   isoDateTimeStringSchema,
+  decimalAmountSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult } from "../toolResult.js";
 
 const listNutritionDiaryEntriesSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  plan: z.number().optional(),
+  plan: positiveIntegerIdSchema.optional(),
   date: isoDateStringSchema.optional(),
 });
 
@@ -35,7 +36,7 @@ const createNutritionDiaryEntrySchema = z.object({
   ingredient: positiveIntegerIdSchema,
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   datetime: isoDateTimeStringSchema.optional(),
-  amount: z.string(),
+  amount: decimalAmountSchema,
 });
 
 const updateNutritionDiaryEntrySchema = z.object({
@@ -45,7 +46,7 @@ const updateNutritionDiaryEntrySchema = z.object({
   ingredient: positiveIntegerIdSchema.optional(),
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   datetime: isoDateTimeStringSchema.optional(),
-  amount: z.string().optional(),
+  amount: decimalAmountSchema.optional(),
 });
 
 function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {

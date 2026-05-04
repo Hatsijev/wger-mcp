@@ -64,10 +64,11 @@ src/
 
 ## Safety
 
-- All inputs validated with Zod
-- Destructive operations require `ENABLE_DESTRUCTIVE_TOOLS=true` + explicit confirmation
-- Admin operations require `ENABLE_ADMIN_TOOLS=true`
-- Raw proxy requires `ENABLE_RAW_WGER_PROXY=true`
+- All inputs validated with Zod before reaching the Wger API.
+- **Write tools** (create / update) are enabled by default. The server assumes the API token has appropriate write scope.
+- **Delete tools** require `ENABLE_DESTRUCTIVE_TOOLS=true`. No delete operations are currently exposed.
+- **Admin operations** require `ENABLE_ADMIN_TOOLS=true`.
+- **Raw proxy** requires `ENABLE_RAW_WGER_PROXY=true`.
 
 ## Development
 

@@ -17,7 +17,7 @@ import { runTool, successResult } from "../toolResult.js";
 const listNutritionPlansSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  description: z.string().optional(),
+  description: boundedStringSchema(80).optional(),
 });
 
 const getNutritionPlanSchema = z.object({
@@ -31,13 +31,13 @@ const getNutritionPlanNutritionalValuesSchema = z.object({
 const createNutritionPlanSchema = z.object({
   start: isoDateStringSchema.optional(),
   end: isoDateStringSchema.nullable().optional(),
-  description: boundedStringSchema(1000).optional(),
+  description: boundedStringSchema(80).optional(),
   only_logging: z.boolean().optional(),
-  goal_energy: z.number().nullable().optional(),
-  goal_protein: z.number().nullable().optional(),
-  goal_carbohydrates: z.number().nullable().optional(),
-  goal_fat: z.number().nullable().optional(),
-  goal_fiber: z.number().nullable().optional(),
+  goal_energy: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_protein: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_carbohydrates: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_fat: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_fiber: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
 });
 
 const updateNutritionPlanSchema = z.object({

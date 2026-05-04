@@ -25,14 +25,14 @@ const getGalleryImageSchema = z.object({
 
 const createGalleryImageSchema = z.object({
   date: isoDateStringSchema,
-  image: z.string(),
+  image: boundedStringSchema(2000),
   description: boundedStringSchema(1000).optional(),
 });
 
 const updateGalleryImageSchema = z.object({
   id: positiveIntegerIdSchema,
   date: isoDateStringSchema.optional(),
-  image: z.string().optional(),
+  image: boundedStringSchema(2000).optional(),
   description: boundedStringSchema(1000).optional(),
 });
 
