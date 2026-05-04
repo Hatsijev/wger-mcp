@@ -4,284 +4,191 @@ Date: 2026-05-04
 
 ## Scope
 
-Review of the current TypeScript MCP server implementation against the local `.agents` directives, `.planning/CURRENT.md`, project docs, and current source code.
+Review of the current TypeScript MCP server implementation against `.agents` directives, `.planning/CURRENT.md`, project docs, `wger.yaml`, and current source code.
 
-Build verification:
+Archived previous audit snapshot:
+
+- `.archive/AUDIT-2026-05-04-before-app-review.md`
+
+## Verification
 
 - `npm run build` passes.
 - `npm run lint` passes.
+- `npm audit --omit=dev` reports `found 0 vulnerabilities`.
+- No executable test suite exists: there is no `test` script and no `test`, `tests`, or `__tests__` directory.
 
-Dependency audit: `npm audit --omit=dev` reports `found 0 vulnerabilities`.
+## Current State
 
-## Milestone 3 Follow-Up
+Milestones 1-3 are implemented at the endpoint-surface level. Exercise, routine/workout/weight/gallery, and nutrition tools/resources are registered through split domain modules in `src/infrastructure/mcp/server.ts`.
 
-Date: 2026-05-04
+Notable improvements since the previous audit:
 
-Milestone 3 nutrition endpoint surface is now implemented: read tools, write tools, resources, nutrition types, and `docs/api/nutrition.md` are present.
+- Tool handlers now use shared `runTool` error handling.
+- Tool success/error envelopes are consistent across domains.
+- Update tools use `PATCH` instead of sparse `PUT`.
+- Resource template IDs use `validateResourceId`.
+- Common MCP schema primitives exist in `sharedSchemas.ts`.
+- Wger HTTP errors no longer expose full upstream response bodies to MCP clients.
+- The previous large routine/nutrition tool files have been split into smaller domain-specific tool modules and resources.
 
-The previous finding "Milestone 3 is incomplete" is closed for basic endpoint coverage, but the new implementation carries forward several quality and safety risks.
+## Findings
 
-### New / Updated Findings
+### 1. No executable tests exist
 
-#### 1. Nutrition update tools use sparse PUT bodies
-
-The OpenAPI spec exposes PATCH endpoints for partial updates, but the MCP update tools currently call `client.put(...)` with only provided fields.
-
-Relevant files:
-
-- `src/infrastructure/mcp/tools/nutrition.ts`
-- `wger.yaml`
-
-Risk: if Wger treats PUT as full replacement, partial MCP update calls can clear or reset omitted fields.
-
-Recommendation: use `PATCH` for `update_meal`, `update_meal_item`, `update_nutrition_plan`, and `update_nutrition_diary_entry`, unless full replacement is explicitly intended and documented.
-
-#### 2. Nutrition schemas are looser than OpenAPI constraints
-
-Nutrition schemas use plain `z.number()` and `z.string()` for fields that have stricter OpenAPI constraints.
-
-Examples:
-
-- IDs accept floats and negative numbers.
-- `time` is not validated as time.
-- `start` and `end` are not validated as dates.
-- `datetime` is not validated as date-time.
-- `amount` does not enforce the decimal pattern `^-?\d{0,4}(?:\.\d{0,2})?$`.
-- Goal fields do not enforce integer bounds from OpenAPI.
-
-Relevant files:
-
-- `src/infrastructure/mcp/tools/nutrition.ts`
-- `wger.yaml`
-
-Recommendation: add shared schema primitives and apply them to all nutrition tools before expanding Milestone 4.
-
-#### 3. Nutrition plan tools and resources use different endpoint families
-
-Nutrition plan tools use `/api/v2/nutritionplaninfo/` for list/get operations, while nutrition plan resources use `/api/v2/nutritionplan/`.
-
-Relevant files:
-
-- `src/infrastructure/mcp/tools/nutrition.ts`
-- `src/infrastructure/mcp/resources/nutrition.ts`
-
-Risk: `list_nutrition_plans` and `wger://nutrition-plans` can return different shapes for the same conceptual object.
-
-Recommendation: choose one public semantic for nutrition plan reads. If both Wger endpoint families are needed, expose them with distinct names and document the difference.
-
-#### 4. Documentation has stale milestone wording
-
-`docs/README.md` still says no delete operations are exposed for "Milestone 2", even though `.planning/CURRENT.md` marks Milestones 1-3 complete.
-
-Relevant file:
-
-- `docs/README.md`
-
-Recommendation: update wording to avoid milestone-specific stale claims.
-
-## High-Priority Findings
-
-### 1. Write tools are registered without capability gating
-
-`ENABLE_DESTRUCTIVE_TOOLS`, `ENABLE_ADMIN_TOOLS`, and `ENABLE_RAW_WGER_PROXY` are parsed and logged, but they are not used to control tool registration or execution.
-
-Current write tools such as `create_routine`, `update_routine`, `create_day`, `update_day`, and other mutation tools are always registered.
-
-Milestone 3 adds nutrition mutation tools to the same globally enabled write surface:
-
-- `create_meal`
-- `update_meal`
-- `create_meal_item`
-- `update_meal_item`
-- `create_nutrition_plan`
-- `update_nutrition_plan`
-- `create_nutrition_diary_entry`
-- `update_nutrition_diary_entry`
-
-Relevant files:
-
-- `src/infrastructure/mcp/server.ts`
-- `src/infrastructure/mcp/tools/routines.ts`
-- `src/infrastructure/mcp/tools/nutrition.ts`
-- `README.md`
-- `docs/README.md`
-
-Risk: any connected MCP client can perform mutation operations if the API token permits them. The top-level README safety section currently implies stronger protection for capability-gated operations than the code enforces. The docs should clearly distinguish safe writes, destructive deletes, admin tools, and raw proxy tools.
-
-Recommendation: introduce explicit capability-based registration or execution guards for mutating, destructive, admin, and raw proxy tools. Keep read-only tools available by default. If safe writes intentionally remain enabled by default, document the deployment expectation and token-scope assumptions.
-
-### 2. No executable tests exist
-
-The repository has `docs/TEST_SCENARIOS.md` and a root-level `TEST_SCENARIOS.md`, but no test runner, no `test` script, and no test files under `test`, `tests`, or `__tests__`.
+`docs/TEST_SCENARIOS.md` and root `TEST_SCENARIOS.md` are planning artifacts only. They do not verify behavior.
 
 Relevant files:
 
 - `package.json`
 - `docs/TEST_SCENARIOS.md`
+- `TEST_SCENARIOS.md`
 
-Risk: endpoint mappings, schema validation, error formatting, config parsing, and client behavior are not automatically verified.
+Risk: endpoint mappings, schemas, tool envelopes, config parsing, and Wger client behavior can regress while build/lint still pass.
 
-Recommendation: add a test framework and focused tests for config loading, WgerClient behavior, MCP tool handlers, schema validation, and endpoint mappings.
+Recommendation: add a test runner and focused tests before Milestone 4.
 
-### 3. Wger API responses are trusted without runtime validation
+### 2. Response validation support exists but is unused
 
-`WgerClient` parses JSON and casts it directly to generic type `T`.
+`WgerClient` accepts optional response schemas, but current tool/resource calls do not pass schemas. Responses are still trusted through generic type parameters in normal use.
+
+Relevant files:
+
+- `src/infrastructure/wger/WgerClient.ts`
+- `src/infrastructure/mcp/tools/*.ts`
+- `src/infrastructure/mcp/resources/*.ts`
+
+Risk: malformed or version-drifted Wger responses can be returned as valid MCP payloads.
+
+Recommendation: introduce response schemas for representative high-value paths first: write tools, status checks, and paginated list envelopes.
+
+### 3. HTTP requests have no timeout or cancellation policy
+
+`fetch` is called without an `AbortSignal`.
 
 Relevant file:
 
 - `src/infrastructure/wger/WgerClient.ts`
 
-Risk: malformed, unexpected, or version-drifted Wger responses can be returned as valid MCP responses.
+Risk: a slow or unreachable Wger instance can hang MCP tool calls indefinitely.
 
-Recommendation: validate public tool response boundaries with Zod schemas or typed endpoint descriptors. At minimum, validate high-risk write responses and status/error envelopes.
+Recommendation: add a configurable request timeout and preserve cancellation behavior where possible.
 
-## Medium-Priority Findings
+### 4. Current code violates zero-unknown guidance
 
-### 4. Error handling is inconsistent across tool domains
-
-Exercise tools allow errors to propagate directly. Routine and nutrition tools catch errors and return structured `{ ok: false, error }` responses with `isError: true`.
-
-Relevant files:
-
-- `src/infrastructure/mcp/tools/exercises.ts`
-- `src/infrastructure/mcp/tools/routines.ts`
-- `src/infrastructure/mcp/tools/nutrition.ts`
-
-Risk: MCP clients receive different error behavior depending on which domain they call.
-
-Recommendation: centralize tool execution through a shared wrapper that returns consistent success and error envelopes.
-
-### 5. Update tools use PUT with sparse bodies
-
-Update handlers extract `id`, omit undefined fields, and call `client.put(...)`.
+`toolResult.ts` uses `unknown` in public result interfaces and `successResult`.
 
 Relevant file:
 
-- `src/infrastructure/mcp/tools/routines.ts`
+- `src/infrastructure/mcp/toolResult.ts`
 
-Risk: if Wger treats PUT as full replacement, partial updates can accidentally clear or reset fields.
+Risk: this conflicts with the project’s stated zero-`unknown` policy. It may be acceptable at an SDK boundary, but that exception is not documented.
 
-Recommendation: verify Wger endpoint semantics. Prefer PATCH for partial update tools unless full replacement is explicitly intended.
+Recommendation: replace with explicit JSON-compatible payload types based on `JsonValue`, or document this as an allowed SDK-boundary exception.
 
-### 6. Input validation is too loose for MCP boundary exposure
+### 5. JSON config validation is not real recursive validation
 
-Many schemas use plain `z.number()` or `z.string()` for IDs, pagination, dates, times, weights, and image payloads.
+`jsonConfigSchema` uses `z.custom<JsonValue>()` without a predicate.
+
+Relevant file:
+
+- `src/infrastructure/mcp/sharedSchemas.ts`
+
+Risk: the schema name suggests JSON validation, but the schema itself does not enforce recursive JSON shape.
+
+Recommendation: replace it with a recursive Zod JSON schema.
+
+### 6. MCP input validation is improved but still incomplete
+
+Many schemas now use shared primitives, but some fields still use loose `z.number()` or `z.string()` where `wger.yaml` has stricter constraints.
 
 Examples:
 
-- IDs accept floats and negative numbers.
-- `limit` and `offset` have no range bounds.
-- Dates and times accept arbitrary strings.
-- Gallery image input is an unbounded string.
-- JSON config fields use `z.custom<JsonValue>()`, which does not meaningfully validate shape.
+- `ingredientTools.ts`: `term`, `language`, `ingredient_id`, and `ingredient` are loose.
+- `mealTools.ts`: filter IDs, `time`, and `amount` are loose.
+- `nutritionPlanTools.ts`: `description` length and goal integer bounds do not match OpenAPI.
+- `nutritionDiaryTools.ts`: filter `plan` and `amount` are loose.
+- `galleryTools.ts`: `image` is unbounded.
+- Workout/routine config and numeric fields still need closer OpenAPI matching.
 
 Relevant files:
 
-- `src/infrastructure/mcp/tools/exercises.ts`
-- `src/infrastructure/mcp/tools/routines.ts`
-- `src/infrastructure/mcp/tools/nutrition.ts`
+- `src/infrastructure/mcp/tools/*.ts`
+- `wger.yaml`
 
-Risk: invalid input reaches Wger, producing avoidable errors or excessive payloads.
+Risk: invalid inputs reach Wger, producing avoidable API errors or excessive payloads.
 
-Recommendation: introduce reusable schema helpers such as positive integer IDs, bounded pagination, ISO date strings, time strings, bounded text fields, and bounded image payload validation.
+Recommendation: finish applying shared primitives and OpenAPI-specific bounds across all tool modules.
 
-### 7. Error logging may leak sensitive data
+### 7. Write tools are enabled by default
 
-Wger error responses are logged with full response bodies, and thrown errors include response text. Fitness, weight, workout, gallery, and nutrition data can be sensitive.
+Create/update tools are registered unconditionally. Delete, admin, and raw proxy tools are not currently exposed, but the config flags are only logged and are not used to control registration.
+
+Relevant files:
+
+- `src/infrastructure/mcp/server.ts`
+- `README.md`
+- `docs/README.md`
+
+Risk: any connected MCP client can perform create/update operations if the configured token permits it.
+
+Recommendation: decide whether safe writes are intentionally enabled by default. If yes, document the security model and least-privilege token expectation clearly. If no, add an explicit write capability gate.
+
+### 8. Error logging still includes upstream body previews
+
+Thrown errors are now sanitized, but logs still include a truncated `bodyPreview`.
 
 Relevant file:
 
 - `src/infrastructure/wger/WgerClient.ts`
 
-Risk: logs or MCP error payloads may expose private user data.
+Risk: even a short preview can contain sensitive health, workout, weight, nutrition, or gallery data.
 
-Recommendation: redact or summarize API error bodies. Include request method, path, status code, and a correlation-friendly error code instead of full body text by default.
+Recommendation: move body previews to `debug`, redact sensitive fields, or log only status/path/error classification by default.
 
-### 8. No timeout, retry, or cancellation policy around fetch
+### 9. Documentation/test scenario files are stale
 
-`fetch` is called without an `AbortSignal` or timeout.
+`docs/TEST_SCENARIOS.md` still describes old behavior in places, including update tools using `PUT` and exercise tools lacking structured error handling.
 
 Relevant file:
 
-- `src/infrastructure/wger/WgerClient.ts`
+- `docs/TEST_SCENARIOS.md`
 
-Risk: a slow or unreachable Wger instance can hang tool calls indefinitely.
+Risk: reviewers and future agents may test against obsolete behavior.
 
-Recommendation: add configurable request timeout. Consider limited retries only for safe idempotent reads.
+Recommendation: regenerate or curate test scenarios after the current refactor.
 
-### 9. Resource template IDs are parsed but not validated
+### 10. Clean Architecture boundary remains thin
 
-Resource handlers convert URI variables with `Number(variables.id)` and use the result directly in API paths.
+The code is better organized by MCP domain module, but MCP transport code still calls `WgerClient` directly. The application layer is still essentially only ports.
 
 Relevant files:
 
-- `src/infrastructure/mcp/resources/exercises.ts`
-- `src/infrastructure/mcp/resources/routines.ts`
-- `src/infrastructure/mcp/resources/nutrition.ts`
+- `src/application/ports/Logger.ts`
+- `src/infrastructure/mcp/tools/*.ts`
+- `src/infrastructure/wger/WgerClient.ts`
 
-Risk: invalid IDs such as `NaN`, floats, or negative values can reach the API path.
+Risk: as Milestone 4 expands, endpoint registration can again become the main architecture rather than a transport adapter over use cases.
 
-Recommendation: validate resource IDs with the same positive-integer helper used by tools.
+Recommendation: introduce endpoint descriptors or application services before adding broad Milestone 4 coverage.
 
-### 10. Milestone 3 endpoint coverage is complete, but quality gates remain open
+## Done Well
 
-Nutrition read tools, write tools, resources, domain types, and documentation are now present.
+- Strict TypeScript build and lint pass.
+- Tool modules are now split by domain, improving maintainability.
+- Tool error handling and response envelopes are centralized.
+- Updates use `PATCH`.
+- Resource IDs are validated.
+- Shared schema primitives are in place.
+- Wger client centralizes auth, HTTP methods, JSON parsing, and response validation hooks.
+- Docs cover current Milestone 3 nutrition tools/resources.
 
-Remaining risks:
+## Suggested Next Order
 
-- no executable tests,
-- loose schemas,
-- sparse PUT updates,
-- nutrition plan endpoint-family mismatch,
-- write tools available by default,
-- unresolved shared WgerClient/runtime-validation risks.
-
-Recommendation: do not expand Milestone 4 until the shared infrastructure issues are addressed or explicitly accepted as deferred risk.
-
-## Architectural Observations
-
-### What is done well
-
-- Strict TypeScript compiler settings are enabled.
-- `npm run build` passes.
-- Config parsing uses Zod.
-- Authentication and HTTP behavior are centralized in `WgerClient`.
-- MCP tools and resources are clearly separated by domain.
-- Domain model files avoid `any` and provide useful readonly interfaces.
-- Documentation and endpoint inventory provide useful project context.
-
-### What needs architectural attention
-
-The repository shape suggests Clean Architecture, but most behavior currently lives in infrastructure. MCP tool handlers call `WgerClient` directly and manually build endpoint paths. The application layer has only a logger port.
-
-Large tool files, especially `src/infrastructure/mcp/tools/routines.ts`, contain repeated registration, request, response, and error-handling logic.
-
-Recommendation: introduce application-level services or endpoint descriptors that keep MCP transport details separate from Wger use cases. Add shared helpers for:
-
-- Tool response formatting.
-- Error conversion.
-- Input schema primitives.
-- Endpoint path construction.
-- Read/write operation registration.
-
-## Security Checklist For Follow-Up
-
-- Verify write-tool gating before exposing the server to an MCP client with a real token.
-- Redact API error bodies from logs and MCP error messages.
-- Add request timeouts.
-- Bound all user-controlled payload sizes.
-- Validate IDs as positive integers.
-- Validate dates/times before requests reach Wger.
-- Decide whether partial updates use PATCH instead of PUT.
-- Confirm no raw proxy, admin, or delete tooling is exposed before the corresponding flags are enforced.
-- Add automated tests before expanding Milestone 4 coverage.
-
-## Suggested Review Order After Milestone 3
-
-1. Decide and document the write-tool capability model.
-2. Switch sparse update tools to PATCH where appropriate.
-3. Add shared MCP tool wrapper for consistent error envelopes.
-4. Tighten Zod schemas with reusable primitives.
-5. Add tests for client behavior, schemas, and representative tools.
-6. Resolve nutrition plan endpoint-family naming/shape consistency.
-7. Revisit architecture boundaries and reduce generated-handler duplication.
+1. Add executable tests for config, `WgerClient`, schema primitives, and representative tools.
+2. Add HTTP request timeout support.
+3. Replace `z.custom<JsonValue>()` with recursive JSON validation.
+4. Tighten remaining schemas against `wger.yaml`.
+5. Decide and document the safe-write capability model.
+6. Start passing response schemas into `WgerClient`.
+7. Refresh `docs/TEST_SCENARIOS.md`.
+8. Introduce application services or endpoint descriptors before Milestone 4 expansion.
