@@ -23,29 +23,7 @@ The previous finding "Milestone 3 is incomplete" is closed for basic endpoint co
 
 ### New / Updated Findings
 
-#### 1. Nutrition write tools are registered without a write capability gate
-
-The new nutrition mutation tools are registered unconditionally:
-
-- `create_meal`
-- `update_meal`
-- `create_meal_item`
-- `update_meal_item`
-- `create_nutrition_plan`
-- `update_nutrition_plan`
-- `create_nutrition_diary_entry`
-- `update_nutrition_diary_entry`
-
-Relevant files:
-
-- `src/infrastructure/mcp/server.ts`
-- `src/infrastructure/mcp/tools/nutrition.ts`
-
-Risk: any connected MCP client can mutate nutrition data if the configured token permits it. This matches current `docs/README.md`, which says write tools are available by default, but it remains a safety concern for real deployments.
-
-Recommendation: decide whether "safe write" tools should remain enabled by default or require an explicit write capability flag. If enabled by default, document the security model clearly and recommend least-privilege Wger tokens.
-
-#### 2. Nutrition update tools use sparse PUT bodies
+#### 1. Nutrition update tools use sparse PUT bodies
 
 The OpenAPI spec exposes PATCH endpoints for partial updates, but the MCP update tools currently call `client.put(...)` with only provided fields.
 
@@ -58,7 +36,7 @@ Risk: if Wger treats PUT as full replacement, partial MCP update calls can clear
 
 Recommendation: use `PATCH` for `update_meal`, `update_meal_item`, `update_nutrition_plan`, and `update_nutrition_diary_entry`, unless full replacement is explicitly intended and documented.
 
-#### 3. Nutrition schemas are looser than OpenAPI constraints
+#### 2. Nutrition schemas are looser than OpenAPI constraints
 
 Nutrition schemas use plain `z.number()` and `z.string()` for fields that have stricter OpenAPI constraints.
 
@@ -78,7 +56,7 @@ Relevant files:
 
 Recommendation: add shared schema primitives and apply them to all nutrition tools before expanding Milestone 4.
 
-#### 4. Nutrition plan tools and resources use different endpoint families
+#### 3. Nutrition plan tools and resources use different endpoint families
 
 Nutrition plan tools use `/api/v2/nutritionplaninfo/` for list/get operations, while nutrition plan resources use `/api/v2/nutritionplan/`.
 
@@ -91,7 +69,7 @@ Risk: `list_nutrition_plans` and `wger://nutrition-plans` can return different s
 
 Recommendation: choose one public semantic for nutrition plan reads. If both Wger endpoint families are needed, expose them with distinct names and document the difference.
 
-#### 5. Documentation has stale milestone wording
+#### 4. Documentation has stale milestone wording
 
 `docs/README.md` still says no delete operations are exposed for "Milestone 2", even though `.planning/CURRENT.md` marks Milestones 1-3 complete.
 
@@ -109,13 +87,26 @@ Recommendation: update wording to avoid milestone-specific stale claims.
 
 Current write tools such as `create_routine`, `update_routine`, `create_day`, `update_day`, and other mutation tools are always registered.
 
+Milestone 3 adds nutrition mutation tools to the same globally enabled write surface:
+
+- `create_meal`
+- `update_meal`
+- `create_meal_item`
+- `update_meal_item`
+- `create_nutrition_plan`
+- `update_nutrition_plan`
+- `create_nutrition_diary_entry`
+- `update_nutrition_diary_entry`
+
 Relevant files:
 
 - `src/infrastructure/mcp/server.ts`
 - `src/infrastructure/mcp/tools/routines.ts`
+- `src/infrastructure/mcp/tools/nutrition.ts`
 - `README.md`
+- `docs/README.md`
 
-Risk: any connected MCP client can perform mutation operations if the API token permits them. The README safety section currently implies stronger protection than the code enforces.
+Risk: any connected MCP client can perform mutation operations if the API token permits them. The top-level README safety section currently implies stronger protection for capability-gated operations than the code enforces. The docs should clearly distinguish safe writes, destructive deletes, admin tools, and raw proxy tools.
 
 Recommendation: introduce explicit capability-based registration or execution guards for mutating, destructive, admin, and raw proxy tools. Keep read-only tools available by default. If safe writes intentionally remain enabled by default, document the deployment expectation and token-scope assumptions.
 
