@@ -100,7 +100,7 @@ Clean Architecture: `domain/` → `application/` → `infrastructure/`
 - Create `docs/decisions/ADR-001-typescript-strict.md`
 - Update `docs/development.md` with setup and build instructions
 
-### Milestone 2: Workout / Routine / Body Weight / Gallery ✅
+### Milestones 1-2: Complete ✅
 
 #### Task 2.1 — Routine Domain Types and Read Tools
 
@@ -155,9 +155,39 @@ Clean Architecture: `domain/` → `application/` → `infrastructure/`
 - Update `docs/api/` with workout/routine/weight/gallery endpoint docs
 - Create `docs/decisions/ADR-002-mcp-server-api.md` documenting the choice of McpServer over Server
 
-### Milestone 3: Nutrition
+### Milestones 1-3: Complete ✅
 
-_(Pending Milestone 2 completion)_
+#### Task 3.1 — Nutrition Domain Types and Read Tools
+
+**Assignee:** dev
+
+- Read `wger.yaml` schemas for Ingredient, Meal, MealItem, NutritionPlan, NutritionDiary, IngredientImage, IngredientWeightUnit, IngredientInfo
+- Create `src/domain/models/Nutrition.types.ts`
+- Implement read-only tools: `list_ingredients`, `get_ingredient`, `search_ingredients`, `get_ingredient_values`
+- Implement read-only tools: `list_meals`, `get_meal`, `list_meal_items`, `get_meal_item`, `get_meal_nutritional_values`, `get_meal_item_nutritional_values`
+- Implement read-only tools: `list_nutrition_plans`, `get_nutrition_plan`, `get_nutrition_plan_nutritional_values`
+- Implement read-only tools: `list_nutrition_diary_entries`, `get_nutrition_diary_entry`, `get_nutrition_diary_nutritional_values`
+- Register corresponding MCP resources
+
+#### Task 3.2 — Safe Write Tools (Create/Update)
+
+**Assignee:** dev
+
+- Implement create/update tools for: meal, meal_item, nutrition_plan, nutrition_diary_entry
+- Ingredient-related endpoints are read-only (Wger manages the ingredient database)
+
+#### Task 3.3 — Build Verification
+
+**Assignee:** dev
+
+- Run `npm run build`, verify zero errors
+
+#### Task D.3 — Documentation Update
+
+**Assignee:** docs
+
+- Create `docs/api/nutrition.md`
+- Update `docs/README.md`
 
 ### Milestone 4: Remaining Coverage + Safe Writes
 
