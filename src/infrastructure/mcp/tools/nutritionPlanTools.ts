@@ -1,0 +1,155 @@
+import { z } from "zod";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { WgerClient } from "../../wger/WgerClient.js";
+import { Logger } from "../../../application/ports/Logger.js";
+import { WgerPaginatedResponse } from "../../wger/types.js";
+import { JsonValue } from "../../../domain/models/Json.types.js";
+import { NutritionPlan, NutritionalValues } from "../../../domain/models/Nutrition.types.js";
+import {
+  paginationLimitSchema,
+  paginationOffsetSchema,
+  positiveIntegerIdSchema,
+  isoDateStringSchema,
+  boundedStringSchema,
+} from "../sharedSchemas.js";
+import { runTool, successResult } from "../toolResult.js";
+
+const listNutritionPlansSchema = z.object({
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  description: z.string().optional(),
+});
+
+const getNutritionPlanSchema = z.object({
+  id: positiveIntegerIdSchema,
+});
+
+const getNutritionPlanNutritionalValuesSchema = z.object({
+  id: positiveIntegerIdSchema,
+});
+
+const createNutritionPlanSchema = z.object({
+  start: isoDateStringSchema.optional(),
+  end: isoDateStringSchema.nullable().optional(),
+  description: boundedStringSchema(1000).optional(),
+  only_logging: z.boolean().optional(),
+  goal_energy: z.number().nullable().optional(),
+  goal_protein: z.number().nullable().optional(),
+  goal_carbohydrates: z.number().nullable().optional(),
+  goal_fat: z.number().nullable().optional(),
+  goal_fiber: z.number().nullable().optional(),
+});
+
+const updateNutritionPlanSchema = z.object({
+  id: positiveIntegerIdSchema,
+  start: isoDateStringSchema.optional(),
+  end: isoDateStringSchema.nullable().optional(),
+  description: boundedStringSchema(1000).optional(),
+  only_logging: z.boolean().optional(),
+  goal_energy: z.number().nullable().optional(),
+  goal_protein: z.number().nullable().optional(),
+  goal_carbohydrates: z.number().nullable().optional(),
+  goal_fat: z.number().nullable().optional(),
+  goal_fiber: z.number().nullable().optional(),
+});
+
+function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
+  const result: Record<string, JsonValue> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      result[key] = value as JsonValue;
+    }
+  }
+  return result;
+}
+
+export function registerNutritionPlanTools(
+  server: McpServer,
+  client: WgerClient,
+  logger: Logger,
+): void {
+  server.registerTool(
+    "list_nutrition_plans",
+    {
+      description: "List nutrition plans",
+      inputSchema: listNutritionPlansSchema,
+    },
+    async (args) =>
+      runTool(logger, "list_nutrition_plans", async () => {
+        const data = await client.get<WgerPaginatedResponse<NutritionPlan>>(
+          "/api/v2/nutritionplan/",
+          {
+            limit: args.limit,
+            offset: args.offset,
+            description: args.description,
+          },
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "get_nutrition_plan",
+    {
+      description: "Get nutrition plan by ID",
+      inputSchema: getNutritionPlanSchema,
+    },
+    async (args) =>
+      runTool(logger, "get_nutrition_plan", async () => {
+        const data = await client.get<NutritionPlan>(
+          `/api/v2/nutritionplan/${args.id}/`,
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "get_nutrition_plan_nutritional_values",
+    {
+      description: "Get nutritional values for a nutrition plan",
+      inputSchema: getNutritionPlanNutritionalValuesSchema,
+    },
+    async (args) =>
+      runTool(logger, "get_nutrition_plan_nutritional_values", async () => {
+        const data = await client.get<NutritionalValues>(
+          `/api/v2/nutritionplan/${args.id}/nutritional_values/`,
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "create_nutrition_plan",
+    {
+      description: "Create a new nutrition plan",
+      inputSchema: createNutritionPlanSchema,
+    },
+    async (args) =>
+      runTool(logger, "create_nutrition_plan", async () => {
+        const data = await client.post<NutritionPlan>(
+          "/api/v2/nutritionplan/",
+          toJsonBody(args),
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "update_nutrition_plan",
+    {
+      description: "Update an existing nutrition plan",
+      inputSchema: updateNutritionPlanSchema,
+    },
+    async (args) =>
+      runTool(logger, "update_nutrition_plan", async () => {
+        const { id, ...body } = args;
+        const data = await client.patch<NutritionPlan>(
+          `/api/v2/nutritionplan/${id}/`,
+          toJsonBody(body),
+        );
+        return successResult(data);
+      }),
+  );
+
+  logger.info("Nutrition plan tools registered");
+}

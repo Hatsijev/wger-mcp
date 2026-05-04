@@ -1,0 +1,150 @@
+import { z } from "zod";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { WgerClient } from "../../wger/WgerClient.js";
+import { Logger } from "../../../application/ports/Logger.js";
+import { WgerPaginatedResponse } from "../../wger/types.js";
+import { JsonValue } from "../../../domain/models/Json.types.js";
+import { NutritionDiaryEntry, NutritionalValues } from "../../../domain/models/Nutrition.types.js";
+import {
+  paginationLimitSchema,
+  paginationOffsetSchema,
+  positiveIntegerIdSchema,
+  isoDateStringSchema,
+  isoDateTimeStringSchema,
+} from "../sharedSchemas.js";
+import { runTool, successResult } from "../toolResult.js";
+
+const listNutritionDiaryEntriesSchema = z.object({
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  plan: z.number().optional(),
+  date: isoDateStringSchema.optional(),
+});
+
+const getNutritionDiaryEntrySchema = z.object({
+  id: positiveIntegerIdSchema,
+});
+
+const getNutritionDiaryNutritionalValuesSchema = z.object({
+  id: positiveIntegerIdSchema,
+});
+
+const createNutritionDiaryEntrySchema = z.object({
+  plan: positiveIntegerIdSchema,
+  meal: positiveIntegerIdSchema.nullable().optional(),
+  ingredient: positiveIntegerIdSchema,
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
+  datetime: isoDateTimeStringSchema.optional(),
+  amount: z.string(),
+});
+
+const updateNutritionDiaryEntrySchema = z.object({
+  id: positiveIntegerIdSchema,
+  plan: positiveIntegerIdSchema.optional(),
+  meal: positiveIntegerIdSchema.nullable().optional(),
+  ingredient: positiveIntegerIdSchema.optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
+  datetime: isoDateTimeStringSchema.optional(),
+  amount: z.string().optional(),
+});
+
+function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
+  const result: Record<string, JsonValue> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      result[key] = value as JsonValue;
+    }
+  }
+  return result;
+}
+
+export function registerNutritionDiaryTools(
+  server: McpServer,
+  client: WgerClient,
+  logger: Logger,
+): void {
+  server.registerTool(
+    "list_nutrition_diary_entries",
+    {
+      description: "List nutrition diary entries",
+      inputSchema: listNutritionDiaryEntriesSchema,
+    },
+    async (args) =>
+      runTool(logger, "list_nutrition_diary_entries", async () => {
+        const data = await client.get<
+          WgerPaginatedResponse<NutritionDiaryEntry>
+        >("/api/v2/nutritiondiary/", {
+          limit: args.limit,
+          offset: args.offset,
+          plan: args.plan,
+          datetime__date: args.date,
+        });
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "get_nutrition_diary_entry",
+    {
+      description: "Get nutrition diary entry by ID",
+      inputSchema: getNutritionDiaryEntrySchema,
+    },
+    async (args) =>
+      runTool(logger, "get_nutrition_diary_entry", async () => {
+        const data = await client.get<NutritionDiaryEntry>(
+          `/api/v2/nutritiondiary/${args.id}/`,
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "get_nutrition_diary_nutritional_values",
+    {
+      description: "Get nutritional values for a diary entry",
+      inputSchema: getNutritionDiaryNutritionalValuesSchema,
+    },
+    async (args) =>
+      runTool(logger, "get_nutrition_diary_nutritional_values", async () => {
+        const data = await client.get<NutritionalValues>(
+          `/api/v2/nutritiondiary/${args.id}/nutritional_values/`,
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "create_nutrition_diary_entry",
+    {
+      description: "Create a new nutrition diary entry",
+      inputSchema: createNutritionDiaryEntrySchema,
+    },
+    async (args) =>
+      runTool(logger, "create_nutrition_diary_entry", async () => {
+        const data = await client.post<NutritionDiaryEntry>(
+          "/api/v2/nutritiondiary/",
+          toJsonBody(args),
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "update_nutrition_diary_entry",
+    {
+      description: "Update an existing nutrition diary entry",
+      inputSchema: updateNutritionDiaryEntrySchema,
+    },
+    async (args) =>
+      runTool(logger, "update_nutrition_diary_entry", async () => {
+        const { id, ...body } = args;
+        const data = await client.patch<NutritionDiaryEntry>(
+          `/api/v2/nutritiondiary/${id}/`,
+          toJsonBody(body),
+        );
+        return successResult(data);
+      }),
+  );
+
+  logger.info("Nutrition diary tools registered");
+}

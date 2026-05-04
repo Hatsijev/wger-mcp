@@ -1,0 +1,133 @@
+import { z } from "zod";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { WgerClient } from "../../wger/WgerClient.js";
+import { Logger } from "../../../application/ports/Logger.js";
+import { WgerPaginatedResponse } from "../../wger/types.js";
+import { JsonValue } from "../../../domain/models/Json.types.js";
+import { Day } from "../../../domain/models/Routine.types.js";
+import {
+  paginationLimitSchema,
+  paginationOffsetSchema,
+  positiveIntegerIdSchema,
+  boundedStringSchema,
+  jsonConfigSchema,
+} from "../sharedSchemas.js";
+import { runTool, successResult } from "../toolResult.js";
+
+const listDaysSchema = z.object({
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  routine: positiveIntegerIdSchema.optional(),
+});
+
+const getDaySchema = z.object({
+  id: positiveIntegerIdSchema,
+});
+
+const createDaySchema = z.object({
+  routine: positiveIntegerIdSchema,
+  order: z.number().optional(),
+  name: boundedStringSchema(20).optional(),
+  description: boundedStringSchema(1000).optional(),
+  is_rest: z.boolean().optional(),
+  need_logs_to_advance: z.boolean().optional(),
+  type: z
+    .enum(["custom", "enom", "amrap", "hiit", "tabata", "edt", "rft", "afap"])
+    .optional(),
+  config: jsonConfigSchema,
+});
+
+const updateDaySchema = z.object({
+  id: positiveIntegerIdSchema,
+  routine: positiveIntegerIdSchema.optional(),
+  order: z.number().optional(),
+  name: boundedStringSchema(20).optional(),
+  description: boundedStringSchema(1000).optional(),
+  is_rest: z.boolean().optional(),
+  need_logs_to_advance: z.boolean().optional(),
+  type: z
+    .enum(["custom", "enom", "amrap", "hiit", "tabata", "edt", "rft", "afap"])
+    .optional(),
+  config: jsonConfigSchema,
+});
+
+function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
+  const result: Record<string, JsonValue> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      result[key] = value as JsonValue;
+    }
+  }
+  return result;
+}
+
+export function registerDayTools(
+  server: McpServer,
+  client: WgerClient,
+  logger: Logger,
+): void {
+  server.registerTool(
+    "list_days",
+    {
+      description: "List routine days",
+      inputSchema: listDaysSchema,
+    },
+    async (args) =>
+      runTool(logger, "list_days", async () => {
+        const data = await client.get<WgerPaginatedResponse<Day>>(
+          "/api/v2/day/",
+          {
+            limit: args.limit,
+            offset: args.offset,
+            routine: args.routine,
+          },
+        );
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "get_day",
+    {
+      description: "Get day by ID",
+      inputSchema: getDaySchema,
+    },
+    async (args) =>
+      runTool(logger, "get_day", async () => {
+        const data = await client.get<Day>(`/api/v2/day/${args.id}/`);
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "create_day",
+    {
+      description: "Create a new day",
+      inputSchema: createDaySchema,
+    },
+    async (args) =>
+      runTool(logger, "create_day", async () => {
+        const data = await client.post<Day>("/api/v2/day/", toJsonBody(args));
+        return successResult(data);
+      }),
+  );
+
+  server.registerTool(
+    "update_day",
+    {
+      description: "Update an existing day",
+      inputSchema: updateDaySchema,
+    },
+    async (args) =>
+      runTool(logger, "update_day", async () => {
+        const { id, ...body } = args;
+        const data = await client.patch<Day>(
+          `/api/v2/day/${id}/`,
+          toJsonBody(body),
+        );
+        return successResult(data);
+      }),
+  );
+
+  logger.info("Day tools registered");
+}
