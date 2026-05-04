@@ -6,6 +6,8 @@ import { registerExerciseTools } from "./tools/exercises.js";
 import { registerExerciseResources } from "./resources/exercises.js";
 import { registerRoutineTools } from "./tools/routines.js";
 import { registerRoutineResources } from "./resources/routines.js";
+import { registerNutritionTools } from "./tools/nutrition.js";
+import { registerNutritionResources } from "./resources/nutrition.js";
 
 export function createMcpServer(
   config: Config,
@@ -26,6 +28,8 @@ export function createMcpServer(
   registerExerciseResources(server, client, logger);
   registerRoutineTools(server, client, logger);
   registerRoutineResources(server, client, logger);
+  registerNutritionTools(server, client, logger);
+  registerNutritionResources(server, client, logger);
 
   logger.debug("MCP server instance created", {
     name: "wger-mcp",

@@ -146,7 +146,7 @@ const createDaySchema = z.object({
   type: z
     .enum(["custom", "enom", "amrap", "hiit", "tabata", "edt", "rft", "afap"])
     .optional(),
-  config: z.unknown().nullable().optional(),
+  config: z.custom<JsonValue>().nullable().optional(),
 });
 
 const updateDaySchema = z.object({
@@ -160,14 +160,14 @@ const updateDaySchema = z.object({
   type: z
     .enum(["custom", "enom", "amrap", "hiit", "tabata", "edt", "rft", "afap"])
     .optional(),
-  config: z.unknown().nullable().optional(),
+  config: z.custom<JsonValue>().nullable().optional(),
 });
 
 const createSlotSchema = z.object({
   day: z.number(),
   order: z.number().optional(),
   comment: z.string().max(200).optional(),
-  config: z.unknown().nullable().optional(),
+  config: z.custom<JsonValue>().nullable().optional(),
 });
 
 const updateSlotSchema = z.object({
@@ -175,7 +175,7 @@ const updateSlotSchema = z.object({
   day: z.number().optional(),
   order: z.number().optional(),
   comment: z.string().max(200).optional(),
-  config: z.unknown().nullable().optional(),
+  config: z.custom<JsonValue>().nullable().optional(),
 });
 
 const createSlotEntrySchema = z.object({
@@ -200,7 +200,7 @@ const createSlotEntrySchema = z.object({
   weight_rounding: z.string().nullable().optional(),
   order: z.number().optional(),
   comment: z.string().max(100).optional(),
-  config: z.unknown().nullable().optional(),
+  config: z.custom<JsonValue>().nullable().optional(),
 });
 
 const updateSlotEntrySchema = z.object({
@@ -226,7 +226,7 @@ const updateSlotEntrySchema = z.object({
   weight_rounding: z.string().nullable().optional(),
   order: z.number().optional(),
   comment: z.string().max(100).optional(),
-  config: z.unknown().nullable().optional(),
+  config: z.custom<JsonValue>().nullable().optional(),
 });
 
 const createWorkoutLogSchema = z.object({
@@ -313,7 +313,7 @@ const updateGalleryImageSchema = z.object({
   description: z.string().max(1000).optional(),
 });
 
-function toJsonBody(obj: Record<string, unknown>): JsonValue {
+function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
   const result: Record<string, JsonValue> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined) {

@@ -9,6 +9,7 @@ Welcome to the Wger MCP server documentation.
 | [architecture.md](architecture.md)             | High-level architecture and C4 diagrams        |
 | [development.md](development.md)               | Setup, build, and quality standards            |
 | [api/workouts.md](api/workouts.md)             | Workout, routine, weight, and gallery API docs |
+| [api/nutrition.md](api/nutrition.md)           | Nutrition ingredients, meals, plans, and diary |
 | [ENDPOINT_INVENTORY.md](ENDPOINT_INVENTORY.md) | Full Wger API endpoint mapping                 |
 | [decisions/](decisions/)                       | Architecture Decision Records (ADRs)           |
 
@@ -107,6 +108,61 @@ Welcome to the Wger MCP server documentation.
 | `wger://weight-entries/{id}`   | Single weight entry      |
 | `wger://gallery`               | List of gallery images   |
 | `wger://gallery/{id}`          | Single gallery image     |
+
+### Nutrition (Milestone 3)
+
+**Read Tools:**
+
+| Tool                                     | Description                            |
+| ---------------------------------------- | -------------------------------------- |
+| `list_ingredients`                       | List ingredients                       |
+| `get_ingredient`                         | Get ingredient by ID                   |
+| `search_ingredients`                     | Search ingredients by name             |
+| `get_ingredient_values`                  | Get nutritional values for ingredient  |
+| `list_ingredient_images`                 | List ingredient images                 |
+| `get_ingredient_image`                   | Get ingredient image by ID             |
+| `list_ingredient_weight_units`           | List ingredient weight units           |
+| `get_ingredient_weight_unit`             | Get ingredient weight unit by ID       |
+| `list_meals`                             | List meals                             |
+| `get_meal`                               | Get meal by ID                         |
+| `get_meal_nutritional_values`            | Get nutritional values for meal        |
+| `list_meal_items`                        | List meal items                        |
+| `get_meal_item`                          | Get meal item by ID                    |
+| `get_meal_item_nutritional_values`       | Get nutritional values for meal item   |
+| `list_nutrition_plans`                   | List nutrition plans                   |
+| `get_nutrition_plan`                     | Get nutrition plan by ID               |
+| `get_nutrition_plan_nutritional_values`  | Get nutritional values for plan        |
+| `list_nutrition_diary_entries`           | List nutrition diary entries           |
+| `get_nutrition_diary_entry`              | Get nutrition diary entry by ID        |
+| `get_nutrition_diary_nutritional_values` | Get nutritional values for diary entry |
+
+**Write Tools (create / update):**
+
+| Tool                           | Description                              |
+| ------------------------------ | ---------------------------------------- |
+| `create_meal`                  | Create a new meal                        |
+| `update_meal`                  | Update an existing meal                  |
+| `create_meal_item`             | Create a new meal item                   |
+| `update_meal_item`             | Update an existing meal item             |
+| `create_nutrition_plan`        | Create a new nutrition plan              |
+| `update_nutrition_plan`        | Update an existing nutrition plan        |
+| `create_nutrition_diary_entry` | Create a new nutrition diary entry       |
+| `update_nutrition_diary_entry` | Update an existing nutrition diary entry |
+
+**Resources:**
+
+| URI                           | Description                     |
+| ----------------------------- | ------------------------------- |
+| `wger://ingredients`          | List of ingredients             |
+| `wger://ingredients/{id}`     | Single ingredient               |
+| `wger://meals`                | List of meals                   |
+| `wger://meals/{id}`           | Single meal                     |
+| `wger://meal-items`           | List of meal items              |
+| `wger://meal-items/{id}`      | Single meal item                |
+| `wger://nutrition-plans`      | List of nutrition plans         |
+| `wger://nutrition-plans/{id}` | Single nutrition plan           |
+| `wger://nutrition-diary`      | List of nutrition diary entries |
+| `wger://nutrition-diary/{id}` | Single nutrition diary entry    |
 
 ## Safety & Configuration
 

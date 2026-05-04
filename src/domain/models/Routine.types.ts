@@ -1,3 +1,5 @@
+import { JsonValue } from "./Json.types.js";
+
 export type DayTypeEnum =
   | "custom"
   | "enom"
@@ -42,7 +44,7 @@ export interface Day {
   readonly is_rest?: boolean;
   readonly need_logs_to_advance?: boolean;
   readonly type?: DayTypeEnum;
-  readonly config?: unknown | null;
+  readonly config?: JsonValue | null;
 }
 
 export interface Slot {
@@ -50,7 +52,7 @@ export interface Slot {
   readonly day: number;
   readonly order?: number;
   readonly comment?: string;
-  readonly config?: unknown | null;
+  readonly config?: JsonValue | null;
 }
 
 export interface SlotEntry {
@@ -64,7 +66,7 @@ export interface SlotEntry {
   readonly weight_rounding?: string | null;
   readonly order?: number;
   readonly comment?: string;
-  readonly config?: unknown | null;
+  readonly config?: JsonValue | null;
 }
 
 export interface WorkoutLog {
