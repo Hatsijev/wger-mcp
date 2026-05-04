@@ -4,6 +4,8 @@ import { Logger } from "../../application/ports/Logger.js";
 import { WgerClient } from "../wger/WgerClient.js";
 import { registerExerciseTools } from "./tools/exercises.js";
 import { registerExerciseResources } from "./resources/exercises.js";
+import { registerRoutineTools } from "./tools/routines.js";
+import { registerRoutineResources } from "./resources/routines.js";
 
 export function createMcpServer(
   config: Config,
@@ -22,6 +24,8 @@ export function createMcpServer(
 
   registerExerciseTools(server, client, logger);
   registerExerciseResources(server, client, logger);
+  registerRoutineTools(server, client, logger);
+  registerRoutineResources(server, client, logger);
 
   logger.debug("MCP server instance created", {
     name: "wger-mcp",

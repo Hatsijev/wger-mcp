@@ -100,9 +100,60 @@ Clean Architecture: `domain/` → `application/` → `infrastructure/`
 - Create `docs/decisions/ADR-001-typescript-strict.md`
 - Update `docs/development.md` with setup and build instructions
 
-### Milestone 2: Workout / Routine / Body Weight
+### Milestone 2: Workout / Routine / Body Weight / Gallery ✅
 
-_(Pending Milestone 1 completion)_
+#### Task 2.1 — Routine Domain Types and Read Tools
+
+**Assignee:** dev
+
+- Read `wger.yaml` schemas for Routine, Day, Slot, SlotEntry, WorkoutLog, WorkoutSession, WeightEntry, Gallery
+- Create `src/domain/models/Routine.types.ts` with all relevant interfaces
+- Implement read-only tools: `list_routines`, `get_routine`, `list_days`, `get_day`, `list_slots`, `get_slot`, `list_slot_entries`, `get_slot_entry`
+- Implement read-only tools: `list_workout_logs`, `get_workout_log`, `list_workout_sessions`, `get_workout_session`
+- Implement read-only tools: `list_weight_entries`, `get_weight_entry`, `list_gallery_images`, `get_gallery_image`
+- Register corresponding MCP resources
+
+#### Task 2.2 — Routine Special Endpoints
+
+**Assignee:** dev
+
+- Implement read-only tools for routine special endpoints:
+  - `get_routine_structure`
+  - `get_routine_logs`
+  - `get_routine_stats`
+  - `get_routine_date_sequence_display`
+  - `get_routine_date_sequence_gym`
+
+#### Task 2.3 — Safe Write Tools (Create/Update)
+
+**Assignee:** dev
+
+- Implement create/update tools (NOT delete):
+  - `create_routine`, `update_routine`
+  - `create_day`, `update_day`
+  - `create_slot`, `update_slot`
+  - `create_slot_entry`, `update_slot_entry`
+  - `create_workout_log`, `update_workout_log`
+  - `create_workout_session`, `update_workout_session`
+  - `create_weight_entry`, `update_weight_entry`
+  - `create_gallery_image`, `update_gallery_image`
+- All write tools must validate inputs with Zod
+- Return structured `{ ok: true, data }` or `{ ok: false, error }`
+
+#### Task 2.4 — Build Verification
+
+**Assignee:** dev
+
+- Run `npm run build`
+- Verify zero TypeScript errors
+- Verify zero `any` or `unknown`
+
+#### Task D.2 — Documentation Update
+
+**Assignee:** docs
+
+- Update `docs/api/` with workout/routine/weight/gallery endpoint docs
+- Create `docs/decisions/ADR-002-mcp-server-api.md` documenting the choice of McpServer over Server
 
 ### Milestone 3: Nutrition
 
@@ -120,7 +171,7 @@ _(Pending Milestone 4 completion)_
 
 1. Read this file before every request.
 2. Delegate each numbered task to the appropriate subagent (`dev` or `docs`).
-3. Execute tasks in order: 1.1 → 1.2 → 1.3 → 1.4 → 1.5 → 1.6 → D.1
+3. Milestone 1 is complete. Execute Milestone 2 tasks in order: 2.1 → 2.2 → 2.3 → 2.4 → D.2
 4. Wait for each task to complete before delegating the next.
 5. Report a concise summary to the user after each task.
 6. If a task fails, stop and ask the user for direction before continuing.
