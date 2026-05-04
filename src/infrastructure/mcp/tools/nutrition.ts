@@ -557,10 +557,7 @@ export function registerNutritionTools(
     },
     async (args) =>
       runTool(logger, "create_meal", async () => {
-        const data = await client.post<Meal>(
-          "/api/v2/meal/",
-          toJsonBody(args),
-        );
+        const data = await client.post<Meal>("/api/v2/meal/", toJsonBody(args));
         return successResult(data);
       }),
   );

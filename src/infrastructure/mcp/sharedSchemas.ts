@@ -3,7 +3,12 @@ import { JsonValue } from "../../domain/models/Json.types.js";
 
 export const positiveIntegerIdSchema = z.number().int().positive();
 
-export const paginationLimitSchema = z.number().int().min(1).max(100).optional();
+export const paginationLimitSchema = z
+  .number()
+  .int()
+  .min(1)
+  .max(100)
+  .optional();
 
 export const paginationOffsetSchema = z.number().int().min(0).optional();
 

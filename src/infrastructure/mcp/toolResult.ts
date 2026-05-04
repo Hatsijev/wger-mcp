@@ -57,7 +57,9 @@ export async function runTool<T extends ToolResult>(
   }
 }
 
-export function validateResourceId(value: string | ReadonlyArray<string>): number {
+export function validateResourceId(
+  value: string | ReadonlyArray<string>,
+): number {
   const raw = Array.isArray(value) ? value[0] : value;
   if (raw === undefined) {
     throw new WgerValidationError("Resource ID is missing");
