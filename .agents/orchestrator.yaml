@@ -1,0 +1,12 @@
+version: 1
+agent:
+  name: wger-mcp-orchestrator
+  extend: default
+  system_prompt_path: ./prompts/orchestrator.md
+  subagents:
+    dev:
+      path: ./subagents/dev.yaml
+      description: "TypeScript backend development for Wger MCP"
+    docs:
+      path: ./subagents/docs.yaml
+      description: "Documentation maintenance for Wger MCP"
