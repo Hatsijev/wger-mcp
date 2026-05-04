@@ -166,8 +166,9 @@ Welcome to the Wger MCP server documentation.
 
 ## Safety & Configuration
 
-- **Write tools** (create / update) are available by default.
-- **Delete tools** require `ENABLE_DESTRUCTIVE_TOOLS=true`. No delete operations are currently exposed for Milestone 2.
+- **Read tools** are always available.
+- **Write tools** (create / update) are enabled by default. The MCP server assumes the API token has appropriate write scope.
+- **Delete tools** require `ENABLE_DESTRUCTIVE_TOOLS=true`. No delete operations are currently exposed.
 - **Admin tools** require `ENABLE_ADMIN_TOOLS=true`.
 - **Raw proxy** requires `ENABLE_RAW_WGER_PROXY=true`.
 

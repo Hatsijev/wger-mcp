@@ -3,6 +3,7 @@ import {
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
+import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import {
@@ -121,7 +122,7 @@ export function registerExerciseResources(
       description: "Get a single exercise by ID",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<ExerciseInfo>(
         `/api/v2/exerciseinfo/${id}/`,
       );

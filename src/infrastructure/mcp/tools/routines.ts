@@ -14,173 +14,184 @@ import {
   WeightEntry,
   GalleryImage,
 } from "../../../domain/models/Routine.types.js";
+import {
+  paginationLimitSchema,
+  paginationOffsetSchema,
+  positiveIntegerIdSchema,
+  isoDateStringSchema,
+  timeStringSchema,
+  decimalAmountSchema,
+  boundedStringSchema,
+  jsonConfigSchema,
+} from "../sharedSchemas.js";
+import { runTool, successResult } from "../toolResult.js";
 
 const listRoutinesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 const getRoutineSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getRoutineStructureSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getRoutineLogsSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getRoutineStatsSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getRoutineDateSequenceDisplaySchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getRoutineDateSequenceGymSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listDaysSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  routine: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  routine: positiveIntegerIdSchema.optional(),
 });
 
 const getDaySchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listSlotsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  day: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  day: positiveIntegerIdSchema.optional(),
 });
 
 const getSlotSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listSlotEntriesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  slot: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  slot: positiveIntegerIdSchema.optional(),
 });
 
 const getSlotEntrySchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listWorkoutLogsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  routine: z.number().optional(),
-  date: z.string().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  routine: positiveIntegerIdSchema.optional(),
+  date: isoDateStringSchema.optional(),
 });
 
 const getWorkoutLogSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listWorkoutSessionsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  date: z.string().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  date: isoDateStringSchema.optional(),
 });
 
 const getWorkoutSessionSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listWeightEntriesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  date__gt: z.string().optional(),
-  date__gte: z.string().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  date__gt: isoDateStringSchema.optional(),
+  date__gte: isoDateStringSchema.optional(),
 });
 
 const getWeightEntrySchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listGalleryImagesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 const getGalleryImageSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const createRoutineSchema = z.object({
-  name: z.string().max(25).optional(),
-  description: z.string().max(1000).optional(),
-  start: z.string(),
-  end: z.string(),
+  name: boundedStringSchema(25).optional(),
+  description: boundedStringSchema(1000).optional(),
+  start: isoDateStringSchema,
+  end: isoDateStringSchema,
   fit_in_week: z.boolean().optional(),
   is_template: z.boolean().optional(),
   is_public: z.boolean().optional(),
 });
 
 const updateRoutineSchema = z.object({
-  id: z.number(),
-  name: z.string().max(25).optional(),
-  description: z.string().max(1000).optional(),
-  start: z.string().optional(),
-  end: z.string().optional(),
+  id: positiveIntegerIdSchema,
+  name: boundedStringSchema(25).optional(),
+  description: boundedStringSchema(1000).optional(),
+  start: isoDateStringSchema.optional(),
+  end: isoDateStringSchema.optional(),
   fit_in_week: z.boolean().optional(),
   is_template: z.boolean().optional(),
   is_public: z.boolean().optional(),
 });
 
 const createDaySchema = z.object({
-  routine: z.number(),
+  routine: positiveIntegerIdSchema,
   order: z.number().optional(),
-  name: z.string().max(20).optional(),
-  description: z.string().max(1000).optional(),
+  name: boundedStringSchema(20).optional(),
+  description: boundedStringSchema(1000).optional(),
   is_rest: z.boolean().optional(),
   need_logs_to_advance: z.boolean().optional(),
   type: z
     .enum(["custom", "enom", "amrap", "hiit", "tabata", "edt", "rft", "afap"])
     .optional(),
-  config: z.custom<JsonValue>().nullable().optional(),
+  config: jsonConfigSchema,
 });
 
 const updateDaySchema = z.object({
-  id: z.number(),
-  routine: z.number().optional(),
+  id: positiveIntegerIdSchema,
+  routine: positiveIntegerIdSchema.optional(),
   order: z.number().optional(),
-  name: z.string().max(20).optional(),
-  description: z.string().max(1000).optional(),
+  name: boundedStringSchema(20).optional(),
+  description: boundedStringSchema(1000).optional(),
   is_rest: z.boolean().optional(),
   need_logs_to_advance: z.boolean().optional(),
   type: z
     .enum(["custom", "enom", "amrap", "hiit", "tabata", "edt", "rft", "afap"])
     .optional(),
-  config: z.custom<JsonValue>().nullable().optional(),
+  config: jsonConfigSchema,
 });
 
 const createSlotSchema = z.object({
-  day: z.number(),
+  day: positiveIntegerIdSchema,
   order: z.number().optional(),
-  comment: z.string().max(200).optional(),
-  config: z.custom<JsonValue>().nullable().optional(),
+  comment: boundedStringSchema(200).optional(),
+  config: jsonConfigSchema,
 });
 
 const updateSlotSchema = z.object({
-  id: z.number(),
-  day: z.number().optional(),
+  id: positiveIntegerIdSchema,
+  day: positiveIntegerIdSchema.optional(),
   order: z.number().optional(),
-  comment: z.string().max(200).optional(),
-  config: z.custom<JsonValue>().nullable().optional(),
+  comment: boundedStringSchema(200).optional(),
+  config: jsonConfigSchema,
 });
 
 const createSlotEntrySchema = z.object({
-  slot: z.number(),
-  exercise: z.number(),
+  slot: positiveIntegerIdSchema,
+  exercise: positiveIntegerIdSchema,
   type: z
     .enum([
       "normal",
@@ -194,19 +205,19 @@ const createSlotEntrySchema = z.object({
       "jump",
     ])
     .optional(),
-  repetition_unit: z.number().nullable().optional(),
+  repetition_unit: positiveIntegerIdSchema.nullable().optional(),
   repetition_rounding: z.string().nullable().optional(),
-  weight_unit: z.number().nullable().optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
   weight_rounding: z.string().nullable().optional(),
   order: z.number().optional(),
-  comment: z.string().max(100).optional(),
-  config: z.custom<JsonValue>().nullable().optional(),
+  comment: boundedStringSchema(100).optional(),
+  config: jsonConfigSchema,
 });
 
 const updateSlotEntrySchema = z.object({
-  id: z.number(),
-  slot: z.number().optional(),
-  exercise: z.number().optional(),
+  id: positiveIntegerIdSchema,
+  slot: positiveIntegerIdSchema.optional(),
+  exercise: positiveIntegerIdSchema.optional(),
   type: z
     .enum([
       "normal",
@@ -220,97 +231,97 @@ const updateSlotEntrySchema = z.object({
       "jump",
     ])
     .optional(),
-  repetition_unit: z.number().nullable().optional(),
+  repetition_unit: positiveIntegerIdSchema.nullable().optional(),
   repetition_rounding: z.string().nullable().optional(),
-  weight_unit: z.number().nullable().optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
   weight_rounding: z.string().nullable().optional(),
   order: z.number().optional(),
-  comment: z.string().max(100).optional(),
-  config: z.custom<JsonValue>().nullable().optional(),
+  comment: boundedStringSchema(100).optional(),
+  config: jsonConfigSchema,
 });
 
 const createWorkoutLogSchema = z.object({
-  date: z.string().optional(),
-  routine: z.number().nullable().optional(),
+  date: isoDateStringSchema.optional(),
+  routine: positiveIntegerIdSchema.nullable().optional(),
   iteration: z.number().nullable().optional(),
-  slot_entry: z.number().nullable().optional(),
-  next_log: z.number().nullable().optional(),
-  exercise: z.number(),
-  repetitions_unit: z.number().nullable().optional(),
-  repetitions: z.string().nullable().optional(),
-  repetitions_target: z.string().nullable().optional(),
-  weight_unit: z.number().nullable().optional(),
-  weight: z.string().nullable().optional(),
-  weight_target: z.string().nullable().optional(),
-  rir: z.string().nullable().optional(),
-  rir_target: z.string().nullable().optional(),
+  slot_entry: positiveIntegerIdSchema.nullable().optional(),
+  next_log: positiveIntegerIdSchema.nullable().optional(),
+  exercise: positiveIntegerIdSchema,
+  repetitions_unit: positiveIntegerIdSchema.nullable().optional(),
+  repetitions: decimalAmountSchema.nullable().optional(),
+  repetitions_target: decimalAmountSchema.nullable().optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
+  weight: decimalAmountSchema.nullable().optional(),
+  weight_target: decimalAmountSchema.nullable().optional(),
+  rir: decimalAmountSchema.nullable().optional(),
+  rir_target: decimalAmountSchema.nullable().optional(),
   rest: z.number().nullable().optional(),
   rest_target: z.number().nullable().optional(),
 });
 
 const updateWorkoutLogSchema = z.object({
-  id: z.number(),
-  date: z.string().optional(),
-  routine: z.number().nullable().optional(),
+  id: positiveIntegerIdSchema,
+  date: isoDateStringSchema.optional(),
+  routine: positiveIntegerIdSchema.nullable().optional(),
   iteration: z.number().nullable().optional(),
-  slot_entry: z.number().nullable().optional(),
-  next_log: z.number().nullable().optional(),
-  exercise: z.number().optional(),
-  repetitions_unit: z.number().nullable().optional(),
-  repetitions: z.string().nullable().optional(),
-  repetitions_target: z.string().nullable().optional(),
-  weight_unit: z.number().nullable().optional(),
-  weight: z.string().nullable().optional(),
-  weight_target: z.string().nullable().optional(),
-  rir: z.string().nullable().optional(),
-  rir_target: z.string().nullable().optional(),
+  slot_entry: positiveIntegerIdSchema.nullable().optional(),
+  next_log: positiveIntegerIdSchema.nullable().optional(),
+  exercise: positiveIntegerIdSchema.optional(),
+  repetitions_unit: positiveIntegerIdSchema.nullable().optional(),
+  repetitions: decimalAmountSchema.nullable().optional(),
+  repetitions_target: decimalAmountSchema.nullable().optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
+  weight: decimalAmountSchema.nullable().optional(),
+  weight_target: decimalAmountSchema.nullable().optional(),
+  rir: decimalAmountSchema.nullable().optional(),
+  rir_target: decimalAmountSchema.nullable().optional(),
   rest: z.number().nullable().optional(),
   rest_target: z.number().nullable().optional(),
 });
 
 const createWorkoutSessionSchema = z.object({
-  routine: z.number().nullable().optional(),
-  day: z.number().nullable().optional(),
-  date: z.string().optional(),
+  routine: positiveIntegerIdSchema.nullable().optional(),
+  day: positiveIntegerIdSchema.nullable().optional(),
+  date: isoDateStringSchema.optional(),
   notes: z.string().nullable().optional(),
   impression: z.enum(["1", "2", "3"]).optional(),
-  time_start: z.string().nullable().optional(),
-  time_end: z.string().nullable().optional(),
+  time_start: timeStringSchema.nullable().optional(),
+  time_end: timeStringSchema.nullable().optional(),
 });
 
 const updateWorkoutSessionSchema = z.object({
-  id: z.number(),
-  routine: z.number().nullable().optional(),
-  day: z.number().nullable().optional(),
-  date: z.string().optional(),
+  id: positiveIntegerIdSchema,
+  routine: positiveIntegerIdSchema.nullable().optional(),
+  day: positiveIntegerIdSchema.nullable().optional(),
+  date: isoDateStringSchema.optional(),
   notes: z.string().nullable().optional(),
   impression: z.enum(["1", "2", "3"]).optional(),
-  time_start: z.string().nullable().optional(),
-  time_end: z.string().nullable().optional(),
+  time_start: timeStringSchema.nullable().optional(),
+  time_end: timeStringSchema.nullable().optional(),
 });
 
 const createWeightEntrySchema = z.object({
-  date: z.string(),
-  weight: z.string(),
+  date: isoDateStringSchema,
+  weight: decimalAmountSchema,
 });
 
 const updateWeightEntrySchema = z.object({
-  id: z.number(),
-  date: z.string().optional(),
-  weight: z.string().optional(),
+  id: positiveIntegerIdSchema,
+  date: isoDateStringSchema.optional(),
+  weight: decimalAmountSchema.optional(),
 });
 
 const createGalleryImageSchema = z.object({
-  date: z.string(),
+  date: isoDateStringSchema,
   image: z.string(),
-  description: z.string().max(1000).optional(),
+  description: boundedStringSchema(1000).optional(),
 });
 
 const updateGalleryImageSchema = z.object({
-  id: z.number(),
-  date: z.string().optional(),
+  id: positiveIntegerIdSchema,
+  date: isoDateStringSchema.optional(),
   image: z.string().optional(),
-  description: z.string().max(1000).optional(),
+  description: boundedStringSchema(1000).optional(),
 });
 
 function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
@@ -334,8 +345,8 @@ export function registerRoutineTools(
       description: "List routines",
       inputSchema: listRoutinesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_routines", async () => {
         const data = await client.get<WgerPaginatedResponse<Routine>>(
           "/api/v2/routine/",
           {
@@ -343,27 +354,8 @@ export function registerRoutineTools(
             offset: args.offset,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -372,30 +364,11 @@ export function registerRoutineTools(
       description: "Get routine by ID",
       inputSchema: getRoutineSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_routine", async () => {
         const data = await client.get<Routine>(`/api/v2/routine/${args.id}/`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -404,8 +377,8 @@ export function registerRoutineTools(
       description: "List routine days",
       inputSchema: listDaysSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_days", async () => {
         const data = await client.get<WgerPaginatedResponse<Day>>(
           "/api/v2/day/",
           {
@@ -414,27 +387,8 @@ export function registerRoutineTools(
             routine: args.routine,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -443,30 +397,11 @@ export function registerRoutineTools(
       description: "Get day by ID",
       inputSchema: getDaySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_day", async () => {
         const data = await client.get<Day>(`/api/v2/day/${args.id}/`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -475,8 +410,8 @@ export function registerRoutineTools(
       description: "List slots",
       inputSchema: listSlotsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_slots", async () => {
         const data = await client.get<WgerPaginatedResponse<Slot>>(
           "/api/v2/slot/",
           {
@@ -485,27 +420,8 @@ export function registerRoutineTools(
             day: args.day,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -514,30 +430,11 @@ export function registerRoutineTools(
       description: "Get slot by ID",
       inputSchema: getSlotSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_slot", async () => {
         const data = await client.get<Slot>(`/api/v2/slot/${args.id}/`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -546,8 +443,8 @@ export function registerRoutineTools(
       description: "List slot entries",
       inputSchema: listSlotEntriesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_slot_entries", async () => {
         const data = await client.get<WgerPaginatedResponse<SlotEntry>>(
           "/api/v2/slot-entry/",
           {
@@ -556,27 +453,8 @@ export function registerRoutineTools(
             slot: args.slot,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -585,32 +463,13 @@ export function registerRoutineTools(
       description: "Get slot entry by ID",
       inputSchema: getSlotEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_slot_entry", async () => {
         const data = await client.get<SlotEntry>(
           `/api/v2/slot-entry/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -619,8 +478,8 @@ export function registerRoutineTools(
       description: "List workout logs",
       inputSchema: listWorkoutLogsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_workout_logs", async () => {
         const data = await client.get<WgerPaginatedResponse<WorkoutLog>>(
           "/api/v2/workoutlog/",
           {
@@ -630,27 +489,8 @@ export function registerRoutineTools(
             date: args.date,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -659,32 +499,13 @@ export function registerRoutineTools(
       description: "Get workout log by ID",
       inputSchema: getWorkoutLogSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_workout_log", async () => {
         const data = await client.get<WorkoutLog>(
           `/api/v2/workoutlog/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -693,8 +514,8 @@ export function registerRoutineTools(
       description: "List workout sessions",
       inputSchema: listWorkoutSessionsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_workout_sessions", async () => {
         const data = await client.get<WgerPaginatedResponse<WorkoutSession>>(
           "/api/v2/workoutsession/",
           {
@@ -703,27 +524,8 @@ export function registerRoutineTools(
             date: args.date,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -732,32 +534,13 @@ export function registerRoutineTools(
       description: "Get workout session by ID",
       inputSchema: getWorkoutSessionSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_workout_session", async () => {
         const data = await client.get<WorkoutSession>(
           `/api/v2/workoutsession/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -766,8 +549,8 @@ export function registerRoutineTools(
       description: "List weight entries",
       inputSchema: listWeightEntriesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_weight_entries", async () => {
         const data = await client.get<WgerPaginatedResponse<WeightEntry>>(
           "/api/v2/weightentry/",
           {
@@ -777,27 +560,8 @@ export function registerRoutineTools(
             date__gte: args.date__gte,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -806,32 +570,13 @@ export function registerRoutineTools(
       description: "Get weight entry by ID",
       inputSchema: getWeightEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_weight_entry", async () => {
         const data = await client.get<WeightEntry>(
           `/api/v2/weightentry/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -840,8 +585,8 @@ export function registerRoutineTools(
       description: "List gallery images",
       inputSchema: listGalleryImagesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_gallery_images", async () => {
         const data = await client.get<WgerPaginatedResponse<GalleryImage>>(
           "/api/v2/gallery/",
           {
@@ -849,27 +594,8 @@ export function registerRoutineTools(
             offset: args.offset,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -878,32 +604,13 @@ export function registerRoutineTools(
       description: "Get gallery image by ID",
       inputSchema: getGalleryImageSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_gallery_image", async () => {
         const data = await client.get<GalleryImage>(
           `/api/v2/gallery/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -912,32 +619,13 @@ export function registerRoutineTools(
       description: "Get routine structure",
       inputSchema: getRoutineStructureSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_routine_structure", async () => {
         const data = await client.get<Routine>(
           `/api/v2/routine/${args.id}/structure/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -946,32 +634,13 @@ export function registerRoutineTools(
       description: "Get routine logs",
       inputSchema: getRoutineLogsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_routine_logs", async () => {
         const data = await client.get<Routine>(
           `/api/v2/routine/${args.id}/logs/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -980,32 +649,13 @@ export function registerRoutineTools(
       description: "Get routine stats",
       inputSchema: getRoutineStatsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_routine_stats", async () => {
         const data = await client.get<Routine>(
           `/api/v2/routine/${args.id}/stats/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1014,32 +664,13 @@ export function registerRoutineTools(
       description: "Get routine display date sequence",
       inputSchema: getRoutineDateSequenceDisplaySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_routine_date_sequence_display", async () => {
         const data = await client.get<Routine>(
           `/api/v2/routine/${args.id}/date-sequence-display/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1048,32 +679,13 @@ export function registerRoutineTools(
       description: "Get routine gym date sequence",
       inputSchema: getRoutineDateSequenceGymSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_routine_date_sequence_gym", async () => {
         const data = await client.get<Routine>(
           `/api/v2/routine/${args.id}/date-sequence-gym/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1082,33 +694,14 @@ export function registerRoutineTools(
       description: "Create a new routine",
       inputSchema: createRoutineSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_routine", async () => {
         const data = await client.post<Routine>(
           "/api/v2/routine/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1117,34 +710,15 @@ export function registerRoutineTools(
       description: "Update an existing routine",
       inputSchema: updateRoutineSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_routine", async () => {
         const { id, ...body } = args;
-        const data = await client.put<Routine>(
+        const data = await client.patch<Routine>(
           `/api/v2/routine/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1153,30 +727,11 @@ export function registerRoutineTools(
       description: "Create a new day",
       inputSchema: createDaySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_day", async () => {
         const data = await client.post<Day>("/api/v2/day/", toJsonBody(args));
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1185,34 +740,15 @@ export function registerRoutineTools(
       description: "Update an existing day",
       inputSchema: updateDaySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_day", async () => {
         const { id, ...body } = args;
-        const data = await client.put<Day>(
+        const data = await client.patch<Day>(
           `/api/v2/day/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1221,30 +757,11 @@ export function registerRoutineTools(
       description: "Create a new slot",
       inputSchema: createSlotSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_slot", async () => {
         const data = await client.post<Slot>("/api/v2/slot/", toJsonBody(args));
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1253,34 +770,15 @@ export function registerRoutineTools(
       description: "Update an existing slot",
       inputSchema: updateSlotSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_slot", async () => {
         const { id, ...body } = args;
-        const data = await client.put<Slot>(
+        const data = await client.patch<Slot>(
           `/api/v2/slot/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1289,33 +787,14 @@ export function registerRoutineTools(
       description: "Create a new slot entry",
       inputSchema: createSlotEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_slot_entry", async () => {
         const data = await client.post<SlotEntry>(
           "/api/v2/slot-entry/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1324,34 +803,15 @@ export function registerRoutineTools(
       description: "Update an existing slot entry",
       inputSchema: updateSlotEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_slot_entry", async () => {
         const { id, ...body } = args;
-        const data = await client.put<SlotEntry>(
+        const data = await client.patch<SlotEntry>(
           `/api/v2/slot-entry/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1360,33 +820,14 @@ export function registerRoutineTools(
       description: "Create a new workout log",
       inputSchema: createWorkoutLogSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_workout_log", async () => {
         const data = await client.post<WorkoutLog>(
           "/api/v2/workoutlog/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1395,34 +836,15 @@ export function registerRoutineTools(
       description: "Update an existing workout log",
       inputSchema: updateWorkoutLogSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_workout_log", async () => {
         const { id, ...body } = args;
-        const data = await client.put<WorkoutLog>(
+        const data = await client.patch<WorkoutLog>(
           `/api/v2/workoutlog/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1431,33 +853,14 @@ export function registerRoutineTools(
       description: "Create a new workout session",
       inputSchema: createWorkoutSessionSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_workout_session", async () => {
         const data = await client.post<WorkoutSession>(
           "/api/v2/workoutsession/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1466,34 +869,15 @@ export function registerRoutineTools(
       description: "Update an existing workout session",
       inputSchema: updateWorkoutSessionSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_workout_session", async () => {
         const { id, ...body } = args;
-        const data = await client.put<WorkoutSession>(
+        const data = await client.patch<WorkoutSession>(
           `/api/v2/workoutsession/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1502,33 +886,14 @@ export function registerRoutineTools(
       description: "Create a new weight entry",
       inputSchema: createWeightEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_weight_entry", async () => {
         const data = await client.post<WeightEntry>(
           "/api/v2/weightentry/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1537,34 +902,15 @@ export function registerRoutineTools(
       description: "Update an existing weight entry",
       inputSchema: updateWeightEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_weight_entry", async () => {
         const { id, ...body } = args;
-        const data = await client.put<WeightEntry>(
+        const data = await client.patch<WeightEntry>(
           `/api/v2/weightentry/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1573,33 +919,14 @@ export function registerRoutineTools(
       description: "Create a new gallery image",
       inputSchema: createGalleryImageSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_gallery_image", async () => {
         const data = await client.post<GalleryImage>(
           "/api/v2/gallery/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1608,34 +935,15 @@ export function registerRoutineTools(
       description: "Update an existing gallery image",
       inputSchema: updateGalleryImageSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_gallery_image", async () => {
         const { id, ...body } = args;
-        const data = await client.put<GalleryImage>(
+        const data = await client.patch<GalleryImage>(
           `/api/v2/gallery/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   logger.info("Routine tools registered");

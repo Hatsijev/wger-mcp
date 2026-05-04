@@ -11,143 +11,151 @@ import {
   Meal,
   MealItem,
   NutritionPlan,
-  NutritionPlanInfo,
   NutritionDiaryEntry,
   NutritionalValues,
 } from "../../../domain/models/Nutrition.types.js";
+import {
+  paginationLimitSchema,
+  paginationOffsetSchema,
+  positiveIntegerIdSchema,
+  isoDateStringSchema,
+  isoDateTimeStringSchema,
+  boundedStringSchema,
+} from "../sharedSchemas.js";
+import { runTool, successResult } from "../toolResult.js";
 
 const listIngredientsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   search: z.string().optional(),
   language: z.number().optional(),
 });
 
 const getIngredientSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const searchIngredientsSchema = z.object({
   term: z.string(),
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 const getIngredientValuesSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listIngredientImagesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   ingredient_id: z.number().optional(),
 });
 
 const getIngredientImageSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listIngredientWeightUnitsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   ingredient: z.number().optional(),
 });
 
 const getIngredientWeightUnitSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listMealsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   plan: z.number().optional(),
   order: z.number().optional(),
 });
 
 const getMealSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getMealNutritionalValuesSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listMealItemsSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   meal: z.number().optional(),
   ingredient: z.number().optional(),
 });
 
 const getMealItemSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getMealItemNutritionalValuesSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listNutritionPlansSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   description: z.string().optional(),
 });
 
 const getNutritionPlanSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getNutritionPlanNutritionalValuesSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const listNutritionDiaryEntriesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
   plan: z.number().optional(),
-  date: z.string().optional(),
+  date: isoDateStringSchema.optional(),
 });
 
 const getNutritionDiaryEntrySchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const getNutritionDiaryNutritionalValuesSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const createMealSchema = z.object({
-  plan: z.number(),
+  plan: positiveIntegerIdSchema,
   time: z.string().nullable().optional(),
   name: z.string().max(25).optional(),
 });
 
 const updateMealSchema = z.object({
-  id: z.number(),
-  plan: z.number().optional(),
+  id: positiveIntegerIdSchema,
+  plan: positiveIntegerIdSchema.optional(),
   time: z.string().nullable().optional(),
   name: z.string().max(25).optional(),
 });
 
 const createMealItemSchema = z.object({
-  meal: z.number(),
-  ingredient: z.number(),
-  weight_unit: z.number().nullable().optional(),
+  meal: positiveIntegerIdSchema,
+  ingredient: positiveIntegerIdSchema,
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
   amount: z.string(),
 });
 
 const updateMealItemSchema = z.object({
-  id: z.number(),
-  meal: z.number().optional(),
-  ingredient: z.number().optional(),
-  weight_unit: z.number().nullable().optional(),
+  id: positiveIntegerIdSchema,
+  meal: positiveIntegerIdSchema.optional(),
+  ingredient: positiveIntegerIdSchema.optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
   amount: z.string().optional(),
 });
 
 const createNutritionPlanSchema = z.object({
-  start: z.string().optional(),
-  end: z.string().nullable().optional(),
-  description: z.string().max(80).optional(),
+  start: isoDateStringSchema.optional(),
+  end: isoDateStringSchema.nullable().optional(),
+  description: boundedStringSchema(1000).optional(),
   only_logging: z.boolean().optional(),
   goal_energy: z.number().nullable().optional(),
   goal_protein: z.number().nullable().optional(),
@@ -157,10 +165,10 @@ const createNutritionPlanSchema = z.object({
 });
 
 const updateNutritionPlanSchema = z.object({
-  id: z.number(),
-  start: z.string().optional(),
-  end: z.string().nullable().optional(),
-  description: z.string().max(80).optional(),
+  id: positiveIntegerIdSchema,
+  start: isoDateStringSchema.optional(),
+  end: isoDateStringSchema.nullable().optional(),
+  description: boundedStringSchema(1000).optional(),
   only_logging: z.boolean().optional(),
   goal_energy: z.number().nullable().optional(),
   goal_protein: z.number().nullable().optional(),
@@ -170,21 +178,21 @@ const updateNutritionPlanSchema = z.object({
 });
 
 const createNutritionDiaryEntrySchema = z.object({
-  plan: z.number(),
-  meal: z.number().nullable().optional(),
-  ingredient: z.number(),
-  weight_unit: z.number().nullable().optional(),
-  datetime: z.string().optional(),
+  plan: positiveIntegerIdSchema,
+  meal: positiveIntegerIdSchema.nullable().optional(),
+  ingredient: positiveIntegerIdSchema,
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
+  datetime: isoDateTimeStringSchema.optional(),
   amount: z.string(),
 });
 
 const updateNutritionDiaryEntrySchema = z.object({
-  id: z.number(),
-  plan: z.number().optional(),
-  meal: z.number().nullable().optional(),
-  ingredient: z.number().optional(),
-  weight_unit: z.number().nullable().optional(),
-  datetime: z.string().optional(),
+  id: positiveIntegerIdSchema,
+  plan: positiveIntegerIdSchema.optional(),
+  meal: positiveIntegerIdSchema.nullable().optional(),
+  ingredient: positiveIntegerIdSchema.optional(),
+  weight_unit: positiveIntegerIdSchema.nullable().optional(),
+  datetime: isoDateTimeStringSchema.optional(),
   amount: z.string().optional(),
 });
 
@@ -209,8 +217,8 @@ export function registerNutritionTools(
       description: "List ingredients",
       inputSchema: listIngredientsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_ingredients", async () => {
         const data = await client.get<WgerPaginatedResponse<IngredientInfo>>(
           "/api/v2/ingredientinfo/",
           {
@@ -220,27 +228,8 @@ export function registerNutritionTools(
             language: args.language,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -249,32 +238,13 @@ export function registerNutritionTools(
       description: "Get ingredient by ID",
       inputSchema: getIngredientSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_ingredient", async () => {
         const data = await client.get<IngredientInfo>(
           `/api/v2/ingredientinfo/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -283,8 +253,8 @@ export function registerNutritionTools(
       description: "Search ingredients",
       inputSchema: searchIngredientsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "search_ingredients", async () => {
         const data = await client.get<WgerPaginatedResponse<IngredientInfo>>(
           "/api/v2/ingredientinfo/",
           {
@@ -293,27 +263,8 @@ export function registerNutritionTools(
             offset: args.offset,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -322,32 +273,13 @@ export function registerNutritionTools(
       description: "Get nutritional values for an ingredient",
       inputSchema: getIngredientValuesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_ingredient_values", async () => {
         const data = await client.get<IngredientInfo>(
           `/api/v2/ingredientinfo/${args.id}/get_values/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -356,8 +288,8 @@ export function registerNutritionTools(
       description: "List ingredient images",
       inputSchema: listIngredientImagesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_ingredient_images", async () => {
         const data = await client.get<WgerPaginatedResponse<IngredientImage>>(
           "/api/v2/ingredient-image/",
           {
@@ -366,27 +298,8 @@ export function registerNutritionTools(
             ingredient_id: args.ingredient_id,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -395,32 +308,13 @@ export function registerNutritionTools(
       description: "Get ingredient image by ID",
       inputSchema: getIngredientImageSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_ingredient_image", async () => {
         const data = await client.get<IngredientImage>(
           `/api/v2/ingredient-image/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -429,8 +323,8 @@ export function registerNutritionTools(
       description: "List ingredient weight units",
       inputSchema: listIngredientWeightUnitsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_ingredient_weight_units", async () => {
         const data = await client.get<
           WgerPaginatedResponse<IngredientWeightUnit>
         >("/api/v2/ingredientweightunit/", {
@@ -438,27 +332,8 @@ export function registerNutritionTools(
           offset: args.offset,
           ingredient: args.ingredient,
         });
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -467,32 +342,13 @@ export function registerNutritionTools(
       description: "Get ingredient weight unit by ID",
       inputSchema: getIngredientWeightUnitSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_ingredient_weight_unit", async () => {
         const data = await client.get<IngredientWeightUnit>(
           `/api/v2/ingredientweightunit/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -501,8 +357,8 @@ export function registerNutritionTools(
       description: "List meals",
       inputSchema: listMealsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_meals", async () => {
         const data = await client.get<WgerPaginatedResponse<Meal>>(
           "/api/v2/meal/",
           {
@@ -512,27 +368,8 @@ export function registerNutritionTools(
             order: args.order,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -541,30 +378,11 @@ export function registerNutritionTools(
       description: "Get meal by ID",
       inputSchema: getMealSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_meal", async () => {
         const data = await client.get<Meal>(`/api/v2/meal/${args.id}/`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -573,32 +391,13 @@ export function registerNutritionTools(
       description: "Get nutritional values for a meal",
       inputSchema: getMealNutritionalValuesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_meal_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/meal/${args.id}/nutritional_values/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -607,8 +406,8 @@ export function registerNutritionTools(
       description: "List meal items",
       inputSchema: listMealItemsSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_meal_items", async () => {
         const data = await client.get<WgerPaginatedResponse<MealItem>>(
           "/api/v2/mealitem/",
           {
@@ -618,27 +417,8 @@ export function registerNutritionTools(
             ingredient: args.ingredient,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -647,30 +427,11 @@ export function registerNutritionTools(
       description: "Get meal item by ID",
       inputSchema: getMealItemSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_meal_item", async () => {
         const data = await client.get<MealItem>(`/api/v2/mealitem/${args.id}/`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -679,32 +440,13 @@ export function registerNutritionTools(
       description: "Get nutritional values for a meal item",
       inputSchema: getMealItemNutritionalValuesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_meal_item_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/mealitem/${args.id}/nutritional_values/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -713,37 +455,18 @@ export function registerNutritionTools(
       description: "List nutrition plans",
       inputSchema: listNutritionPlansSchema,
     },
-    async (args) => {
-      try {
-        const data = await client.get<WgerPaginatedResponse<NutritionPlanInfo>>(
-          "/api/v2/nutritionplaninfo/",
+    async (args) =>
+      runTool(logger, "list_nutrition_plans", async () => {
+        const data = await client.get<WgerPaginatedResponse<NutritionPlan>>(
+          "/api/v2/nutritionplan/",
           {
             limit: args.limit,
             offset: args.offset,
             description: args.description,
           },
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -752,32 +475,13 @@ export function registerNutritionTools(
       description: "Get nutrition plan by ID",
       inputSchema: getNutritionPlanSchema,
     },
-    async (args) => {
-      try {
-        const data = await client.get<NutritionPlanInfo>(
-          `/api/v2/nutritionplaninfo/${args.id}/`,
+    async (args) =>
+      runTool(logger, "get_nutrition_plan", async () => {
+        const data = await client.get<NutritionPlan>(
+          `/api/v2/nutritionplan/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -786,32 +490,13 @@ export function registerNutritionTools(
       description: "Get nutritional values for a nutrition plan",
       inputSchema: getNutritionPlanNutritionalValuesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_nutrition_plan_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/nutritionplan/${args.id}/nutritional_values/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -820,8 +505,8 @@ export function registerNutritionTools(
       description: "List nutrition diary entries",
       inputSchema: listNutritionDiaryEntriesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "list_nutrition_diary_entries", async () => {
         const data = await client.get<
           WgerPaginatedResponse<NutritionDiaryEntry>
         >("/api/v2/nutritiondiary/", {
@@ -830,27 +515,8 @@ export function registerNutritionTools(
           plan: args.plan,
           datetime__date: args.date,
         });
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -859,32 +525,13 @@ export function registerNutritionTools(
       description: "Get nutrition diary entry by ID",
       inputSchema: getNutritionDiaryEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_nutrition_diary_entry", async () => {
         const data = await client.get<NutritionDiaryEntry>(
           `/api/v2/nutritiondiary/${args.id}/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -893,32 +540,13 @@ export function registerNutritionTools(
       description: "Get nutritional values for a diary entry",
       inputSchema: getNutritionDiaryNutritionalValuesSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "get_nutrition_diary_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/nutritiondiary/${args.id}/nutritional_values/`,
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -927,33 +555,14 @@ export function registerNutritionTools(
       description: "Create a new meal",
       inputSchema: createMealSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_meal", async () => {
         const data = await client.post<Meal>(
           "/api/v2/meal/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -962,34 +571,15 @@ export function registerNutritionTools(
       description: "Update an existing meal",
       inputSchema: updateMealSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_meal", async () => {
         const { id, ...body } = args;
-        const data = await client.put<Meal>(
+        const data = await client.patch<Meal>(
           `/api/v2/meal/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -998,33 +588,14 @@ export function registerNutritionTools(
       description: "Create a new meal item",
       inputSchema: createMealItemSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_meal_item", async () => {
         const data = await client.post<MealItem>(
           "/api/v2/mealitem/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1033,34 +604,15 @@ export function registerNutritionTools(
       description: "Update an existing meal item",
       inputSchema: updateMealItemSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_meal_item", async () => {
         const { id, ...body } = args;
-        const data = await client.put<MealItem>(
+        const data = await client.patch<MealItem>(
           `/api/v2/mealitem/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1069,33 +621,14 @@ export function registerNutritionTools(
       description: "Create a new nutrition plan",
       inputSchema: createNutritionPlanSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_nutrition_plan", async () => {
         const data = await client.post<NutritionPlan>(
           "/api/v2/nutritionplan/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1104,34 +637,15 @@ export function registerNutritionTools(
       description: "Update an existing nutrition plan",
       inputSchema: updateNutritionPlanSchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_nutrition_plan", async () => {
         const { id, ...body } = args;
-        const data = await client.put<NutritionPlan>(
+        const data = await client.patch<NutritionPlan>(
           `/api/v2/nutritionplan/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1140,33 +654,14 @@ export function registerNutritionTools(
       description: "Create a new nutrition diary entry",
       inputSchema: createNutritionDiaryEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "create_nutrition_diary_entry", async () => {
         const data = await client.post<NutritionDiaryEntry>(
           "/api/v2/nutritiondiary/",
           toJsonBody(args),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -1175,34 +670,15 @@ export function registerNutritionTools(
       description: "Update an existing nutrition diary entry",
       inputSchema: updateNutritionDiaryEntrySchema,
     },
-    async (args) => {
-      try {
+    async (args) =>
+      runTool(logger, "update_nutrition_diary_entry", async () => {
         const { id, ...body } = args;
-        const data = await client.put<NutritionDiaryEntry>(
+        const data = await client.patch<NutritionDiaryEntry>(
           `/api/v2/nutritiondiary/${id}/`,
           toJsonBody(body),
         );
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: true, data }),
-            },
-          ],
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({ ok: false, error: message }),
-            },
-          ],
-          isError: true,
-        };
-      }
-    },
+        return successResult(data);
+      }),
   );
 
   logger.info("Nutrition tools registered");

@@ -3,6 +3,7 @@ import {
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
+import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import {
@@ -53,7 +54,7 @@ export function registerRoutineResources(
       description: "Single routine",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<Routine>(`/api/v2/routine/${id}/`);
       return {
         contents: [
@@ -99,7 +100,7 @@ export function registerRoutineResources(
       description: "Single day",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<Day>(`/api/v2/day/${id}/`);
       return {
         contents: [
@@ -145,7 +146,7 @@ export function registerRoutineResources(
       description: "Single slot",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<Slot>(`/api/v2/slot/${id}/`);
       return {
         contents: [
@@ -191,7 +192,7 @@ export function registerRoutineResources(
       description: "Single slot entry",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<SlotEntry>(`/api/v2/slot-entry/${id}/`);
       return {
         contents: [
@@ -237,7 +238,7 @@ export function registerRoutineResources(
       description: "Single workout log",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<WorkoutLog>(`/api/v2/workoutlog/${id}/`);
       return {
         contents: [
@@ -283,7 +284,7 @@ export function registerRoutineResources(
       description: "Single workout session",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<WorkoutSession>(
         `/api/v2/workoutsession/${id}/`,
       );
@@ -331,7 +332,7 @@ export function registerRoutineResources(
       description: "Single weight entry",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<WeightEntry>(`/api/v2/weightentry/${id}/`);
       return {
         contents: [
@@ -377,7 +378,7 @@ export function registerRoutineResources(
       description: "Single gallery image",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<GalleryImage>(`/api/v2/gallery/${id}/`);
       return {
         contents: [

@@ -3,6 +3,7 @@ import {
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
+import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import {
@@ -50,7 +51,7 @@ export function registerNutritionResources(
       description: "Single ingredient",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<IngredientInfo>(
         `/api/v2/ingredientinfo/${id}/`,
       );
@@ -98,7 +99,7 @@ export function registerNutritionResources(
       description: "Single meal",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<Meal>(`/api/v2/meal/${id}/`);
       return {
         contents: [
@@ -144,7 +145,7 @@ export function registerNutritionResources(
       description: "Single meal item",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<MealItem>(`/api/v2/mealitem/${id}/`);
       return {
         contents: [
@@ -190,7 +191,7 @@ export function registerNutritionResources(
       description: "Single nutrition plan",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<NutritionPlan>(
         `/api/v2/nutritionplan/${id}/`,
       );
@@ -238,7 +239,7 @@ export function registerNutritionResources(
       description: "Single nutrition diary entry",
     },
     async (uri, variables) => {
-      const id = Number(variables.id);
+      const id = validateResourceId(variables.id);
       const data = await client.get<NutritionDiaryEntry>(
         `/api/v2/nutritiondiary/${id}/`,
       );

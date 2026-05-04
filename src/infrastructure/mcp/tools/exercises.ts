@@ -9,38 +9,44 @@ import {
   Equipment,
   ExerciseCategory,
 } from "../../../domain/models/Exercise.types.js";
+import {
+  paginationLimitSchema,
+  paginationOffsetSchema,
+  positiveIntegerIdSchema,
+} from "../sharedSchemas.js";
+import { runTool, successResult } from "../toolResult.js";
 
 const listExercisesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  category: z.number().optional(),
-  equipment: z.number().optional(),
-  language: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
+  category: positiveIntegerIdSchema.optional(),
+  equipment: positiveIntegerIdSchema.optional(),
+  language: positiveIntegerIdSchema.optional(),
 });
 
 const getExerciseSchema = z.object({
-  id: z.number(),
+  id: positiveIntegerIdSchema,
 });
 
 const searchExercisesSchema = z.object({
-  term: z.string(),
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  term: z.string().min(1),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 const listMusclesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 const listEquipmentSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 const listExerciseCategoriesSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: paginationLimitSchema,
+  offset: paginationOffsetSchema,
 });
 
 export function registerExerciseTools(
@@ -54,26 +60,20 @@ export function registerExerciseTools(
       description: "List exercises with pagination and optional filtering",
       inputSchema: listExercisesSchema,
     },
-    async (args) => {
-      const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
-        "/api/v2/exerciseinfo/",
-        {
-          limit: args.limit,
-          offset: args.offset,
-          category: args.category,
-          equipment: args.equipment,
-          language: args.language,
-        },
-      );
-      return {
-        content: [
+    async (args) =>
+      runTool(logger, "list_exercises", async () => {
+        const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
+          "/api/v2/exerciseinfo/",
           {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
+            limit: args.limit,
+            offset: args.offset,
+            category: args.category,
+            equipment: args.equipment,
+            language: args.language,
           },
-        ],
-      };
-    },
+        );
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -82,19 +82,13 @@ export function registerExerciseTools(
       description: "Get a single exercise by its ID",
       inputSchema: getExerciseSchema,
     },
-    async (args) => {
-      const data = await client.get<ExerciseInfo>(
-        `/api/v2/exerciseinfo/${args.id}/`,
-      );
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
-          },
-        ],
-      };
-    },
+    async (args) =>
+      runTool(logger, "get_exercise", async () => {
+        const data = await client.get<ExerciseInfo>(
+          `/api/v2/exerciseinfo/${args.id}/`,
+        );
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -103,24 +97,18 @@ export function registerExerciseTools(
       description: "Search exercises by name or description",
       inputSchema: searchExercisesSchema,
     },
-    async (args) => {
-      const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
-        "/api/v2/exerciseinfo/",
-        {
-          name__search: args.term,
-          limit: args.limit,
-          offset: args.offset,
-        },
-      );
-      return {
-        content: [
+    async (args) =>
+      runTool(logger, "search_exercises", async () => {
+        const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
+          "/api/v2/exerciseinfo/",
           {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
+            name__search: args.term,
+            limit: args.limit,
+            offset: args.offset,
           },
-        ],
-      };
-    },
+        );
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -129,23 +117,17 @@ export function registerExerciseTools(
       description: "List all muscles",
       inputSchema: listMusclesSchema,
     },
-    async (args) => {
-      const data = await client.get<WgerPaginatedResponse<Muscle>>(
-        "/api/v2/muscle/",
-        {
-          limit: args.limit,
-          offset: args.offset,
-        },
-      );
-      return {
-        content: [
+    async (args) =>
+      runTool(logger, "list_muscles", async () => {
+        const data = await client.get<WgerPaginatedResponse<Muscle>>(
+          "/api/v2/muscle/",
           {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
+            limit: args.limit,
+            offset: args.offset,
           },
-        ],
-      };
-    },
+        );
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -154,23 +136,17 @@ export function registerExerciseTools(
       description: "List all equipment",
       inputSchema: listEquipmentSchema,
     },
-    async (args) => {
-      const data = await client.get<WgerPaginatedResponse<Equipment>>(
-        "/api/v2/equipment/",
-        {
-          limit: args.limit,
-          offset: args.offset,
-        },
-      );
-      return {
-        content: [
+    async (args) =>
+      runTool(logger, "list_equipment", async () => {
+        const data = await client.get<WgerPaginatedResponse<Equipment>>(
+          "/api/v2/equipment/",
           {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
+            limit: args.limit,
+            offset: args.offset,
           },
-        ],
-      };
-    },
+        );
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -179,23 +155,17 @@ export function registerExerciseTools(
       description: "List all exercise categories",
       inputSchema: listExerciseCategoriesSchema,
     },
-    async (args) => {
-      const data = await client.get<WgerPaginatedResponse<ExerciseCategory>>(
-        "/api/v2/exercisecategory/",
-        {
-          limit: args.limit,
-          offset: args.offset,
-        },
-      );
-      return {
-        content: [
+    async (args) =>
+      runTool(logger, "list_exercise_categories", async () => {
+        const data = await client.get<WgerPaginatedResponse<ExerciseCategory>>(
+          "/api/v2/exercisecategory/",
           {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
+            limit: args.limit,
+            offset: args.offset,
           },
-        ],
-      };
-    },
+        );
+        return successResult(data);
+      }),
   );
 
   server.registerTool(
@@ -203,17 +173,11 @@ export function registerExerciseTools(
     {
       description: "Check connectivity to the Wger API instance",
     },
-    async () => {
-      const data = await client.getStatus();
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({ ok: true, data }),
-          },
-        ],
-      };
-    },
+    async () =>
+      runTool(logger, "get_wger_status", async () => {
+        const data = await client.getStatus();
+        return successResult(data);
+      }),
   );
 
   logger.info("Exercise tools registered");
