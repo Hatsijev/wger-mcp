@@ -6,9 +6,100 @@ Date: 2026-05-04
 
 Review of the current TypeScript MCP server implementation against the local `.agents` directives, `.planning/CURRENT.md`, project docs, and current source code.
 
-Build verification: `npm run build` passes.
+Build verification:
+
+- `npm run build` passes.
+- `npm run lint` passes.
 
 Dependency audit: `npm audit --omit=dev` reports `found 0 vulnerabilities`.
+
+## Milestone 3 Follow-Up
+
+Date: 2026-05-04
+
+Milestone 3 nutrition endpoint surface is now implemented: read tools, write tools, resources, nutrition types, and `docs/api/nutrition.md` are present.
+
+The previous finding "Milestone 3 is incomplete" is closed for basic endpoint coverage, but the new implementation carries forward several quality and safety risks.
+
+### New / Updated Findings
+
+#### 1. Nutrition write tools are registered without a write capability gate
+
+The new nutrition mutation tools are registered unconditionally:
+
+- `create_meal`
+- `update_meal`
+- `create_meal_item`
+- `update_meal_item`
+- `create_nutrition_plan`
+- `update_nutrition_plan`
+- `create_nutrition_diary_entry`
+- `update_nutrition_diary_entry`
+
+Relevant files:
+
+- `src/infrastructure/mcp/server.ts`
+- `src/infrastructure/mcp/tools/nutrition.ts`
+
+Risk: any connected MCP client can mutate nutrition data if the configured token permits it. This matches current `docs/README.md`, which says write tools are available by default, but it remains a safety concern for real deployments.
+
+Recommendation: decide whether "safe write" tools should remain enabled by default or require an explicit write capability flag. If enabled by default, document the security model clearly and recommend least-privilege Wger tokens.
+
+#### 2. Nutrition update tools use sparse PUT bodies
+
+The OpenAPI spec exposes PATCH endpoints for partial updates, but the MCP update tools currently call `client.put(...)` with only provided fields.
+
+Relevant files:
+
+- `src/infrastructure/mcp/tools/nutrition.ts`
+- `wger.yaml`
+
+Risk: if Wger treats PUT as full replacement, partial MCP update calls can clear or reset omitted fields.
+
+Recommendation: use `PATCH` for `update_meal`, `update_meal_item`, `update_nutrition_plan`, and `update_nutrition_diary_entry`, unless full replacement is explicitly intended and documented.
+
+#### 3. Nutrition schemas are looser than OpenAPI constraints
+
+Nutrition schemas use plain `z.number()` and `z.string()` for fields that have stricter OpenAPI constraints.
+
+Examples:
+
+- IDs accept floats and negative numbers.
+- `time` is not validated as time.
+- `start` and `end` are not validated as dates.
+- `datetime` is not validated as date-time.
+- `amount` does not enforce the decimal pattern `^-?\d{0,4}(?:\.\d{0,2})?$`.
+- Goal fields do not enforce integer bounds from OpenAPI.
+
+Relevant files:
+
+- `src/infrastructure/mcp/tools/nutrition.ts`
+- `wger.yaml`
+
+Recommendation: add shared schema primitives and apply them to all nutrition tools before expanding Milestone 4.
+
+#### 4. Nutrition plan tools and resources use different endpoint families
+
+Nutrition plan tools use `/api/v2/nutritionplaninfo/` for list/get operations, while nutrition plan resources use `/api/v2/nutritionplan/`.
+
+Relevant files:
+
+- `src/infrastructure/mcp/tools/nutrition.ts`
+- `src/infrastructure/mcp/resources/nutrition.ts`
+
+Risk: `list_nutrition_plans` and `wger://nutrition-plans` can return different shapes for the same conceptual object.
+
+Recommendation: choose one public semantic for nutrition plan reads. If both Wger endpoint families are needed, expose them with distinct names and document the difference.
+
+#### 5. Documentation has stale milestone wording
+
+`docs/README.md` still says no delete operations are exposed for "Milestone 2", even though `.planning/CURRENT.md` marks Milestones 1-3 complete.
+
+Relevant file:
+
+- `docs/README.md`
+
+Recommendation: update wording to avoid milestone-specific stale claims.
 
 ## High-Priority Findings
 
@@ -26,11 +117,11 @@ Relevant files:
 
 Risk: any connected MCP client can perform mutation operations if the API token permits them. The README safety section currently implies stronger protection than the code enforces.
 
-Recommendation: introduce explicit capability-based registration or execution guards for mutating, destructive, admin, and raw proxy tools. Keep read-only tools available by default.
+Recommendation: introduce explicit capability-based registration or execution guards for mutating, destructive, admin, and raw proxy tools. Keep read-only tools available by default. If safe writes intentionally remain enabled by default, document the deployment expectation and token-scope assumptions.
 
 ### 2. No executable tests exist
 
-The repository has `docs/TEST_SCENARIOS.md`, but no test runner, no `test` script, and no test files under `test`, `tests`, or `__tests__`.
+The repository has `docs/TEST_SCENARIOS.md` and a root-level `TEST_SCENARIOS.md`, but no test runner, no `test` script, and no test files under `test`, `tests`, or `__tests__`.
 
 Relevant files:
 
@@ -141,16 +232,20 @@ Risk: invalid IDs such as `NaN`, floats, or negative values can reach the API pa
 
 Recommendation: validate resource IDs with the same positive-integer helper used by tools.
 
-### 10. Milestone 3 is incomplete
+### 10. Milestone 3 endpoint coverage is complete, but quality gates remain open
 
-Nutrition read tools and resources exist. Safe write tools for `meal`, `meal_item`, `nutrition_plan`, and `nutrition_diary_entry` are not implemented yet.
+Nutrition read tools, write tools, resources, domain types, and documentation are now present.
 
-Relevant files:
+Remaining risks:
 
-- `.planning/CURRENT.md`
-- `src/infrastructure/mcp/tools/nutrition.ts`
+- no executable tests,
+- loose schemas,
+- sparse PUT updates,
+- nutrition plan endpoint-family mismatch,
+- write tools available by default,
+- unresolved shared WgerClient/runtime-validation risks.
 
-Recommendation: complete Task 3.2 after confirming whether writes should target `nutritionplan` or `nutritionplaninfo` endpoints.
+Recommendation: do not expand Milestone 4 until the shared infrastructure issues are addressed or explicitly accepted as deferred risk.
 
 ## Architectural Observations
 
@@ -192,9 +287,10 @@ Recommendation: introduce application-level services or endpoint descriptors tha
 
 ## Suggested Review Order After Milestone 3
 
-1. Confirm Milestone 3 read and write coverage against `wger.yaml`.
-2. Fix write-tool gating and README safety mismatch.
+1. Decide and document the write-tool capability model.
+2. Switch sparse update tools to PATCH where appropriate.
 3. Add shared MCP tool wrapper for consistent error envelopes.
 4. Tighten Zod schemas with reusable primitives.
 5. Add tests for client behavior, schemas, and representative tools.
-6. Revisit architecture boundaries and reduce generated-handler duplication.
+6. Resolve nutrition plan endpoint-family naming/shape consistency.
+7. Revisit architecture boundaries and reduce generated-handler duplication.
