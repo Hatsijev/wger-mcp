@@ -1,9 +1,7 @@
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
-  ListResourcesRequestSchema,
-  ListResourceTemplatesRequestSchema,
-  ReadResourceRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+  McpServer,
+  ResourceTemplate,
+} from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
@@ -15,119 +13,129 @@ import {
 } from "../../../domain/models/Exercise.types.js";
 
 export function registerExerciseResources(
-  server: Server,
+  server: McpServer,
   client: WgerClient,
   logger: Logger,
 ): void {
-  server.setRequestHandler(ListResourcesRequestSchema, async () => {
-    return {
-      resources: [
-        {
-          uri: "wger://exercises",
-          name: "Exercises",
-          mimeType: "application/json",
-        },
-        {
-          uri: "wger://muscles",
-          name: "Muscles",
-          mimeType: "application/json",
-        },
-        {
-          uri: "wger://equipment",
-          name: "Equipment",
-          mimeType: "application/json",
-        },
-        {
-          uri: "wger://categories",
-          name: "Exercise Categories",
-          mimeType: "application/json",
-        },
-      ],
-    };
-  });
+  server.registerResource(
+    "exercises",
+    "wger://exercises",
+    {
+      mimeType: "application/json",
+      description: "List of all exercises",
+    },
+    async () => {
+      const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
+        "/api/v2/exerciseinfo/",
+        { limit: 20 },
+      );
+      return {
+        contents: [
+          {
+            uri: "wger://exercises",
+            mimeType: "application/json",
+            text: JSON.stringify(data),
+          },
+        ],
+      };
+    },
+  );
 
-  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
-    return {
-      resourceTemplates: [
-        {
-          uriTemplate: "wger://exercises/{id}",
-          name: "Exercise by ID",
-          mimeType: "application/json",
-        },
-      ],
-    };
-  });
+  server.registerResource(
+    "muscles",
+    "wger://muscles",
+    {
+      mimeType: "application/json",
+      description: "List of all muscles",
+    },
+    async () => {
+      const data = await client.get<WgerPaginatedResponse<Muscle>>(
+        "/api/v2/muscle/",
+        { limit: 20 },
+      );
+      return {
+        contents: [
+          {
+            uri: "wger://muscles",
+            mimeType: "application/json",
+            text: JSON.stringify(data),
+          },
+        ],
+      };
+    },
+  );
 
-  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
-    const { uri } = request.params;
+  server.registerResource(
+    "equipment",
+    "wger://equipment",
+    {
+      mimeType: "application/json",
+      description: "List of all equipment",
+    },
+    async () => {
+      const data = await client.get<WgerPaginatedResponse<Equipment>>(
+        "/api/v2/equipment/",
+        { limit: 20 },
+      );
+      return {
+        contents: [
+          {
+            uri: "wger://equipment",
+            mimeType: "application/json",
+            text: JSON.stringify(data),
+          },
+        ],
+      };
+    },
+  );
 
-    try {
-      if (uri === "wger://exercises") {
-        const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
-          "/api/v2/exerciseinfo/",
-          { limit: 20 },
-        );
-        return {
-          contents: [
-            { uri, mimeType: "application/json", text: JSON.stringify(data) },
-          ],
-        };
-      }
+  server.registerResource(
+    "categories",
+    "wger://categories",
+    {
+      mimeType: "application/json",
+      description: "List of all exercise categories",
+    },
+    async () => {
+      const data = await client.get<WgerPaginatedResponse<ExerciseCategory>>(
+        "/api/v2/exercisecategory/",
+        { limit: 20 },
+      );
+      return {
+        contents: [
+          {
+            uri: "wger://categories",
+            mimeType: "application/json",
+            text: JSON.stringify(data),
+          },
+        ],
+      };
+    },
+  );
 
-      if (uri === "wger://muscles") {
-        const data = await client.get<WgerPaginatedResponse<Muscle>>(
-          "/api/v2/muscle/",
-          { limit: 20 },
-        );
-        return {
-          contents: [
-            { uri, mimeType: "application/json", text: JSON.stringify(data) },
-          ],
-        };
-      }
+  server.registerResource(
+    "exercise-by-id",
+    new ResourceTemplate("wger://exercises/{id}", { list: undefined }),
+    {
+      mimeType: "application/json",
+      description: "Get a single exercise by ID",
+    },
+    async (uri, variables) => {
+      const id = Number(variables.id);
+      const data = await client.get<ExerciseInfo>(
+        `/api/v2/exerciseinfo/${id}/`,
+      );
+      return {
+        contents: [
+          {
+            uri: uri.toString(),
+            mimeType: "application/json",
+            text: JSON.stringify(data),
+          },
+        ],
+      };
+    },
+  );
 
-      if (uri === "wger://equipment") {
-        const data = await client.get<WgerPaginatedResponse<Equipment>>(
-          "/api/v2/equipment/",
-          { limit: 20 },
-        );
-        return {
-          contents: [
-            { uri, mimeType: "application/json", text: JSON.stringify(data) },
-          ],
-        };
-      }
-
-      if (uri === "wger://categories") {
-        const data = await client.get<WgerPaginatedResponse<ExerciseCategory>>(
-          "/api/v2/exercisecategory/",
-          { limit: 20 },
-        );
-        return {
-          contents: [
-            { uri, mimeType: "application/json", text: JSON.stringify(data) },
-          ],
-        };
-      }
-
-      const exerciseMatch = /^wger:\/\/exercises\/(\d+)$/.exec(uri);
-      if (exerciseMatch !== null) {
-        const id = Number(exerciseMatch[1]);
-        const data = await client.get<ExerciseInfo>(
-          `/api/v2/exerciseinfo/${id}/`,
-        );
-        return {
-          contents: [
-            { uri, mimeType: "application/json", text: JSON.stringify(data) },
-          ],
-        };
-      }
-
-      throw new Error(`Unknown resource URI: ${uri}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      logger.error("Resource read failed", { uri, error: message });
-      throw new Error(`Failed to read resource ${uri}: ${message}`);
-    }
-  });
+  logger.info("Exercise resources registered");
 }

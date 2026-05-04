@@ -1,4 +1,4 @@
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Config } from "../../domain/models/Config.types.js";
 import { Logger } from "../../application/ports/Logger.js";
 import { WgerClient } from "../wger/WgerClient.js";
@@ -9,8 +9,8 @@ export function createMcpServer(
   config: Config,
   logger: Logger,
   client: WgerClient,
-): Server {
-  const server: Server = new Server(
+): McpServer {
+  const server = new McpServer(
     { name: "wger-mcp", version: "0.1.0" },
     {
       capabilities: {
