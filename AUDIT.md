@@ -15,7 +15,7 @@ Archived previous audit snapshots:
 
 - `npm run build` passes.
 - `npm run lint` passes.
-- `npm test` passes: 30 test files, 290 tests.
+- `npm test` passes: 30 test files, 290 tests. Re-run after nutritional-value schema wiring.
 - `npm_config_cache=/tmp/npm-cache npm pack --dry-run` passes for `wger-mcp@0.1.2`.
 - `npm_config_cache=/tmp/npm-cache npm audit --omit=dev` passes with 0 vulnerabilities.
 - Stdio startup check passes: captured stdout is 0 bytes; logs go to stderr.
@@ -49,42 +49,15 @@ Notable improvements since the previous audit:
 - The Wger ingredient response mismatch is fixed:
   - `IngredientInfo.image` and `IngredientInfo.thumbnails` allow `null`.
   - `IngredientInfo.weight_units` uses a separate `IngredientWeightUnitInfo` schema without requiring `ingredient`.
+- Nutritional-value endpoints now validate responses with `nutritionalValuesResponseSchema`.
+- The config response schema type assertion is documented as a Wger arbitrary-JSON boundary.
 - Tests are now configured with Vitest and pass.
 - Production TypeScript build excludes test files, so broken test-only imports cannot block npm packaging.
 - `npm audit --omit=dev` currently reports 0 vulnerabilities.
 
 ## Findings
 
-### 1. Nutritional-value response validation is still incomplete
-
-Most tool/resource calls now validate Wger responses with concrete Zod schemas, and the recent real API failures for exercises and ingredients are fixed. One gap from the previous audit remains: nutritional-value endpoints still call `client.get<NutritionalValues>` without passing a response schema.
-
-Relevant files:
-
-- `src/infrastructure/mcp/tools/mealTools.ts`
-- `src/infrastructure/mcp/tools/nutritionPlanTools.ts`
-- `src/infrastructure/mcp/tools/nutritionDiaryTools.ts`
-- `src/infrastructure/mcp/responseSchemas.ts`
-
-Risk: malformed or version-drifted nutritional-value payloads can pass through unchecked.
-
-Recommendation: add `nutritionalValuesResponseSchema` and wire it into meal, meal item, nutrition plan, and nutrition diary nutritional-value tools.
-
-### 2. Config response schema still relies on a type assertion
-
-`responseSchemas.ts` now uses real recursive JSON validation for open-ended config values, which is a large improvement over permissive validation. It still asserts `jsonValueSchema` as `z.ZodType<Config>`.
-
-Relevant files:
-
-- `src/infrastructure/mcp/responseSchemas.ts`
-- `src/infrastructure/mcp/sharedSchemas.ts`
-- `src/domain/models/Routine.types.ts`
-
-Risk: low. Runtime validation still enforces JSON-compatible values, but the TypeScript assertion hides the exact shape mismatch between open-ended JSON and the `Config` alias.
-
-Recommendation: either export a named `configResponseSchema` from `sharedSchemas.ts` with a short boundary comment, or change the domain config type to directly reuse the JSON type so the assertion is unnecessary.
-
-### 3. Debug logs can expose personal Wger metadata/data
+### 1. Debug logs can expose personal Wger metadata/data
 
 The API token is not logged, and normal `LOG_LEVEL=info` is acceptable for personal use. At debug level, `WgerClient` still logs full request URLs and debug error body previews. URLs can include dates, routine IDs, diary filters, ingredient searches, or other private metadata. Error body previews may include private Wger data depending on upstream error shape.
 
@@ -97,7 +70,7 @@ Risk: safe for personal use when logs remain private and `LOG_LEVEL=info`; not i
 
 Recommendation: before wider public release, log method + path without query string and remove upstream body previews entirely, or gate body previews behind a separate explicit diagnostic flag.
 
-### 4. Clean Architecture boundary remains thin
+### 2. Clean Architecture boundary remains thin
 
 The code is organized by MCP domain module, but MCP transport handlers still call `WgerClient` directly. The application layer remains mostly the logger port.
 
@@ -119,6 +92,8 @@ Fixed:
 - The previous response-schema drift for workout logs and slot entries is fixed.
 - Wger exercise image `style` string enum validation is fixed and live-tested.
 - Wger ingredient nullable media and compact weight-unit validation is fixed and live-tested.
+- Nutritional-value endpoint responses are now validated with `nutritionalValuesResponseSchema`.
+- The config response schema type assertion is now documented as a Wger arbitrary-JSON boundary.
 - Stdio stdout pollution from dotenv is fixed.
 - Runtime logging uses stderr, not stdout.
 - MCP `serverInfo.version` is aligned with package version `0.1.2`.
@@ -129,8 +104,6 @@ Fixed:
 
 Still open:
 
-- Nutritional-value endpoint responses need a schema.
-- Config response validation still uses a TypeScript assertion.
 - Debug logs still expose full URLs and debug body previews.
 - The application layer remains thin.
 
@@ -149,7 +122,5 @@ Before publishing or sharing publicly:
 
 ## Suggested Next Order
 
-1. Add `nutritionalValuesResponseSchema` and wire it into nutritional-value tools.
-2. Remove or document the config schema type assertion.
-3. Reduce debug logging of full URLs and remove upstream body previews before public release.
-4. Introduce application services or endpoint descriptors before Milestone 4 expansion.
+1. Reduce debug logging of full URLs and remove upstream body previews before public release.
+2. Introduce application services or endpoint descriptors before Milestone 4 expansion.
