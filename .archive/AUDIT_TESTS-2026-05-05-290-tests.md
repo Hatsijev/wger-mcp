@@ -44,36 +44,36 @@
 
 ### New Test Files (13 files, +98 tests — added since initial audit)
 
-| File | Lines | Tests | Status |
-| --- | --- | --- | --- |
-| `src/infrastructure/mcp/tools/__tests__/mealTools.spec.ts` | 126 | 9 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/nutritionPlanTools.spec.ts` | 123 | 9 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/nutritionDiaryTools.spec.ts` | 123 | 9 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/ingredientTools.spec.ts` | 113 | 7 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/dayTools.spec.ts` | 121 | 9 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/slotTools.spec.ts` | 113 | 8 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/slotEntryTools.spec.ts` | 126 | 10 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/workoutLogTools.spec.ts` | 115 | 8 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/workoutSessionTools.spec.ts` | 115 | 8 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/weightEntryTools.spec.ts` | 115 | 8 | Correct |
-| `src/infrastructure/mcp/tools/__tests__/galleryTools.spec.ts` | 107 | 7 | Correct |
-| `src/infrastructure/mcp/resources/__tests__/nutritionDiaryResources.spec.ts` | 70 | 3 | Correct |
-| `src/infrastructure/mcp/resources/__tests__/nutritionPlanResources.spec.ts` | 70 | 3 | Correct |
+| File                                                                         | Lines | Tests | Status  |
+| ---------------------------------------------------------------------------- | ----- | ----- | ------- |
+| `src/infrastructure/mcp/tools/__tests__/mealTools.spec.ts`                   | 126   | 9     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/nutritionPlanTools.spec.ts`          | 123   | 9     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/nutritionDiaryTools.spec.ts`         | 123   | 9     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/ingredientTools.spec.ts`             | 113   | 7     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/dayTools.spec.ts`                    | 121   | 9     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/slotTools.spec.ts`                   | 113   | 8     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/slotEntryTools.spec.ts`              | 126   | 10    | Correct |
+| `src/infrastructure/mcp/tools/__tests__/workoutLogTools.spec.ts`             | 115   | 8     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/workoutSessionTools.spec.ts`         | 115   | 8     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/weightEntryTools.spec.ts`            | 115   | 8     | Correct |
+| `src/infrastructure/mcp/tools/__tests__/galleryTools.spec.ts`                | 107   | 7     | Correct |
+| `src/infrastructure/mcp/resources/__tests__/nutritionDiaryResources.spec.ts` | 70    | 3     | Correct |
+| `src/infrastructure/mcp/resources/__tests__/nutritionPlanResources.spec.ts`  | 70    | 3     | Correct |
 
 ### Still Missing Test Files (10 resource files — zero coverage)
 
-| Resource File | Resources Registered | Test File |
-| --- | --- | --- |
-| `src/infrastructure/mcp/resources/routineResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/dayResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/slotResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/slotEntryResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/workoutLogResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/workoutSessionResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/weightEntryResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/galleryResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/ingredientResources.ts` | ~4 resources | **NONE** |
-| `src/infrastructure/mcp/resources/mealResources.ts` | ~4 resources | **NONE** |
+| Resource File                                                 | Resources Registered | Test File |
+| ------------------------------------------------------------- | -------------------- | --------- |
+| `src/infrastructure/mcp/resources/routineResources.ts`        | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/dayResources.ts`            | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/slotResources.ts`           | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/slotEntryResources.ts`      | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/workoutLogResources.ts`     | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/workoutSessionResources.ts` | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/weightEntryResources.ts`    | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/galleryResources.ts`        | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/ingredientResources.ts`     | ~4 resources         | **NONE**  |
+| `src/infrastructure/mcp/resources/mealResources.ts`           | ~4 resources         | **NONE**  |
 
 **Total untested resource registrations: ~40 resources**
 
@@ -171,21 +171,21 @@ All update operations were verified to use `client.patch()` (not `client.put()`)
 
 All endpoint paths in tool files were verified against `wger.yaml`:
 
-| Tool                                    | Code Path                                        | OpenAPI Path                                     | Match?             |
-| --------------------------------------- | ------------------------------------------------ | ------------------------------------------------ | ------------------ |
-| `list_ingredients`                      | `/api/v2/ingredientinfo/`                        | `/api/v2/ingredientinfo/`                        | ✅                 |
-| `get_ingredient`                        | `/api/v2/ingredientinfo/{id}/`                   | `/api/v2/ingredientinfo/{id}/`                   | ✅                 |
-| `get_ingredient_values`                 | `/api/v2/ingredientinfo/{id}/get_values/`        | `/api/v2/ingredientinfo/{id}/get_values/`        | ✅                 |
-| `list_ingredient_images`                | `/api/v2/ingredient-image/`                      | `/api/v2/ingredient-image/`                      | ✅                 |
-| `list_ingredient_weight_units`          | `/api/v2/ingredientweightunit/`                  | `/api/v2/ingredientweightunit/`                  | ✅                 |
-| `list_meals`                            | `/api/v2/meal/`                                  | `/api/v2/meal/`                                  | ✅                 |
-| `get_meal_nutritional_values`           | `/api/v2/meal/{id}/nutritional_values/`          | `/api/v2/meal/{id}/nutritional_values/`          | ✅                 |
-| `list_meal_items`                       | `/api/v2/mealitem/`                              | `/api/v2/mealitem/`                              | ✅                 |
+| Tool                                    | Code Path                                        | OpenAPI Path                                     | Match?                              |
+| --------------------------------------- | ------------------------------------------------ | ------------------------------------------------ | ----------------------------------- |
+| `list_ingredients`                      | `/api/v2/ingredientinfo/`                        | `/api/v2/ingredientinfo/`                        | ✅                                  |
+| `get_ingredient`                        | `/api/v2/ingredientinfo/{id}/`                   | `/api/v2/ingredientinfo/{id}/`                   | ✅                                  |
+| `get_ingredient_values`                 | `/api/v2/ingredientinfo/{id}/get_values/`        | `/api/v2/ingredientinfo/{id}/get_values/`        | ✅                                  |
+| `list_ingredient_images`                | `/api/v2/ingredient-image/`                      | `/api/v2/ingredient-image/`                      | ✅                                  |
+| `list_ingredient_weight_units`          | `/api/v2/ingredientweightunit/`                  | `/api/v2/ingredientweightunit/`                  | ✅                                  |
+| `list_meals`                            | `/api/v2/meal/`                                  | `/api/v2/meal/`                                  | ✅                                  |
+| `get_meal_nutritional_values`           | `/api/v2/meal/{id}/nutritional_values/`          | `/api/v2/meal/{id}/nutritional_values/`          | ✅                                  |
+| `list_meal_items`                       | `/api/v2/mealitem/`                              | `/api/v2/mealitem/`                              | ✅                                  |
 | `list_nutrition_plans`                  | `/api/v2/nutritionplan/`                         | `/api/v2/nutritionplan/`                         | ✅ (changed from nutritionplaninfo) |
 | `get_nutrition_plan`                    | `/api/v2/nutritionplan/{id}/`                    | `/api/v2/nutritionplan/{id}/`                    | ✅ (changed from nutritionplaninfo) |
-| `get_nutrition_plan_nutritional_values` | `/api/v2/nutritionplan/{id}/nutritional_values/` | `/api/v2/nutritionplan/{id}/nutritional_values/` | ✅ (now validates response) |
-| `list_nutrition_diary_entries`          | `/api/v2/nutritiondiary/`                        | `/api/v2/nutritiondiary/`                        | ✅                 |
-| `create_nutrition_plan`                 | `/api/v2/nutritionplan/`                         | `/api/v2/nutritionplan/`                         | ✅                 |
+| `get_nutrition_plan_nutritional_values` | `/api/v2/nutritionplan/{id}/nutritional_values/` | `/api/v2/nutritionplan/{id}/nutritional_values/` | ✅ (now validates response)         |
+| `list_nutrition_diary_entries`          | `/api/v2/nutritiondiary/`                        | `/api/v2/nutritiondiary/`                        | ✅                                  |
+| `create_nutrition_plan`                 | `/api/v2/nutritionplan/`                         | `/api/v2/nutritionplan/`                         | ✅                                  |
 
 ---
 
@@ -213,8 +213,7 @@ Verified in `nutritionPlanTools.spec.ts` line 59-68 and `nutritionPlanResources.
 ### Priority 2 — Missing Test Files (MOSTLY DONE ✅)
 
 3-11. ~~All 9 missing tool test files~~ — Done. All now have `.spec.ts` files.
-12-13. Nutrition resource tests — Done. `nutritionDiaryResources.spec.ts` and `nutritionPlanResources.spec.ts` created.
-14. **Still missing**: 10 resource test files (routineResources, dayResources, slotResources, slotEntryResources, workoutLogResources, workoutSessionResources, weightEntryResources, galleryResources, ingredientResources, mealResources)
+12-13. Nutrition resource tests — Done. `nutritionDiaryResources.spec.ts` and `nutritionPlanResources.spec.ts` created. 14. **Still missing**: 10 resource test files (routineResources, dayResources, slotResources, slotEntryResources, workoutLogResources, workoutSessionResources, weightEntryResources, galleryResources, ingredientResources, mealResources)
 
 ### Priority 3 — Cleanup
 
