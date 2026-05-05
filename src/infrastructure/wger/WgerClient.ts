@@ -11,7 +11,7 @@ export class WgerClient {
   private readonly _timeoutMs: number;
 
   constructor(config: Config, logger: Logger) {
-    this._baseUrl = config.wgerBaseUrl.replace(/\/$/, "");
+    this._baseUrl = config.wgerBaseUrl.replace(/\/+$/, "");
     this._token = config.wgerApiToken;
     this._logger = logger;
     this._timeoutMs = config.wgerRequestTimeoutMs;

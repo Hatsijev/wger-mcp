@@ -30,7 +30,7 @@ import { registerNutritionPlanResources } from "./resources/nutritionPlanResourc
 import { registerNutritionDiaryResources } from "./resources/nutritionDiaryResources.js";
 
 const SERVER_NAME = "wger-mcp";
-const SERVER_VERSION = "0.1.1";
+const SERVER_VERSION = "0.1.2";
 
 export function createMcpServer(
   config: Config,

@@ -928,7 +928,7 @@
 
 | #     | Scenario                                        | Expected behavior                                                                                        |
 | ----- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 9.1.1 | `createMcpServer` returns `McpServer` instance  | Server name is `"wger-mcp"`, version `"0.1.1"`                                                           |
+| 9.1.1 | `createMcpServer` returns `McpServer` instance  | Server name is `"wger-mcp"`, version `"0.1.2"`                                                           |
 | 9.1.2 | Server has `tools` and `resources` capabilities | Both declared                                                                                            |
 | 9.1.3 | All four registration functions called          | `registerExerciseTools`, `registerExerciseResources`, `registerRoutineTools`, `registerRoutineResources` |
 | 9.1.4 | Debug log emitted with config flags             | Shows `enableDestructiveTools`, `enableAdminTools`, `enableRawWgerProxy`                                 |
