@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { Meal, MealItem, NutritionalValues } from "../../../domain/models/Nutrition.types.js";
+import { Meal, MealItem, NutritionalValues, MealRequest, MealItemRequest, PatchedMealRequest, PatchedMealItemRequest } from "../../../domain/models/Nutrition.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -13,7 +12,7 @@ import {
   decimalAmountSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listMealsSchema = z.object({
   limit: paginationLimitSchema,
@@ -72,16 +71,6 @@ const updateMealItemSchema = z.object({
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   amount: decimalAmountSchema.optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerMealTools(
   server: McpServer,
@@ -194,7 +183,7 @@ export function registerMealTools(
     },
     async (args) =>
       runTool(logger, "create_meal", async () => {
-        const data = await client.post<Meal>("/api/v2/meal/", toJsonBody(args));
+        const data = await client.post<Meal>("/api/v2/meal/", toJsonBody(args) as MealRequest);
         return successResult(data);
       }),
   );
@@ -210,7 +199,7 @@ export function registerMealTools(
         const { id, ...body } = args;
         const data = await client.patch<Meal>(
           `/api/v2/meal/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedMealRequest,
         );
         return successResult(data);
       }),
@@ -226,7 +215,7 @@ export function registerMealTools(
       runTool(logger, "create_meal_item", async () => {
         const data = await client.post<MealItem>(
           "/api/v2/mealitem/",
-          toJsonBody(args),
+          toJsonBody(args) as MealItemRequest,
         );
         return successResult(data);
       }),
@@ -243,7 +232,7 @@ export function registerMealTools(
         const { id, ...body } = args;
         const data = await client.patch<MealItem>(
           `/api/v2/mealitem/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedMealItemRequest,
         );
         return successResult(data);
       }),

@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { Day } from "../../../domain/models/Routine.types.js";
+import { Day, DayRequest, PatchedDayRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   boundedStringSchema,
   jsonConfigSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listDaysSchema = z.object({
   limit: paginationLimitSchema,
@@ -50,16 +49,6 @@ const updateDaySchema = z.object({
     .optional(),
   config: jsonConfigSchema,
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerDayTools(
   server: McpServer,
@@ -107,7 +96,7 @@ export function registerDayTools(
     },
     async (args) =>
       runTool(logger, "create_day", async () => {
-        const data = await client.post<Day>("/api/v2/day/", toJsonBody(args));
+        const data = await client.post<Day>("/api/v2/day/", toJsonBody(args) as DayRequest);
         return successResult(data);
       }),
   );
@@ -123,7 +112,7 @@ export function registerDayTools(
         const { id, ...body } = args;
         const data = await client.patch<Day>(
           `/api/v2/day/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedDayRequest,
         );
         return successResult(data);
       }),

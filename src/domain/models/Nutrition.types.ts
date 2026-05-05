@@ -2,6 +2,8 @@ import { Nested } from "./Exercise.types.js";
 
 export type Nutriscore = "a" | "b" | "c" | "d" | "e" | "" | null;
 
+// ── Response types (exact from wger.yaml) ───────────────────────────────
+
 export interface IngredientWeightUnitInfo {
   readonly id: number;
   readonly uuid: string;
@@ -192,4 +194,76 @@ export interface NutritionalValues {
   readonly fat_saturated: number;
   readonly fiber: number;
   readonly sodium: number;
+}
+
+// ── Request body types for POST (exact from wger.yaml *Request) ──────────
+
+export interface MealRequest {
+  readonly plan: number;
+  readonly time?: string | null;
+  readonly name?: string;
+}
+
+export interface MealItemRequest {
+  readonly meal: number;
+  readonly ingredient: number;
+  readonly weight_unit?: number | null;
+  readonly amount: string;
+}
+
+export interface NutritionPlanRequest {
+  readonly start?: string;
+  readonly end?: string | null;
+  readonly description?: string;
+  readonly only_logging?: boolean;
+  readonly goal_energy?: number | null;
+  readonly goal_protein?: number | null;
+  readonly goal_carbohydrates?: number | null;
+  readonly goal_fat?: number | null;
+  readonly goal_fiber?: number | null;
+}
+
+export interface LogItemRequest {
+  readonly plan: number;
+  readonly meal?: number | null;
+  readonly ingredient: number;
+  readonly weight_unit?: number | null;
+  readonly datetime?: string;
+  readonly amount: string;
+}
+
+// ── PATCH body types (exact from wger.yaml Patched*Request) ──────────────
+
+export interface PatchedMealRequest {
+  readonly plan?: number;
+  readonly time?: string | null;
+  readonly name?: string;
+}
+
+export interface PatchedMealItemRequest {
+  readonly meal?: number;
+  readonly ingredient?: number;
+  readonly weight_unit?: number | null;
+  readonly amount?: string;
+}
+
+export interface PatchedNutritionPlanRequest {
+  readonly start?: string;
+  readonly end?: string | null;
+  readonly description?: string;
+  readonly only_logging?: boolean;
+  readonly goal_energy?: number | null;
+  readonly goal_protein?: number | null;
+  readonly goal_carbohydrates?: number | null;
+  readonly goal_fat?: number | null;
+  readonly goal_fiber?: number | null;
+}
+
+export interface PatchedLogItemRequest {
+  readonly plan?: number;
+  readonly meal?: number | null;
+  readonly ingredient?: number;
+  readonly weight_unit?: number | null;
+  readonly datetime?: string;
+  readonly amount?: string;
 }

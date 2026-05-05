@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { WorkoutLog } from "../../../domain/models/Routine.types.js";
+import { WorkoutLog, WorkoutLogRequest, PatchedWorkoutLogRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   isoDateStringSchema,
   decimalAmountSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listWorkoutLogsSchema = z.object({
   limit: paginationLimitSchema,
@@ -63,16 +62,6 @@ const updateWorkoutLogSchema = z.object({
   rest: z.number().nullable().optional(),
   rest_target: z.number().nullable().optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerWorkoutLogTools(
   server: McpServer,
@@ -125,7 +114,7 @@ export function registerWorkoutLogTools(
       runTool(logger, "create_workout_log", async () => {
         const data = await client.post<WorkoutLog>(
           "/api/v2/workoutlog/",
-          toJsonBody(args),
+          toJsonBody(args) as WorkoutLogRequest,
         );
         return successResult(data);
       }),
@@ -142,7 +131,7 @@ export function registerWorkoutLogTools(
         const { id, ...body } = args;
         const data = await client.patch<WorkoutLog>(
           `/api/v2/workoutlog/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedWorkoutLogRequest,
         );
         return successResult(data);
       }),

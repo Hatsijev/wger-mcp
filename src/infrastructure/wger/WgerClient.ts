@@ -3,7 +3,7 @@ import { Config } from "../../domain/models/Config.types.js";
 import { Logger } from "../../application/ports/Logger.js";
 import { WgerError, WgerAuthError } from "../../domain/errors/WgerError.js";
 import { WgerStatusResponse } from "./types.js";
-import { JsonValue } from "../../domain/models/Json.types.js";
+
 
 export class WgerClient {
   private readonly _baseUrl: string;
@@ -26,9 +26,9 @@ export class WgerClient {
     return this._request<T>("GET", url, undefined, responseSchema);
   }
 
-  async post<T>(
+  async post<T, B extends object = object>(
     path: string,
-    body: JsonValue,
+    body: B,
     responseSchema?: z.ZodType<T>,
   ): Promise<T> {
     const url = `${this._baseUrl}${path}`;
@@ -36,9 +36,9 @@ export class WgerClient {
     return this._request<T>("POST", url, body, responseSchema);
   }
 
-  async put<T>(
+  async put<T, B extends object = object>(
     path: string,
-    body: JsonValue,
+    body: B,
     responseSchema?: z.ZodType<T>,
   ): Promise<T> {
     const url = `${this._baseUrl}${path}`;
@@ -46,9 +46,9 @@ export class WgerClient {
     return this._request<T>("PUT", url, body, responseSchema);
   }
 
-  async patch<T>(
+  async patch<T, B extends object = object>(
     path: string,
-    body: JsonValue,
+    body: B,
     responseSchema?: z.ZodType<T>,
   ): Promise<T> {
     const url = `${this._baseUrl}${path}`;
@@ -63,7 +63,7 @@ export class WgerClient {
   }
 
   async getStatus(): Promise<WgerStatusResponse> {
-    await this.get<JsonValue>("/api/v2/exerciseinfo/", { limit: 1 });
+    await this.get<{ readonly id: number }>("/api/v2/exerciseinfo/", { limit: 1 });
     return { status: "ok", version: "2.5.0" };
   }
 
@@ -95,7 +95,7 @@ export class WgerClient {
   private async _request<T>(
     method: string,
     url: string,
-    body?: JsonValue,
+    body?: object,
     responseSchema?: z.ZodType<T>,
   ): Promise<T> {
     const response = await this._executeFetch(method, url, body);
@@ -109,7 +109,7 @@ export class WgerClient {
   private async _executeFetch(
     method: string,
     url: string,
-    body?: JsonValue,
+    body?: object,
   ): Promise<Response> {
     const headers: Record<string, string> = {
       Authorization: `Token ${this._token}`,

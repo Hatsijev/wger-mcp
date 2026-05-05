@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { GalleryImage } from "../../../domain/models/Routine.types.js";
+import { GalleryImage, ImageRequest, PatchedImageRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   isoDateStringSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listGalleryImagesSchema = z.object({
   limit: paginationLimitSchema,
@@ -35,16 +34,6 @@ const updateGalleryImageSchema = z.object({
   image: boundedStringSchema(2000).optional(),
   description: boundedStringSchema(1000).optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerGalleryTools(
   server: McpServer,
@@ -95,7 +84,7 @@ export function registerGalleryTools(
       runTool(logger, "create_gallery_image", async () => {
         const data = await client.post<GalleryImage>(
           "/api/v2/gallery/",
-          toJsonBody(args),
+          toJsonBody(args) as ImageRequest,
         );
         return successResult(data);
       }),
@@ -112,7 +101,7 @@ export function registerGalleryTools(
         const { id, ...body } = args;
         const data = await client.patch<GalleryImage>(
           `/api/v2/gallery/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedImageRequest,
         );
         return successResult(data);
       }),

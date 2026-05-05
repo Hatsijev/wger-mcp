@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { WeightEntry } from "../../../domain/models/Routine.types.js";
+import { WeightEntry, WeightEntryRequest, PatchedWeightEntryRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   isoDateStringSchema,
   decimalAmountSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listWeightEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -35,16 +34,6 @@ const updateWeightEntrySchema = z.object({
   date: isoDateStringSchema.optional(),
   weight: decimalAmountSchema.optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerWeightEntryTools(
   server: McpServer,
@@ -97,7 +86,7 @@ export function registerWeightEntryTools(
       runTool(logger, "create_weight_entry", async () => {
         const data = await client.post<WeightEntry>(
           "/api/v2/weightentry/",
-          toJsonBody(args),
+          toJsonBody(args) as WeightEntryRequest,
         );
         return successResult(data);
       }),
@@ -114,7 +103,7 @@ export function registerWeightEntryTools(
         const { id, ...body } = args;
         const data = await client.patch<WeightEntry>(
           `/api/v2/weightentry/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedWeightEntryRequest,
         );
         return successResult(data);
       }),

@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { NutritionDiaryEntry, NutritionalValues } from "../../../domain/models/Nutrition.types.js";
+import { NutritionDiaryEntry, NutritionalValues, LogItemRequest, PatchedLogItemRequest } from "../../../domain/models/Nutrition.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -13,7 +12,7 @@ import {
   isoDateTimeStringSchema,
   decimalAmountSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listNutritionDiaryEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -48,16 +47,6 @@ const updateNutritionDiaryEntrySchema = z.object({
   datetime: isoDateTimeStringSchema.optional(),
   amount: decimalAmountSchema.optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerNutritionDiaryTools(
   server: McpServer,
@@ -124,7 +113,7 @@ export function registerNutritionDiaryTools(
       runTool(logger, "create_nutrition_diary_entry", async () => {
         const data = await client.post<NutritionDiaryEntry>(
           "/api/v2/nutritiondiary/",
-          toJsonBody(args),
+          toJsonBody(args) as LogItemRequest,
         );
         return successResult(data);
       }),
@@ -141,7 +130,7 @@ export function registerNutritionDiaryTools(
         const { id, ...body } = args;
         const data = await client.patch<NutritionDiaryEntry>(
           `/api/v2/nutritiondiary/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedLogItemRequest,
         );
         return successResult(data);
       }),

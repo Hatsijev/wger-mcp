@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { WorkoutSession } from "../../../domain/models/Routine.types.js";
+import { WorkoutSession, WorkoutSessionRequest, PatchedWorkoutSessionRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   isoDateStringSchema,
   timeStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listWorkoutSessionsSchema = z.object({
   limit: paginationLimitSchema,
@@ -44,16 +43,6 @@ const updateWorkoutSessionSchema = z.object({
   time_start: timeStringSchema.nullable().optional(),
   time_end: timeStringSchema.nullable().optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerWorkoutSessionTools(
   server: McpServer,
@@ -105,7 +94,7 @@ export function registerWorkoutSessionTools(
       runTool(logger, "create_workout_session", async () => {
         const data = await client.post<WorkoutSession>(
           "/api/v2/workoutsession/",
-          toJsonBody(args),
+          toJsonBody(args) as WorkoutSessionRequest,
         );
         return successResult(data);
       }),
@@ -122,7 +111,7 @@ export function registerWorkoutSessionTools(
         const { id, ...body } = args;
         const data = await client.patch<WorkoutSession>(
           `/api/v2/workoutsession/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedWorkoutSessionRequest,
         );
         return successResult(data);
       }),

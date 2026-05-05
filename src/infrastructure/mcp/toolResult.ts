@@ -1,8 +1,8 @@
 import { Logger } from "../../application/ports/Logger.js";
 import { WgerValidationError } from "../../domain/errors/WgerError.js";
 
-// Index signatures use `unknown` because the MCP SDK's CallToolResult type
-// requires `{ [x: string]: unknown }`. This is an allowed SDK-boundary exception.
+// Index signatures use `{ [x: string]: unknown }` to satisfy the MCP SDK's
+// CallToolResult type. This is the only allowed SDK-boundary exception.
 export interface ToolSuccessResult {
   readonly content: Array<{
     type: "text";
@@ -57,6 +57,17 @@ export async function runTool<T extends ToolResult>(
     logger.error("Tool execution failed", { tool: toolName, error: message });
     return errorResult(message) as T;
   }
+}
+
+export function toJsonBody<T extends object>(obj: T): T {
+  const result = {} as T;
+  for (const key of Object.keys(obj)) {
+    const value = (obj as Record<string, string | number | boolean | null | undefined | object>)[key];
+    if (value !== undefined) {
+      (result as Record<string, string | number | boolean | null | object>)[key] = value;
+    }
+  }
+  return result;
 }
 
 export function validateResourceId(

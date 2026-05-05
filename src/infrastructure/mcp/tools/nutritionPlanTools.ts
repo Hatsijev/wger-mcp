@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { NutritionPlan, NutritionalValues } from "../../../domain/models/Nutrition.types.js";
+import { NutritionPlan, NutritionalValues, NutritionPlanRequest, PatchedNutritionPlanRequest } from "../../../domain/models/Nutrition.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   isoDateStringSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listNutritionPlansSchema = z.object({
   limit: paginationLimitSchema,
@@ -52,16 +51,6 @@ const updateNutritionPlanSchema = z.object({
   goal_fat: z.number().nullable().optional(),
   goal_fiber: z.number().nullable().optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerNutritionPlanTools(
   server: McpServer,
@@ -128,7 +117,7 @@ export function registerNutritionPlanTools(
       runTool(logger, "create_nutrition_plan", async () => {
         const data = await client.post<NutritionPlan>(
           "/api/v2/nutritionplan/",
-          toJsonBody(args),
+          toJsonBody(args) as NutritionPlanRequest,
         );
         return successResult(data);
       }),
@@ -145,7 +134,7 @@ export function registerNutritionPlanTools(
         const { id, ...body } = args;
         const data = await client.patch<NutritionPlan>(
           `/api/v2/nutritionplan/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedNutritionPlanRequest,
         );
         return successResult(data);
       }),

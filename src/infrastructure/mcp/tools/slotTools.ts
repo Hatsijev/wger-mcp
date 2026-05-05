@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { Slot } from "../../../domain/models/Routine.types.js";
+import { Slot, SlotRequest, PatchedSlotRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   boundedStringSchema,
   jsonConfigSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listSlotsSchema = z.object({
   limit: paginationLimitSchema,
@@ -38,16 +37,6 @@ const updateSlotSchema = z.object({
   comment: boundedStringSchema(200).optional(),
   config: jsonConfigSchema,
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerSlotTools(
   server: McpServer,
@@ -95,7 +84,7 @@ export function registerSlotTools(
     },
     async (args) =>
       runTool(logger, "create_slot", async () => {
-        const data = await client.post<Slot>("/api/v2/slot/", toJsonBody(args));
+        const data = await client.post<Slot>("/api/v2/slot/", toJsonBody(args) as SlotRequest);
         return successResult(data);
       }),
   );
@@ -111,7 +100,7 @@ export function registerSlotTools(
         const { id, ...body } = args;
         const data = await client.patch<Slot>(
           `/api/v2/slot/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedSlotRequest,
         );
         return successResult(data);
       }),

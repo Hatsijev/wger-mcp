@@ -3,8 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { JsonValue } from "../../../domain/models/Json.types.js";
-import { Routine } from "../../../domain/models/Routine.types.js";
+import { Routine, RoutineRequest, PatchedRoutineRequest } from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +11,7 @@ import {
   isoDateStringSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { runTool, successResult, toJsonBody } from "../toolResult.js";
 
 const listRoutinesSchema = z.object({
   limit: paginationLimitSchema,
@@ -63,16 +62,6 @@ const updateRoutineSchema = z.object({
   is_template: z.boolean().optional(),
   is_public: z.boolean().optional(),
 });
-
-function toJsonBody(obj: Record<string, JsonValue | undefined>): JsonValue {
-  const result: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
-      result[key] = value as JsonValue;
-    }
-  }
-  return result;
-}
 
 export function registerRoutineTools(
   server: McpServer,
@@ -196,7 +185,7 @@ export function registerRoutineTools(
       runTool(logger, "create_routine", async () => {
         const data = await client.post<Routine>(
           "/api/v2/routine/",
-          toJsonBody(args),
+          toJsonBody(args) as RoutineRequest,
         );
         return successResult(data);
       }),
@@ -213,7 +202,7 @@ export function registerRoutineTools(
         const { id, ...body } = args;
         const data = await client.patch<Routine>(
           `/api/v2/routine/${id}/`,
-          toJsonBody(body),
+          toJsonBody(body) as PatchedRoutineRequest,
         );
         return successResult(data);
       }),
