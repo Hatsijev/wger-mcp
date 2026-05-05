@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -54,7 +60,12 @@ describe("registerExerciseTools", () => {
 
   describe("list_exercises", () => {
     it("5.1.1: no arguments calls GET /api/v2/exerciseinfo/", async () => {
-      client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+      client.get.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
       registerExerciseTools(server as never, client as never, logger);
       const handler = server.getTool("list_exercises")!;
       await handler({});
@@ -66,7 +77,12 @@ describe("registerExerciseTools", () => {
     });
 
     it("5.1.2: passes limit and offset", async () => {
-      client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+      client.get.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
       registerExerciseTools(server as never, client as never, logger);
       const handler = server.getTool("list_exercises")!;
       await handler({ limit: 10, offset: 20 });
@@ -78,31 +94,58 @@ describe("registerExerciseTools", () => {
     });
 
     it("5.1.4: passes all filter params", async () => {
-      client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+      client.get.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
       registerExerciseTools(server as never, client as never, logger);
       const handler = server.getTool("list_exercises")!;
-      await handler({ limit: 10, offset: 20, category: 3, equipment: 1, language: 2 });
+      await handler({
+        limit: 10,
+        offset: 20,
+        category: 3,
+        equipment: 1,
+        language: 2,
+      });
       expect(client.get).toHaveBeenCalledWith(
         "/api/v2/exerciseinfo/",
-        expect.objectContaining({ limit: 10, offset: 20, category: 3, equipment: 1, language: 2 }),
+        expect.objectContaining({
+          limit: 10,
+          offset: 20,
+          category: 3,
+          equipment: 1,
+          language: 2,
+        }),
         expect.anything(),
       );
     });
 
     it("5.1.5: returns paginated response", async () => {
-      const data = { count: 1, next: null, previous: null, results: [{ id: 1 }] };
+      const data = {
+        count: 1,
+        next: null,
+        previous: null,
+        results: [{ id: 1 }],
+      };
       client.get.mockResolvedValue(data);
       registerExerciseTools(server as never, client as never, logger);
       const handler = server.getTool("list_exercises")!;
       const result = await handler({});
-      const parsed = JSON.parse((result as { content: Array<{ type: string; text: string }> }).content[0].text);
+      const parsed = JSON.parse(
+        (result as { content: Array<{ type: string; text: string }> })
+          .content[0].text,
+      );
       expect(parsed.ok).toBe(true);
       expect(parsed.data).toEqual(data);
     });
 
     it("5.1.7: schema rejects string limit", async () => {
       registerExerciseTools(server as never, client as never, logger);
-      const schema = server.getSchema("list_exercises") as { parse: (v: unknown) => unknown };
+      const schema = server.getSchema("list_exercises") as {
+        parse: (v: unknown) => unknown;
+      };
       expect(() => schema.parse({ limit: "ten" })).toThrow();
     });
   });
@@ -113,25 +156,38 @@ describe("registerExerciseTools", () => {
       registerExerciseTools(server as never, client as never, logger);
       const handler = server.getTool("get_exercise")!;
       await handler({ id: 1 });
-      expect(client.get).toHaveBeenCalledWith("/api/v2/exerciseinfo/1/", undefined, expect.anything());
+      expect(client.get).toHaveBeenCalledWith(
+        "/api/v2/exerciseinfo/1/",
+        undefined,
+        expect.anything(),
+      );
     });
 
     it("5.2.5: schema requires id", async () => {
       registerExerciseTools(server as never, client as never, logger);
-      const schema = server.getSchema("get_exercise") as { parse: (v: unknown) => unknown };
+      const schema = server.getSchema("get_exercise") as {
+        parse: (v: unknown) => unknown;
+      };
       expect(() => schema.parse({})).toThrow();
     });
 
     it("5.2.6: schema rejects string id", async () => {
       registerExerciseTools(server as never, client as never, logger);
-      const schema = server.getSchema("get_exercise") as { parse: (v: unknown) => unknown };
+      const schema = server.getSchema("get_exercise") as {
+        parse: (v: unknown) => unknown;
+      };
       expect(() => schema.parse({ id: "1" })).toThrow();
     });
   });
 
   describe("search_exercises", () => {
     it("5.3.1: maps term to name__search", async () => {
-      client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+      client.get.mockResolvedValue({
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      });
       registerExerciseTools(server as never, client as never, logger);
       const handler = server.getTool("search_exercises")!;
       await handler({ term: "bench press" });
@@ -144,7 +200,9 @@ describe("registerExerciseTools", () => {
 
     it("5.3.6: schema requires term", async () => {
       registerExerciseTools(server as never, client as never, logger);
-      const schema = server.getSchema("search_exercises") as { parse: (v: unknown) => unknown };
+      const schema = server.getSchema("search_exercises") as {
+        parse: (v: unknown) => unknown;
+      };
       expect(() => schema.parse({ limit: 10 })).toThrow();
     });
   });
@@ -156,7 +214,10 @@ describe("registerExerciseTools", () => {
       const handler = server.getTool("get_wger_status")!;
       const result = await handler({});
       expect(client.getStatus).toHaveBeenCalled();
-      const parsed = JSON.parse((result as { content: Array<{ type: string; text: string }> }).content[0].text);
+      const parsed = JSON.parse(
+        (result as { content: Array<{ type: string; text: string }> })
+          .content[0].text,
+      );
       expect(parsed.ok).toBe(true);
       expect(parsed.data.status).toBe("ok");
     });

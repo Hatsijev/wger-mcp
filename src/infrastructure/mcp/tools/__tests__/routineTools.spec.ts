@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -57,19 +63,33 @@ describe("registerRoutineTools", () => {
   describe("create_routine schema", () => {
     it("6.1.1: minimal valid input", async () => {
       registerRoutineTools(server as never, client as never, logger, true);
-      const schema = server.getSchema("create_routine") as { parse: (v: unknown) => unknown };
-      expect(() => schema.parse({ start: "2025-01-01", end: "2025-12-31" })).not.toThrow();
+      const schema = server.getSchema("create_routine") as {
+        parse: (v: unknown) => unknown;
+      };
+      expect(() =>
+        schema.parse({ start: "2025-01-01", end: "2025-12-31" }),
+      ).not.toThrow();
     });
 
     it("6.1.3: name exceeds 25 chars rejected", async () => {
       registerRoutineTools(server as never, client as never, logger, true);
-      const schema = server.getSchema("create_routine") as { parse: (v: unknown) => unknown };
-      expect(() => schema.parse({ start: "2025-01-01", end: "2025-12-31", name: "a".repeat(26) })).toThrow();
+      const schema = server.getSchema("create_routine") as {
+        parse: (v: unknown) => unknown;
+      };
+      expect(() =>
+        schema.parse({
+          start: "2025-01-01",
+          end: "2025-12-31",
+          name: "a".repeat(26),
+        }),
+      ).toThrow();
     });
 
     it("6.1.5: missing start rejected", async () => {
       registerRoutineTools(server as never, client as never, logger, true);
-      const schema = server.getSchema("create_routine") as { parse: (v: unknown) => unknown };
+      const schema = server.getSchema("create_routine") as {
+        parse: (v: unknown) => unknown;
+      };
       expect(() => schema.parse({ end: "2025-12-31" })).toThrow();
     });
   });
@@ -112,7 +132,10 @@ describe("registerRoutineTools", () => {
       registerRoutineTools(server as never, client as never, logger, true);
       const handler = server.getTool("list_routines")!;
       const result = await handler({});
-      const parsed = JSON.parse((result as { content: Array<{ type: string; text: string }> }).content[0].text);
+      const parsed = JSON.parse(
+        (result as { content: Array<{ type: string; text: string }> })
+          .content[0].text,
+      );
       expect(parsed.ok).toBe(false);
       expect(parsed.error).toBe("API down");
     });

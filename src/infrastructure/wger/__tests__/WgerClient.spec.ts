@@ -39,10 +39,14 @@ describe("WgerClient", () => {
       ok,
       status,
       clone: () => ({
-        text: () => Promise.resolve(typeof body === "string" ? body : JSON.stringify(body)),
+        text: () =>
+          Promise.resolve(
+            typeof body === "string" ? body : JSON.stringify(body),
+          ),
       }),
       json: () => Promise.resolve(body),
-      text: () => Promise.resolve(typeof body === "string" ? body : JSON.stringify(body)),
+      text: () =>
+        Promise.resolve(typeof body === "string" ? body : JSON.stringify(body)),
     };
   }
 
@@ -89,7 +93,10 @@ describe("WgerClient", () => {
     it("4.2.3: undefined params are omitted", async () => {
       fetchMock.mockResolvedValue(mockResponse({ count: 1, results: [] }));
       const client = createClient();
-      await client.get("/api/v2/exerciseinfo/", { limit: 10, offset: undefined });
+      await client.get("/api/v2/exerciseinfo/", {
+        limit: 10,
+        offset: undefined,
+      });
       const url = fetchMock.mock.calls[0][0] as string;
       expect(url).toContain("limit=10");
       expect(url).not.toContain("offset");
@@ -209,19 +216,25 @@ describe("WgerClient", () => {
     it("4.10.2: DELETE 404 throws WgerError", async () => {
       fetchMock.mockResolvedValue(mockResponse("Not found", 404, false));
       const client = createClient();
-      await expect(client.delete("/api/v2/routine/1/")).rejects.toThrow(WgerError);
+      await expect(client.delete("/api/v2/routine/1/")).rejects.toThrow(
+        WgerError,
+      );
     });
 
     it("4.10.3: DELETE 401 throws WgerAuthError", async () => {
       fetchMock.mockResolvedValue(mockResponse("Unauthorized", 401, false));
       const client = createClient();
-      await expect(client.delete("/api/v2/routine/1/")).rejects.toThrow(WgerAuthError);
+      await expect(client.delete("/api/v2/routine/1/")).rejects.toThrow(
+        WgerAuthError,
+      );
     });
   });
 
   describe("getStatus", () => {
     it("4.6.1: getStatus succeeds", async () => {
-      fetchMock.mockResolvedValue(mockResponse({ count: 1, results: [{ id: 1 }] }));
+      fetchMock.mockResolvedValue(
+        mockResponse({ count: 1, results: [{ id: 1 }] }),
+      );
       const client = createClient();
       const status = await client.getStatus();
       expect(status.status).toBe("ok");
@@ -312,13 +325,20 @@ describe("WgerClient", () => {
 
   describe("response schema validation", () => {
     it("validates response when schema provided", async () => {
-      fetchMock.mockResolvedValue(mockResponse({ count: 1, next: null, previous: null, results: [] }));
+      fetchMock.mockResolvedValue(
+        mockResponse({ count: 1, next: null, previous: null, results: [] }),
+      );
       const client = createClient();
       const schema = {
         safeParse: (data: unknown) => ({ success: true, data }),
       };
       const result = await client.get("/path", {}, schema as never);
-      expect(result).toEqual({ count: 1, next: null, previous: null, results: [] });
+      expect(result).toEqual({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [],
+      });
     });
 
     it("throws when response schema validation fails", async () => {
@@ -330,7 +350,9 @@ describe("WgerClient", () => {
           error: { issues: [{ path: ["count"], message: "Required" }] },
         }),
       };
-      await expect(client.get("/path", {}, schema as never)).rejects.toThrow(WgerError);
+      await expect(client.get("/path", {}, schema as never)).rejects.toThrow(
+        WgerError,
+      );
     });
   });
 });

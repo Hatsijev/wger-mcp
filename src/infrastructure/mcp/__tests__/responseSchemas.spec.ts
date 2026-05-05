@@ -18,7 +18,14 @@ describe("responseSchemas", () => {
         count: 2,
         next: "https://next",
         previous: null,
-        results: [{ id: 1, created: "2024-01-01", start: "2024-01-01", end: "2024-12-31" }],
+        results: [
+          {
+            id: 1,
+            created: "2024-01-01",
+            start: "2024-01-01",
+            end: "2024-12-31",
+          },
+        ],
       });
       expect(result.count).toBe(2);
       expect(result.results[0].id).toBe(1);

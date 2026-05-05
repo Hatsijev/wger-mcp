@@ -56,7 +56,9 @@ describe("createMcpServer", () => {
     };
     const client = createMockClient();
     createMcpServer(baseConfig, logger as never, client);
-    expect(logs.some((l) => l.includes("MCP server instance created"))).toBe(true);
+    expect(logs.some((l) => l.includes("MCP server instance created"))).toBe(
+      true,
+    );
   });
 
   it("9.2.1-2: same client and logger passed to all", () => {

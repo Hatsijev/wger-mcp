@@ -83,7 +83,12 @@ describe("ConsoleLogger", () => {
 
   it("3.2.4: meta with various types serializes correctly", () => {
     const logger = new ConsoleLogger("debug");
-    logger.info("msg", { count: 42, active: true, extra: null, missing: undefined });
+    logger.info("msg", {
+      count: 42,
+      active: true,
+      extra: null,
+      missing: undefined,
+    });
     const call = stderrSpy.mock.calls[0][0] as string;
     expect(call).toContain('"count":42');
     expect(call).toContain('"active":true');

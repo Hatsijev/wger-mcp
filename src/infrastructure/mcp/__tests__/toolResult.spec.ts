@@ -1,10 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { successResult, errorResult, runTool, toJsonBody, validateResourceId } from "../toolResult.js";
+import {
+  successResult,
+  errorResult,
+  runTool,
+  toJsonBody,
+  validateResourceId,
+} from "../toolResult.js";
 import { ConsoleLogger } from "../../ConsoleLogger.js";
 
-function getText(result: { content: Array<{ type: string; text?: string }> }): string {
+function getText(result: {
+  content: Array<{ type: string; text?: string }>;
+}): string {
   const item = result.content[0];
-  if (item.type !== "text" || !item.text) throw new Error("Expected text content");
+  if (item.type !== "text" || !item.text)
+    throw new Error("Expected text content");
   return item.text;
 }
 
@@ -33,7 +42,9 @@ describe("toolResult", () => {
   describe("runTool", () => {
     it("returns handler result on success", async () => {
       const logger = new ConsoleLogger("error");
-      const result = await runTool(logger, "test_tool", async () => successResult("data"));
+      const result = await runTool(logger, "test_tool", async () =>
+        successResult("data"),
+      );
       expect(getText(result)).toContain("data");
     });
 
@@ -95,7 +106,9 @@ describe("toolResult", () => {
     });
 
     it("throws for undefined", () => {
-      expect(() => validateResourceId(undefined as unknown as string)).toThrow();
+      expect(() =>
+        validateResourceId(undefined as unknown as string),
+      ).toThrow();
     });
 
     it("throws for NaN", () => {

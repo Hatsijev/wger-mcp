@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import type { ExerciseInfo, ExerciseImage, Muscle, Nested } from "../Exercise.types.js";
+import type {
+  ExerciseInfo,
+  ExerciseImage,
+  Muscle,
+  Nested,
+} from "../Exercise.types.js";
 
 describe("Exercise types", () => {
   it("1.3.1: ExerciseInfo has all required fields", () => {
@@ -60,7 +65,12 @@ describe("Exercise types", () => {
   it("1.3.4: Nested.url accepts undefined, null, and string", () => {
     const a: Nested = { id: 1, full_name: "A", short_name: "a" };
     const b: Nested = { id: 1, full_name: "A", short_name: "a", url: null };
-    const c: Nested = { id: 1, full_name: "A", short_name: "a", url: "http://x" };
+    const c: Nested = {
+      id: 1,
+      full_name: "A",
+      short_name: "a",
+      url: "http://x",
+    };
     expect(a.url).toBeUndefined();
     expect(b.url).toBeNull();
     expect(c.url).toBe("http://x");

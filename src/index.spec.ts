@@ -12,14 +12,19 @@ describe("main entry point", () => {
     process.env = { ...originalEnv };
     process.env.WGER_BASE_URL = "https://wger.de";
     process.env.WGER_API_TOKEN = "test-token";
-    exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: () => Promise.resolve({ count: 1, results: [{ id: 1 }] }),
-      clone: () => ({ text: () => Promise.resolve("{}") }),
-      text: () => Promise.resolve("{}"),
-    }));
+    exitSpy = vi
+      .spyOn(process, "exit")
+      .mockImplementation(() => undefined as never);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ count: 1, results: [{ id: 1 }] }),
+        clone: () => ({ text: () => Promise.resolve("{}") }),
+        text: () => Promise.resolve("{}"),
+      }),
+    );
   });
 
   afterEach(() => {

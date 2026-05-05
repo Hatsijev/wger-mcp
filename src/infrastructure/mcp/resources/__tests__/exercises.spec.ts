@@ -17,9 +17,16 @@ function createMockClient() {
 function createMockServer() {
   const resources = new Map<string, () => Promise<unknown>>();
   return {
-    registerResource: vi.fn((name: string, _uri: unknown, _meta: unknown, handler: () => Promise<unknown>) => {
-      resources.set(name, handler);
-    }),
+    registerResource: vi.fn(
+      (
+        name: string,
+        _uri: unknown,
+        _meta: unknown,
+        handler: () => Promise<unknown>,
+      ) => {
+        resources.set(name, handler);
+      },
+    ),
     getResource: (name: string) => resources.get(name),
     resources,
   };
@@ -42,7 +49,12 @@ describe("registerExerciseResources", () => {
   });
 
   it("7.1.1: exercises resource fetches with limit=20", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerExerciseResources(server as never, client as never, logger);
     const handler = server.getResource("exercises")!;
     await handler();
@@ -54,21 +66,39 @@ describe("registerExerciseResources", () => {
   });
 
   it("7.1.2: muscles resource", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerExerciseResources(server as never, client as never, logger);
     const handler = server.getResource("muscles")!;
     await handler();
-    expect(client.get).toHaveBeenCalledWith("/api/v2/muscle/", { limit: 20 }, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/muscle/",
+      { limit: 20 },
+      expect.anything(),
+    );
   });
 
   it("7.1.5: all static resources hardcode limit 20", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerExerciseResources(server as never, client as never, logger);
     for (const name of ["exercises", "muscles", "equipment", "categories"]) {
       client.get.mockClear();
       const handler = server.getResource(name)!;
       await handler();
-      expect(client.get).toHaveBeenCalledWith(expect.any(String), { limit: 20 }, expect.anything());
+      expect(client.get).toHaveBeenCalledWith(
+        expect.any(String),
+        { limit: 20 },
+        expect.anything(),
+      );
     }
   });
 });
