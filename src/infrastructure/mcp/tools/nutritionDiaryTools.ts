@@ -21,6 +21,7 @@ import { runTool, successResult, toJsonBody } from "../toolResult.js";
 import {
   paginatedResponseSchema,
   nutritionDiaryEntryResponseSchema,
+  nutritionalValuesResponseSchema,
 } from "../responseSchemas.js";
 
 const listNutritionDiaryEntriesSchema = z.object({
@@ -114,6 +115,8 @@ export function registerNutritionDiaryTools(
       runTool(logger, "get_nutrition_diary_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/nutritiondiary/${args.id}/nutritional_values/`,
+          undefined,
+          nutritionalValuesResponseSchema,
         );
         return successResult(data);
       }),

@@ -85,7 +85,7 @@ describe("registerMealTools", () => {
     registerMealTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_meal_nutritional_values")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/meal/1/nutritional_values/");
+    expect(client.get).toHaveBeenCalledWith("/api/v2/meal/1/nutritional_values/", undefined, expect.anything());
   });
 
   it("list_meal_items calls GET /api/v2/mealitem/", async () => {

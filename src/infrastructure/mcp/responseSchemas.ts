@@ -2,6 +2,9 @@ import { z } from "zod";
 import { jsonValueSchema } from "./sharedSchemas.js";
 import { Config } from "../../domain/models/Routine.types.js";
 
+// Boundary: Config is intentionally an open-ended JSON object in the domain model,
+// but Wger returns arbitrary JSON-compatible values for config fields.
+// This assertion bridges the runtime JSON validation to the compile-time Config type.
 const configResponseSchema = jsonValueSchema as z.ZodType<Config>;
 
 export const wgerStatusResponseSchema = z.object({
@@ -310,6 +313,17 @@ export const ingredientImageResponseSchema = z.object({
   size: z.number().int(),
   width: z.number().int(),
   height: z.number().int(),
+});
+
+export const nutritionalValuesResponseSchema = z.object({
+  energy: z.number(),
+  protein: z.number(),
+  carbohydrates: z.number(),
+  carbohydrates_sugar: z.number(),
+  fat: z.number(),
+  fat_saturated: z.number(),
+  fiber: z.number(),
+  sodium: z.number(),
 });
 
 export const ingredientInfoResponseSchema = z.object({

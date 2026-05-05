@@ -20,6 +20,7 @@ import { runTool, successResult, toJsonBody } from "../toolResult.js";
 import {
   paginatedResponseSchema,
   nutritionPlanResponseSchema,
+  nutritionalValuesResponseSchema,
 } from "../responseSchemas.js";
 
 const listNutritionPlansSchema = z.object({
@@ -175,6 +176,8 @@ export function registerNutritionPlanTools(
       runTool(logger, "get_nutrition_plan_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/nutritionplan/${args.id}/nutritional_values/`,
+          undefined,
+          nutritionalValuesResponseSchema,
         );
         return successResult(data);
       }),

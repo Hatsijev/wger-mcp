@@ -25,6 +25,7 @@ import {
   paginatedResponseSchema,
   mealResponseSchema,
   mealItemResponseSchema,
+  nutritionalValuesResponseSchema,
 } from "../responseSchemas.js";
 
 const listMealsSchema = z.object({
@@ -140,6 +141,8 @@ export function registerMealTools(
       runTool(logger, "get_meal_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/meal/${args.id}/nutritional_values/`,
+          undefined,
+          nutritionalValuesResponseSchema,
         );
         return successResult(data);
       }),
@@ -194,6 +197,8 @@ export function registerMealTools(
       runTool(logger, "get_meal_item_nutritional_values", async () => {
         const data = await client.get<NutritionalValues>(
           `/api/v2/mealitem/${args.id}/nutritional_values/`,
+          undefined,
+          nutritionalValuesResponseSchema,
         );
         return successResult(data);
       }),

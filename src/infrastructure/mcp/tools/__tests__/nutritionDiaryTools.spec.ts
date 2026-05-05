@@ -81,7 +81,7 @@ describe("registerNutritionDiaryTools", () => {
     registerNutritionDiaryTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_nutrition_diary_nutritional_values")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/nutritiondiary/1/nutritional_values/");
+    expect(client.get).toHaveBeenCalledWith("/api/v2/nutritiondiary/1/nutritional_values/", undefined, expect.anything());
   });
 
   it("create_nutrition_diary_entry calls POST /api/v2/nutritiondiary/", async () => {
