@@ -44,7 +44,7 @@ export interface ExerciseImage {
   readonly exercise_uuid: string;
   readonly image: string;
   readonly is_main?: boolean | undefined;
-  readonly style?: number | undefined;
+  readonly style?: "1" | "2" | "3" | "4" | "5" | undefined;
   readonly license?: number | undefined;
   readonly license_title?: string | undefined;
   readonly license_object_url?: string | undefined;

@@ -51,7 +51,7 @@ export const exerciseImageResponseSchema = z.object({
   exercise_uuid: z.string(),
   image: z.string(),
   is_main: z.boolean().optional(),
-  style: z.number().int().optional(),
+  style: z.enum(["1", "2", "3", "4", "5"]).optional(),
   license: z.number().int().optional(),
   license_title: z.string().optional(),
   license_object_url: z.string().optional(),

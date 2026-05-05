@@ -29,13 +29,16 @@ import { registerMealResources } from "./resources/mealResources.js";
 import { registerNutritionPlanResources } from "./resources/nutritionPlanResources.js";
 import { registerNutritionDiaryResources } from "./resources/nutritionDiaryResources.js";
 
+const SERVER_NAME = "wger-mcp";
+const SERVER_VERSION = "0.1.1";
+
 export function createMcpServer(
   config: Config,
   logger: Logger,
   client: WgerClient,
 ): McpServer {
   const server = new McpServer(
-    { name: "wger-mcp", version: "0.1.0" },
+    { name: SERVER_NAME, version: SERVER_VERSION },
     {
       capabilities: {
         tools: {},
@@ -72,8 +75,8 @@ export function createMcpServer(
   registerNutritionDiaryResources(server, client, logger);
 
   logger.debug("MCP server instance created", {
-    name: "wger-mcp",
-    version: "0.1.0",
+    name: SERVER_NAME,
+    version: SERVER_VERSION,
     enableDestructiveTools: config.enableDestructiveTools,
     enableAdminTools: config.enableAdminTools,
     enableRawWgerProxy: config.enableRawWgerProxy,

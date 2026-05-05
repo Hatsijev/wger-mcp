@@ -139,13 +139,13 @@
 | 3.1.5 | Logger created with `"debug"` level; call all four methods | All four produce output   |
 | 3.1.6 | Logger created with `"warn"` level; call `info("msg")`     | No output                 |
 | 3.1.7 | Logger created with `"warn"` level; call `warn("msg")`     | Output                    |
-| 3.1.8 | Logger created with `"info"` level; call `info("msg")`     | Output to `console.log`   |
+| 3.1.8 | Logger created with `"info"` level; call `info("msg")`     | Output to stderr          |
 
 ### 3.2 Message Formatting
 
 | #     | Scenario                                                                    | Expected behavior                                                                                                                |
 | ----- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| 3.2.1 | `info("hello")`                                                             | Outputs `[INFO] hello`                                                                                                           |
+| 3.2.1 | `info("hello")`                                                             | Outputs an info-level message to stderr                                                                                          |
 | 3.2.2 | `error("fail")`                                                             | Outputs `[ERROR] fail` to `console.error`                                                                                        |
 | 3.2.3 | `debug("msg", { key: "value" })`                                            | Outputs `[DEBUG] msg {"key":"value"}`                                                                                            |
 | 3.2.4 | `info("msg", { count: 42, active: true, extra: null, missing: undefined })` | Meta serialized as `{"count":42,"active":true,"extra":null,"missing":null}` — note: `undefined` becomes `null` in JSON.stringify |
@@ -928,7 +928,7 @@
 
 | #     | Scenario                                        | Expected behavior                                                                                        |
 | ----- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 9.1.1 | `createMcpServer` returns `McpServer` instance  | Server name is `"wger-mcp"`, version `"0.1.0"`                                                           |
+| 9.1.1 | `createMcpServer` returns `McpServer` instance  | Server name is `"wger-mcp"`, version `"0.1.1"`                                                           |
 | 9.1.2 | Server has `tools` and `resources` capabilities | Both declared                                                                                            |
 | 9.1.3 | All four registration functions called          | `registerExerciseTools`, `registerExerciseResources`, `registerRoutineTools`, `registerRoutineResources` |
 | 9.1.4 | Debug log emitted with config flags             | Shows `enableDestructiveTools`, `enableAdminTools`, `enableRawWgerProxy`                                 |
