@@ -293,3 +293,163 @@ export interface PatchedImageRequest {
   readonly image?: string | undefined;
   readonly description?: string | undefined;
 }
+
+// ── Max Config types ─────────────────────────────────────────────────────
+
+export type OperationEnum = "+" | "-" | "r";
+export type StepEnum = "na" | "abs" | "percent";
+
+export interface MaxRepetitionsConfig {
+  readonly id: number;
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: string;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements: unknown | null;
+}
+
+export interface MaxRepetitionsConfigRequest {
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: string;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface PatchedMaxRepetitionsConfigRequest {
+  readonly slot_entry?: number | undefined;
+  readonly iteration?: number | undefined;
+  readonly value?: string | undefined;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface MaxRestConfig {
+  readonly id: number;
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: number;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements: unknown | null;
+}
+
+export interface MaxRestConfigRequest {
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: number;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface PatchedMaxRestConfigRequest {
+  readonly slot_entry?: number | undefined;
+  readonly iteration?: number | undefined;
+  readonly value?: number | undefined;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface MaxRiRConfig {
+  readonly id: number;
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: string;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements: unknown | null;
+}
+
+export interface MaxRiRConfigRequest {
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: string;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface PatchedMaxRiRConfigRequest {
+  readonly slot_entry?: number | undefined;
+  readonly iteration?: number | undefined;
+  readonly value?: string | undefined;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface MaxSetNrConfig {
+  readonly id: number;
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: number;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements: unknown | null;
+}
+
+export interface MaxSetNrConfigRequest {
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: number;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface PatchedMaxSetNrConfigRequest {
+  readonly slot_entry?: number | undefined;
+  readonly iteration?: number | undefined;
+  readonly value?: number | undefined;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface MaxWeightConfig {
+  readonly id: number;
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: string;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements: unknown | null;
+}
+
+export interface MaxWeightConfigRequest {
+  readonly slot_entry: number;
+  readonly iteration: number;
+  readonly value: string;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}
+
+export interface PatchedMaxWeightConfigRequest {
+  readonly slot_entry?: number | undefined;
+  readonly iteration?: number | undefined;
+  readonly value?: string | undefined;
+  readonly operation?: OperationEnum | undefined;
+  readonly step?: StepEnum | undefined;
+  readonly repeat?: boolean | undefined;
+  readonly requirements?: unknown | null | undefined;
+}

@@ -343,3 +343,151 @@ export const ingredientInfoResponseSchema = z.object({
   image: ingredientImageResponseSchema.nullable(),
   thumbnails: z.string().nullable(),
 });
+
+export const languageResponseSchema = z.object({
+  id: z.number().int(),
+  short_name: z.string(),
+  full_name: z.string(),
+  full_name_en: z.string(),
+});
+
+export const licenseResponseSchema = z.object({
+  id: z.number().int(),
+  full_name: z.string(),
+  short_name: z.string(),
+  url: z.string().nullable(),
+});
+
+export const repetitionUnitResponseSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  unit_type: z.enum(["REPETITIONS", "TIME", "DISTANCE"]),
+  multiplier: z.number().int().nullable(),
+});
+
+export const weightUnitResponseSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+});
+
+export const versionResponseSchema = z.string();
+
+export const minVersionResponseSchema = z.string();
+
+export const schemaResponseSchema = z.record(z.string(), z.unknown());
+
+export const measurementResponseSchema = z.object({
+  id: z.number().int(),
+  category: z.number().int(),
+  date: z.string().optional(),
+  value: z.number().min(0).max(5000),
+  notes: z.string().optional(),
+});
+
+export const measurementCategoryResponseSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  unit: z.string(),
+});
+
+export const trophyResponseSchema = z.object({
+  id: z.number().int(),
+  uuid: z.string(),
+  name: z.string(),
+  description: z.string(),
+  image: z.string(),
+  trophy_type: z.enum(["time", "volume", "count", "sequence", "date", "pr", "other"]),
+  is_hidden: z.boolean(),
+  is_progressive: z.boolean(),
+  is_repeatable: z.boolean(),
+  order: z.number().int(),
+});
+
+export const trophyProgressResponseSchema = z.object({
+  trophy: trophyResponseSchema,
+  is_earned: z.boolean(),
+  earned_at: z.string().nullable(),
+  progress: z.number(),
+  current_value: z.string().nullable(),
+  target_value: z.string().nullable(),
+  progress_display: z.string().nullable(),
+});
+
+export const userTrophyResponseSchema = z.object({
+  id: z.number().int(),
+  trophy: trophyResponseSchema,
+  earned_at: z.string(),
+  progress: z.number(),
+  is_notified: z.boolean(),
+  context_data: z.unknown().nullable(),
+});
+
+export const userStatisticsResponseSchema = z.object({
+  id: z.number().int(),
+  total_weight_lifted: z.string(),
+  total_workouts: z.number().int(),
+  current_streak: z.number().int(),
+  longest_streak: z.number().int(),
+  last_workout_date: z.string().nullable(),
+  earliest_workout_time: z.string().nullable(),
+  latest_workout_time: z.string().nullable(),
+  weekend_workout_streak: z.number().int(),
+  last_complete_weekend_date: z.string().nullable(),
+  worked_out_jan_1: z.boolean(),
+  last_updated: z.string(),
+});
+
+export const maxRepetitionsConfigResponseSchema = z.object({
+  id: z.number().int(),
+  slot_entry: z.number().int(),
+  iteration: z.number().int().min(0),
+  value: z.string(),
+  operation: z.enum(["+", "-", "r"]).optional(),
+  step: z.enum(["na", "abs", "percent"]).optional(),
+  repeat: z.boolean().optional(),
+  requirements: z.unknown().nullable(),
+});
+
+export const maxRestConfigResponseSchema = z.object({
+  id: z.number().int(),
+  slot_entry: z.number().int(),
+  iteration: z.number().int().min(0),
+  value: z.number().int().min(0).max(600),
+  operation: z.enum(["+", "-", "r"]).optional(),
+  step: z.enum(["na", "abs", "percent"]).optional(),
+  repeat: z.boolean().optional(),
+  requirements: z.unknown().nullable(),
+});
+
+export const maxRiRConfigResponseSchema = z.object({
+  id: z.number().int(),
+  slot_entry: z.number().int(),
+  iteration: z.number().int().min(0),
+  value: z.string(),
+  operation: z.enum(["+", "-", "r"]).optional(),
+  step: z.enum(["na", "abs", "percent"]).optional(),
+  repeat: z.boolean().optional(),
+  requirements: z.unknown().nullable(),
+});
+
+export const maxSetNrConfigResponseSchema = z.object({
+  id: z.number().int(),
+  slot_entry: z.number().int(),
+  iteration: z.number().int().min(0),
+  value: z.number().int().min(0).max(50),
+  operation: z.enum(["+", "-", "r"]).optional(),
+  step: z.enum(["na", "abs", "percent"]).optional(),
+  repeat: z.boolean().optional(),
+  requirements: z.unknown().nullable(),
+});
+
+export const maxWeightConfigResponseSchema = z.object({
+  id: z.number().int(),
+  slot_entry: z.number().int(),
+  iteration: z.number().int().min(0),
+  value: z.string(),
+  operation: z.enum(["+", "-", "r"]).optional(),
+  step: z.enum(["na", "abs", "percent"]).optional(),
+  repeat: z.boolean().optional(),
+  requirements: z.unknown().nullable(),
+});

@@ -28,6 +28,12 @@ import { registerIngredientResources } from "./resources/ingredientResources.js"
 import { registerMealResources } from "./resources/mealResources.js";
 import { registerNutritionPlanResources } from "./resources/nutritionPlanResources.js";
 import { registerNutritionDiaryResources } from "./resources/nutritionDiaryResources.js";
+import { registerReferenceTools } from "./tools/referenceTools.js";
+import { registerMeasurementTools } from "./tools/measurementTools.js";
+import { registerExerciseDetailTools } from "./tools/exerciseDetailTools.js";
+import { registerTemplateTools } from "./tools/templateTools.js";
+import { registerTrophyTools } from "./tools/trophyTools.js";
+import { registerConfigTools } from "./tools/configTools.js";
 
 const SERVER_NAME = "wger-mcp";
 const SERVER_VERSION = "0.1.2";
@@ -73,6 +79,12 @@ export function createMcpServer(
   registerMealResources(server, client, logger);
   registerNutritionPlanResources(server, client, logger);
   registerNutritionDiaryResources(server, client, logger);
+  registerReferenceTools(server, client, logger);
+  registerMeasurementTools(server, client, logger, config.enableWriteTools);
+  registerExerciseDetailTools(server, client, logger, config.enableWriteTools);
+  registerTemplateTools(server, client, logger);
+  registerTrophyTools(server, client, logger);
+  registerConfigTools(server, client, logger, config.enableWriteTools);
 
   logger.debug("MCP server instance created", {
     name: SERVER_NAME,
