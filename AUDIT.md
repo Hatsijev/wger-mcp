@@ -17,6 +17,8 @@ Archived previous audit snapshot:
 - `npm run lint` passes.
 - `npm audit --omit=dev` was not rerun during this update.
 - Unit and integration tests are intentionally excluded from this follow-up verification.
+- Privacy check: no tracked `.env`, token, secret, or log files were found.
+- Privacy check: `git status` was clean at the time of the check.
 
 ## Current State
 
@@ -34,6 +36,8 @@ Notable improvements since the previous audit:
 - HTTP requests now use `AbortController` with a configurable request timeout.
 - Response schemas are wired through most tool/resource calls.
 - The previously listed workout-log and slot-entry schema drift is fixed.
+- No real API tokens or `.env` files are tracked.
+- Local `.crush/logs/crush.log` exists but is ignored and not tracked.
 - `npm run build` and `npm run lint` pass.
 
 ## Findings
@@ -75,6 +79,24 @@ Risk: Milestone 4 can grow the transport layer into the main application archite
 
 Recommendation: before adding broad Milestone 4 coverage, introduce endpoint descriptors or application services that centralize method/path/schema/response handling per domain.
 
+### 3. Debug logs can expose personal Wger metadata/data
+
+The API token is not logged. However, `WgerClient` logs full request URLs at debug level, and debug error logging still includes a truncated upstream response body preview. URLs can contain personal metadata such as dates, routine IDs, diary filters, ingredient searches, or other query parameters. Error body previews can contain personal Wger data depending on the endpoint and upstream error shape.
+
+Relevant files:
+
+- `src/infrastructure/wger/WgerClient.ts:27`
+- `src/infrastructure/wger/WgerClient.ts:37`
+- `src/infrastructure/wger/WgerClient.ts:47`
+- `src/infrastructure/wger/WgerClient.ts:57`
+- `src/infrastructure/wger/WgerClient.ts:63`
+- `src/infrastructure/wger/WgerClient.ts:164`
+- `src/infrastructure/ConsoleLogger.ts:37`
+
+Risk: safe for normal personal use with `LOG_LEVEL=info`, but debug logs can reveal private workout/nutrition metadata or upstream response snippets if shared or committed accidentally.
+
+Recommendation: keep `LOG_LEVEL=info` for normal use. Before public release, consider logging only method + path without query string and removing upstream body previews entirely.
+
 ## Resolved Since Previous Audit
 
 - Recursive JSON validation is now real Zod validation.
@@ -89,14 +111,29 @@ Recommendation: before adding broad Milestone 4 coverage, introduce endpoint des
 - HTTP requests now have configurable cancellation via `AbortController`.
 - The previously listed input-schema drift items are fixed.
 - Response validation is broadly wired through tools/resources.
+- No real `.env`, token, secret, or log files are tracked.
+- API tokens are not logged.
 - Build and lint pass.
 
 ## Excluded From This Follow-up
 
 Unit and integration tests were explicitly excluded from this verification pass. The project still needs executable tests, but that is not counted as an open issue in this update.
 
+## Privacy Notes
+
+The app is suitable for personal use from a privacy standpoint if local logs and configs stay private. The MCP responses intentionally expose Wger data to the connected MCP client, including workouts, weight entries, nutrition data, diary entries, and gallery data. Do not connect this server to an untrusted MCP client.
+
+Before publishing publicly:
+
+- Do not publish real MCP client config containing your Wger URL or token.
+- Keep `.env` untracked.
+- Keep generated local runtime folders such as `.crush/` untracked.
+- Prefer `LOG_LEVEL=info`.
+- Consider disabling write tools by setting `ENABLE_WRITE_TOOLS=false` for read-only deployments.
+
 ## Suggested Next Order
 
 1. Add `nutritionalValuesResponseSchema` and wire it into nutritional-value tools.
 2. Remove or explicitly document the `unknown` cast in `responseSchemas.ts`.
-3. Introduce application services or endpoint descriptors before Milestone 4 expansion.
+3. Reduce debug logging of full URLs and remove upstream body previews before public release.
+4. Introduce application services or endpoint descriptors before Milestone 4 expansion.
