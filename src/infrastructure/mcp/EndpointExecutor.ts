@@ -26,6 +26,13 @@ export function endpointHandler<TArgs extends object, TResponse, TBody extends o
           );
           return successResult(data);
         }
+        case "GET_RAW": {
+          const data = await client.get<TResponse>(
+            path,
+            descriptor.mapParams?.(args),
+          );
+          return successResult(data);
+        }
         case "POST": {
           const data = await client.post<TResponse>(
             path,

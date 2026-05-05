@@ -24,17 +24,17 @@ export const getRoutineEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
 };
 
 export const getRoutineStructureEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
-  method: "GET",
+  method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/structure/`,
 };
 
 export const getRoutineLogsEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
-  method: "GET",
+  method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/logs/`,
 };
 
 export const getRoutineStatsEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
-  method: "GET",
+  method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/stats/`,
 };
 
@@ -42,7 +42,7 @@ export const getRoutineDateSequenceDisplayEndpoint: EndpointDescriptor<
   { id: number },
   Routine
 > = {
-  method: "GET",
+  method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/date-sequence-display/`,
 };
 
@@ -50,7 +50,7 @@ export const getRoutineDateSequenceGymEndpoint: EndpointDescriptor<
   { id: number },
   Routine
 > = {
-  method: "GET",
+  method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/date-sequence-gym/`,
 };
 

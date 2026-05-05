@@ -4,7 +4,15 @@ export interface GetEndpointDescriptor<TArgs, TResponse> {
   method: "GET";
   path: string | ((args: TArgs) => string);
   mapParams?: (args: TArgs) => Record<string, string | number | boolean | undefined>;
-  responseSchema?: ZodType<TResponse>;
+  responseSchema: ZodType<TResponse>;
+}
+
+/** Explicit variant for GET endpoints whose response shape is not yet schema-validated.
+ *  Use sparingly — every new endpoint should aim for a real responseSchema. */
+export interface RawGetEndpointDescriptor<TArgs> {
+  method: "GET_RAW";
+  path: string | ((args: TArgs) => string);
+  mapParams?: (args: TArgs) => Record<string, string | number | boolean | undefined>;
 }
 
 export interface PostEndpointDescriptor<TArgs, TResponse, TBody extends object> {
@@ -35,6 +43,7 @@ export interface DeleteEndpointDescriptor<TArgs> {
 
 export type EndpointDescriptor<TArgs, TResponse, TBody extends object = object> =
   | GetEndpointDescriptor<TArgs, TResponse>
+  | RawGetEndpointDescriptor<TArgs>
   | PostEndpointDescriptor<TArgs, TResponse, TBody>
   | PatchEndpointDescriptor<TArgs, TResponse, TBody>
   | PutEndpointDescriptor<TArgs, TResponse, TBody>
