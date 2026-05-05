@@ -41,10 +41,6 @@ export class ConsoleLogger implements Logger {
       meta !== undefined ? ` ${JSON.stringify(meta)}` : "";
     const output: string = `[${levelLabel}] ${message}${metaString}`;
 
-    if (level === "error") {
-      console.error(output);
-    } else {
-      console.log(output);
-    }
+    console.error(output);
   }
 }

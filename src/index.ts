@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { loadConfig } from "./infrastructure/config.js";
 import { createMcpServer } from "./infrastructure/mcp/server.js";
 import { ConsoleLogger } from "./infrastructure/ConsoleLogger.js";
