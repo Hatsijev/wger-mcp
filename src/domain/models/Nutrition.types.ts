@@ -96,8 +96,8 @@ export interface IngredientInfo {
   readonly license_author?: string | null | undefined;
   readonly license_author_url?: string | undefined;
   readonly license_derivative_source_url?: string | undefined;
-  readonly image: IngredientImage;
-  readonly thumbnails: string;
+  readonly image: IngredientImage | null;
+  readonly thumbnails: string | null;
 }
 
 export interface IngredientWeightUnit {

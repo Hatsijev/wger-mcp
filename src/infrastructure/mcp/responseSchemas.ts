@@ -292,6 +292,13 @@ export const ingredientWeightUnitResponseSchema = z.object({
   name: z.string(),
 });
 
+export const ingredientWeightUnitInfoResponseSchema = z.object({
+  id: z.number().int(),
+  uuid: z.string(),
+  gram: z.number(),
+  name: z.string(),
+});
+
 export const ingredientImageResponseSchema = z.object({
   id: z.number().int(),
   uuid: z.string(),
@@ -316,9 +323,9 @@ export const ingredientInfoResponseSchema = z.object({
   protein: z.string(),
   carbohydrates: z.string(),
   fat: z.string(),
-  weight_units: z.array(ingredientWeightUnitResponseSchema),
+  weight_units: z.array(ingredientWeightUnitInfoResponseSchema),
   language: nestedResponseSchema,
   license: nestedResponseSchema,
-  image: ingredientImageResponseSchema,
-  thumbnails: z.string(),
+  image: ingredientImageResponseSchema.nullable(),
+  thumbnails: z.string().nullable(),
 });
