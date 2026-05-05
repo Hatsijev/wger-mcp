@@ -200,7 +200,7 @@ When adding tests, the expected approach is:
 4. Implement infrastructure adapters (tools, resources, client methods).
 5. Register new tools/resources in `src/infrastructure/mcp/server.ts`.
 6. Run `npm run build` to verify zero compiler errors.
-7. Compare paths, methods, request schemas, and response schemas against `wger.yaml`.
+7. Compare paths, methods, request schemas, and response schemas against `wger.yaml` (read piece by piece with `grep -n` + `sed`).
 8. Update docs in `docs/api/` if adding new endpoints.
 
 ## Key Files for Reference
@@ -246,3 +246,42 @@ The project is organized around milestones:
 5. **Gated + Admin + Polish** — not yet started (delete tools, admin tools, raw proxy, tests)
 
 When implementing new domains, follow the existing file organization: create domain types, then add tool/resource files under `src/infrastructure/mcp/tools/` and `src/infrastructure/mcp/resources/`, and register them in `src/infrastructure/mcp/server.ts`.
+
+## Agent Registry
+
+`AGENTS.md` is the canonical agent guide for this repository. Keep agent role notes here rather than in `AGENT.md`.
+
+### Active Agents
+
+#### GLM-5.1 — QA Test Lead / Test Architect
+
+**Role:** Quality Assurance Test Lead
+
+**Responsibilities:**
+
+- Write comprehensive test scenarios for all implemented code.
+- Challenge implementation quality by identifying edge cases, boundary conditions, and gaps.
+- Analyze both the TypeScript code and the Wger OpenAPI spec (`wger.yaml`) for schema validation mismatches.
+- Identify inconsistencies between error handling patterns across modules.
+- Detect missing validation that the API enforces but the MCP server does not.
+- Produce actionable test scenario documents that developers can turn into test code.
+- Review implementation work for correctness, completeness, and robustness.
+
+**Working Style:**
+
+- Reads every source file before writing scenarios.
+- Extracts API constraints from `wger.yaml` piece by piece.
+- Cross-references OpenAPI schemas with Zod schemas for mismatches.
+- Documents discovered bugs alongside test scenarios.
+
+**Output:** `TEST_SCENARIOS.md`
+
+#### Kimi — TypeScript Backend Developer
+
+**Role:** Implementation Agent
+
+**Responsibilities:**
+
+- Implement TypeScript code following Clean Architecture, SOLID, and DRY.
+- Follow coding standards in `.agents/skills/wger-mcp-dev/`.
+- Keep all types in `.types.ts`, use explicit return types, and avoid `any` / `unknown`.
