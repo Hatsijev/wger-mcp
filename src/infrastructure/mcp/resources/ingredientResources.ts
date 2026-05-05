@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { IngredientInfo } from "../../../domain/models/Nutrition.types.js";
-import { paginatedResponseSchema, ingredientInfoResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  ingredientInfoResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerIngredientResources(
   server: McpServer,

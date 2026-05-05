@@ -3,7 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { SlotEntry, SlotEntryRequest, PatchedSlotEntryRequest } from "../../../domain/models/Routine.types.js";
+import {
+  SlotEntry,
+  SlotEntryRequest,
+  PatchedSlotEntryRequest,
+} from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -13,7 +17,10 @@ import {
   roundingDecimalSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, slotEntryResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  slotEntryResponseSchema,
+} from "../responseSchemas.js";
 
 const listSlotEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -121,40 +128,40 @@ export function registerSlotEntryTools(
   );
 
   if (enableWriteTools) {
-  server.registerTool(
-    "create_slot_entry",
-    {
-      description: "Create a new slot entry",
-      inputSchema: createSlotEntrySchema,
-    },
-    async (args) =>
-      runTool(logger, "create_slot_entry", async () => {
-        const data = await client.post<SlotEntry>(
-          "/api/v2/slot-entry/",
-          toJsonBody(args) as SlotEntryRequest,
-          slotEntryResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "create_slot_entry",
+      {
+        description: "Create a new slot entry",
+        inputSchema: createSlotEntrySchema,
+      },
+      async (args) =>
+        runTool(logger, "create_slot_entry", async () => {
+          const data = await client.post<SlotEntry>(
+            "/api/v2/slot-entry/",
+            toJsonBody(args) as SlotEntryRequest,
+            slotEntryResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
 
-  server.registerTool(
-    "update_slot_entry",
-    {
-      description: "Update an existing slot entry",
-      inputSchema: updateSlotEntrySchema,
-    },
-    async (args) =>
-      runTool(logger, "update_slot_entry", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<SlotEntry>(
-          `/api/v2/slot-entry/${id}/`,
-          toJsonBody(body) as PatchedSlotEntryRequest,
-          slotEntryResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "update_slot_entry",
+      {
+        description: "Update an existing slot entry",
+        inputSchema: updateSlotEntrySchema,
+      },
+      async (args) =>
+        runTool(logger, "update_slot_entry", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<SlotEntry>(
+            `/api/v2/slot-entry/${id}/`,
+            toJsonBody(body) as PatchedSlotEntryRequest,
+            slotEntryResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Slot entry tools registered");

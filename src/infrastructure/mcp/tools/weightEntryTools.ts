@@ -3,7 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { WeightEntry, WeightEntryRequest, PatchedWeightEntryRequest } from "../../../domain/models/Routine.types.js";
+import {
+  WeightEntry,
+  WeightEntryRequest,
+  PatchedWeightEntryRequest,
+} from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +16,10 @@ import {
   decimalAmountSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, weightEntryResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  weightEntryResponseSchema,
+} from "../responseSchemas.js";
 
 const listWeightEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -82,40 +89,40 @@ export function registerWeightEntryTools(
   );
 
   if (enableWriteTools) {
-  server.registerTool(
-    "create_weight_entry",
-    {
-      description: "Create a new weight entry",
-      inputSchema: createWeightEntrySchema,
-    },
-    async (args) =>
-      runTool(logger, "create_weight_entry", async () => {
-        const data = await client.post<WeightEntry>(
-          "/api/v2/weightentry/",
-          toJsonBody(args) as WeightEntryRequest,
-          weightEntryResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "create_weight_entry",
+      {
+        description: "Create a new weight entry",
+        inputSchema: createWeightEntrySchema,
+      },
+      async (args) =>
+        runTool(logger, "create_weight_entry", async () => {
+          const data = await client.post<WeightEntry>(
+            "/api/v2/weightentry/",
+            toJsonBody(args) as WeightEntryRequest,
+            weightEntryResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
 
-  server.registerTool(
-    "update_weight_entry",
-    {
-      description: "Update an existing weight entry",
-      inputSchema: updateWeightEntrySchema,
-    },
-    async (args) =>
-      runTool(logger, "update_weight_entry", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<WeightEntry>(
-          `/api/v2/weightentry/${id}/`,
-          toJsonBody(body) as PatchedWeightEntryRequest,
-          weightEntryResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "update_weight_entry",
+      {
+        description: "Update an existing weight entry",
+        inputSchema: updateWeightEntrySchema,
+      },
+      async (args) =>
+        runTool(logger, "update_weight_entry", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<WeightEntry>(
+            `/api/v2/weightentry/${id}/`,
+            toJsonBody(body) as PatchedWeightEntryRequest,
+            weightEntryResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Weight entry tools registered");

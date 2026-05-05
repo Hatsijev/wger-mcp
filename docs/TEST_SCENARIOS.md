@@ -424,16 +424,16 @@
 
 ### 6.11 Routine Tool Handlers — HTTP Methods Used
 
-| #      | Scenario                                 | Expected behavior                 |
-| ------ | ---------------------------------------- | --------------------------------- |
-| 6.11.1 | `create_routine` uses `client.post()`    | POST to `/api/v2/routine/`        |
-| 6.11.2 | `update_routine` uses `client.patch()`   | PATCH to `/api/v2/routine/{id}/`  |
-| 6.11.3 | `create_day` uses `client.post()`        | POST to `/api/v2/day/`            |
-| 6.11.4 | `update_day` uses `client.patch()`       | PATCH to `/api/v2/day/{id}/`      |
-| 6.11.5 | `create_slot` uses `client.post()`       | POST to `/api/v2/slot/`           |
-| 6.11.6 | `update_slot` uses `client.patch()`      | PATCH to `/api/v2/slot/{id}/`     |
-| 6.11.7 | `create_slot_entry` uses `client.post()` | POST to `/api/v2/slot-entry/`     |
-| 6.11.8 | `update_slot_entry` uses `client.patch()`| PATCH to `/api/v2/slot-entry/{id}/` |
+| #      | Scenario                                  | Expected behavior                   |
+| ------ | ----------------------------------------- | ----------------------------------- |
+| 6.11.1 | `create_routine` uses `client.post()`     | POST to `/api/v2/routine/`          |
+| 6.11.2 | `update_routine` uses `client.patch()`    | PATCH to `/api/v2/routine/{id}/`    |
+| 6.11.3 | `create_day` uses `client.post()`         | POST to `/api/v2/day/`              |
+| 6.11.4 | `update_day` uses `client.patch()`        | PATCH to `/api/v2/day/{id}/`        |
+| 6.11.5 | `create_slot` uses `client.post()`        | POST to `/api/v2/slot/`             |
+| 6.11.6 | `update_slot` uses `client.patch()`       | PATCH to `/api/v2/slot/{id}/`       |
+| 6.11.7 | `create_slot_entry` uses `client.post()`  | POST to `/api/v2/slot-entry/`       |
+| 6.11.8 | `update_slot_entry` uses `client.patch()` | PATCH to `/api/v2/slot-entry/{id}/` |
 
 ### 6.12 Routine Special Endpoints
 
@@ -588,12 +588,12 @@
 
 ### 11.1 Error Handling Consistency
 
-| #      | Scenario                                 | Expected behavior                           | Actual behavior                             |
-| ------ | ---------------------------------------- | ------------------------------------------- | ------------------------------------------- |
-| 11.1.1 | Exercise tool handler throws `WgerError` | Returns `{ ok: false, error: "..." }`       | Correct — all tools use `runTool` wrapper   |
-| 11.1.2 | Routine tool handler throws `WgerError`  | Returns `{ ok: false, error: "..." }`       | Correct                                     |
-| 11.1.3 | `search_exercises` API returns 500       | Error caught → structured response          | Correct                                     |
-| 11.1.4 | `list_exercises` API returns 401         | Error caught → structured response          | Correct                                     |
+| #      | Scenario                                 | Expected behavior                     | Actual behavior                           |
+| ------ | ---------------------------------------- | ------------------------------------- | ----------------------------------------- |
+| 11.1.1 | Exercise tool handler throws `WgerError` | Returns `{ ok: false, error: "..." }` | Correct — all tools use `runTool` wrapper |
+| 11.1.2 | Routine tool handler throws `WgerError`  | Returns `{ ok: false, error: "..." }` | Correct                                   |
+| 11.1.3 | `search_exercises` API returns 500       | Error caught → structured response    | Correct                                   |
+| 11.1.4 | `list_exercises` API returns 401         | Error caught → structured response    | Correct                                   |
 
 ### 11.2 Config Flags Not Enforced
 
@@ -797,13 +797,13 @@
 
 ### 16.3 Missing Operations (Per Roadmap)
 
-| #      | Scenario                                       | Expected behavior                     |
-| ------ | ---------------------------------------------- | ------------------------------------- |
-| 16.3.1 | No DELETE tools exist yet                      | Consistent with roadmap (Milestone 5) |
-| 16.3.2 | PATCH operations used for all updates          | Partial update semantics              |
-| 16.3.3 | No `delete_routine`, `delete_day`, etc.        | Not yet implemented                   |
-| 16.3.4 | Nutrition tools implemented (Milestone 3)      | Meal, meal item, nutrition plan, diary |
-| 16.3.5 | No measurement tools (Milestone 4)             | Not yet implemented                   |
+| #      | Scenario                                  | Expected behavior                      |
+| ------ | ----------------------------------------- | -------------------------------------- |
+| 16.3.1 | No DELETE tools exist yet                 | Consistent with roadmap (Milestone 5)  |
+| 16.3.2 | PATCH operations used for all updates     | Partial update semantics               |
+| 16.3.3 | No `delete_routine`, `delete_day`, etc.   | Not yet implemented                    |
+| 16.3.4 | Nutrition tools implemented (Milestone 3) | Meal, meal item, nutrition plan, diary |
+| 16.3.5 | No measurement tools (Milestone 4)        | Not yet implemented                    |
 
 ---
 
@@ -843,7 +843,7 @@
 | 18.2 | **`getStatus()` returns hardcoded version `"2.5.0"`**                | MEDIUM   | The version is not fetched from the API. Misleading if the actual Wger instance is a different version.                                                                                 |
 | 18.3 | **`_buildUrl` filters `null` but type allows it**                    | LOW      | `_buildUrl` checks `value !== null` but the params type doesn't include `null` — dead code or defensive coding for runtime safety.                                                      |
 | 18.4 | **Config flags (`enableDestructiveTools`, etc.) are never used**     | LOW      | Parsed and logged but no tool handler checks them. Currently inert.                                                                                                                     |
-| 18.5 | ~~`update_*` operations use PUT, not PATCH~~                         | —        | **FIXED** — All updates now use PATCH for partial replacement semantics.                                                                                                                 |
+| 18.5 | ~~`update_*` operations use PUT, not PATCH~~                         | —        | **FIXED** — All updates now use PATCH for partial replacement semantics.                                                                                                                |
 | 18.6 | **Resource template `Number(variables.id)` — no NaN guard**          | LOW      | Non-numeric URI variables result in NaN in API path.                                                                                                                                    |
 | 18.7 | **No request timeout**                                               | MEDIUM   | No `AbortController` or timeout in fetch options.                                                                                                                                       |
 | 18.8 | **`_request` reads response body twice on error**                    | LOW      | `_handleErrorResponse` calls `response.text()`, then if control flow continued, `_parseJson` would call `response.json()` — but `_handleErrorResponse` throws `never`, so this is safe. |

@@ -3,7 +3,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { NutritionPlan, NutritionalValues, NutritionPlanRequest, PatchedNutritionPlanRequest } from "../../../domain/models/Nutrition.types.js";
+import {
+  NutritionPlan,
+  NutritionalValues,
+  NutritionPlanRequest,
+  PatchedNutritionPlanRequest,
+} from "../../../domain/models/Nutrition.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +17,10 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, nutritionPlanResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  nutritionPlanResponseSchema,
+} from "../responseSchemas.js";
 
 const listNutritionPlansSchema = z.object({
   limit: paginationLimitSchema,
@@ -33,11 +41,41 @@ const createNutritionPlanSchema = z.object({
   end: isoDateStringSchema.nullable().optional(),
   description: boundedStringSchema(80).optional(),
   only_logging: z.boolean().optional(),
-  goal_energy: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_protein: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_carbohydrates: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_fat: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_fiber: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_energy: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_protein: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_carbohydrates: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_fat: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_fiber: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
 });
 
 const updateNutritionPlanSchema = z.object({
@@ -46,11 +84,41 @@ const updateNutritionPlanSchema = z.object({
   end: isoDateStringSchema.nullable().optional(),
   description: boundedStringSchema(80).optional(),
   only_logging: z.boolean().optional(),
-  goal_energy: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_protein: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_carbohydrates: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_fat: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
-  goal_fiber: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_energy: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_protein: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_carbohydrates: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_fat: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
+  goal_fiber: z
+    .number()
+    .int()
+    .min(-2147483648)
+    .max(2147483647)
+    .nullable()
+    .optional(),
 });
 
 export function registerNutritionPlanTools(
@@ -113,40 +181,40 @@ export function registerNutritionPlanTools(
   );
 
   if (enableWriteTools) {
-  server.registerTool(
-    "create_nutrition_plan",
-    {
-      description: "Create a new nutrition plan",
-      inputSchema: createNutritionPlanSchema,
-    },
-    async (args) =>
-      runTool(logger, "create_nutrition_plan", async () => {
-        const data = await client.post<NutritionPlan>(
-          "/api/v2/nutritionplan/",
-          toJsonBody(args) as NutritionPlanRequest,
-          nutritionPlanResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "create_nutrition_plan",
+      {
+        description: "Create a new nutrition plan",
+        inputSchema: createNutritionPlanSchema,
+      },
+      async (args) =>
+        runTool(logger, "create_nutrition_plan", async () => {
+          const data = await client.post<NutritionPlan>(
+            "/api/v2/nutritionplan/",
+            toJsonBody(args) as NutritionPlanRequest,
+            nutritionPlanResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
 
-  server.registerTool(
-    "update_nutrition_plan",
-    {
-      description: "Update an existing nutrition plan",
-      inputSchema: updateNutritionPlanSchema,
-    },
-    async (args) =>
-      runTool(logger, "update_nutrition_plan", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<NutritionPlan>(
-          `/api/v2/nutritionplan/${id}/`,
-          toJsonBody(body) as PatchedNutritionPlanRequest,
-          nutritionPlanResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "update_nutrition_plan",
+      {
+        description: "Update an existing nutrition plan",
+        inputSchema: updateNutritionPlanSchema,
+      },
+      async (args) =>
+        runTool(logger, "update_nutrition_plan", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<NutritionPlan>(
+            `/api/v2/nutritionplan/${id}/`,
+            toJsonBody(body) as PatchedNutritionPlanRequest,
+            nutritionPlanResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Nutrition plan tools registered");

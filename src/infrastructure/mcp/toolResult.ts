@@ -43,9 +43,16 @@ export async function runTool(
 export function toJsonBody<T extends object>(obj: T): T {
   const result = {} as T;
   for (const key of Object.keys(obj)) {
-    const value = (obj as Record<string, string | number | boolean | null | undefined | object>)[key];
+    const value = (
+      obj as Record<
+        string,
+        string | number | boolean | null | undefined | object
+      >
+    )[key];
     if (value !== undefined) {
-      (result as Record<string, string | number | boolean | null | object>)[key] = value;
+      (result as Record<string, string | number | boolean | null | object>)[
+        key
+      ] = value;
     }
   }
   return result;

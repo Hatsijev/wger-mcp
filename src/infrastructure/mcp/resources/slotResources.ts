@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { Slot } from "../../../domain/models/Routine.types.js";
-import { paginatedResponseSchema, slotResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  slotResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerSlotResources(
   server: McpServer,
@@ -48,7 +51,11 @@ export function registerSlotResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<Slot>(`/api/v2/slot/${id}/`, undefined, slotResponseSchema);
+      const data = await client.get<Slot>(
+        `/api/v2/slot/${id}/`,
+        undefined,
+        slotResponseSchema,
+      );
       return {
         contents: [
           {

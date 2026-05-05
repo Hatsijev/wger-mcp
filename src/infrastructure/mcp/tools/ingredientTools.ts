@@ -193,12 +193,15 @@ export function registerIngredientTools(
       runTool(logger, "list_ingredient_weight_units", async () => {
         const data = await client.get<
           WgerPaginatedResponse<IngredientWeightUnit>
-        >("/api/v2/ingredientweightunit/", {
-          limit: args.limit,
-          offset: args.offset,
-          ingredient: args.ingredient,
-        },
-        paginatedResponseSchema(ingredientWeightUnitResponseSchema));
+        >(
+          "/api/v2/ingredientweightunit/",
+          {
+            limit: args.limit,
+            offset: args.offset,
+            ingredient: args.ingredient,
+          },
+          paginatedResponseSchema(ingredientWeightUnitResponseSchema),
+        );
         return successResult(data);
       }),
   );

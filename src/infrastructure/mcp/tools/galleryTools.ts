@@ -3,7 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { GalleryImage, ImageRequest, PatchedImageRequest } from "../../../domain/models/Routine.types.js";
+import {
+  GalleryImage,
+  ImageRequest,
+  PatchedImageRequest,
+} from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +16,10 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, galleryImageResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  galleryImageResponseSchema,
+} from "../responseSchemas.js";
 
 const listGalleryImagesSchema = z.object({
   limit: paginationLimitSchema,
@@ -80,40 +87,40 @@ export function registerGalleryTools(
   );
 
   if (enableWriteTools) {
-  server.registerTool(
-    "create_gallery_image",
-    {
-      description: "Create a new gallery image",
-      inputSchema: createGalleryImageSchema,
-    },
-    async (args) =>
-      runTool(logger, "create_gallery_image", async () => {
-        const data = await client.post<GalleryImage>(
-          "/api/v2/gallery/",
-          toJsonBody(args) as ImageRequest,
-          galleryImageResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "create_gallery_image",
+      {
+        description: "Create a new gallery image",
+        inputSchema: createGalleryImageSchema,
+      },
+      async (args) =>
+        runTool(logger, "create_gallery_image", async () => {
+          const data = await client.post<GalleryImage>(
+            "/api/v2/gallery/",
+            toJsonBody(args) as ImageRequest,
+            galleryImageResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
 
-  server.registerTool(
-    "update_gallery_image",
-    {
-      description: "Update an existing gallery image",
-      inputSchema: updateGalleryImageSchema,
-    },
-    async (args) =>
-      runTool(logger, "update_gallery_image", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<GalleryImage>(
-          `/api/v2/gallery/${id}/`,
-          toJsonBody(body) as PatchedImageRequest,
-          galleryImageResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "update_gallery_image",
+      {
+        description: "Update an existing gallery image",
+        inputSchema: updateGalleryImageSchema,
+      },
+      async (args) =>
+        runTool(logger, "update_gallery_image", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<GalleryImage>(
+            `/api/v2/gallery/${id}/`,
+            toJsonBody(body) as PatchedImageRequest,
+            galleryImageResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Gallery tools registered");

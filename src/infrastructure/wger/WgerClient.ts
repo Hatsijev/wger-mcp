@@ -4,7 +4,6 @@ import { Logger } from "../../application/ports/Logger.js";
 import { WgerError, WgerAuthError } from "../../domain/errors/WgerError.js";
 import { WgerStatusResponse } from "./types.js";
 
-
 export class WgerClient {
   private readonly _baseUrl: string;
   private readonly _token: string;
@@ -65,7 +64,9 @@ export class WgerClient {
   }
 
   async getStatus(): Promise<WgerStatusResponse> {
-    await this.get<{ readonly id: number }>("/api/v2/exerciseinfo/", { limit: 1 });
+    await this.get<{ readonly id: number }>("/api/v2/exerciseinfo/", {
+      limit: 1,
+    });
     return { status: "ok" };
   }
 
@@ -138,8 +139,14 @@ export class WgerClient {
     } catch (error) {
       clearTimeout(timeoutId);
       if (error instanceof Error && error.name === "AbortError") {
-        this._logger.error("Wger API request timed out", { method, url, timeoutMs: this._timeoutMs });
-        throw new WgerError(`Request timed out after ${this._timeoutMs}ms`, { statusCode: 408 });
+        this._logger.error("Wger API request timed out", {
+          method,
+          url,
+          timeoutMs: this._timeoutMs,
+        });
+        throw new WgerError(`Request timed out after ${this._timeoutMs}ms`, {
+          statusCode: 408,
+        });
       }
       const message = error instanceof Error ? error.message : "Network error";
       this._logger.error("Wger API request failed", {
@@ -161,7 +168,11 @@ export class WgerClient {
     const statusCode = response.status;
     const bodyPreview = await this._safePreviewBody(response);
     this._logger.error("Wger API error response", { method, url, statusCode });
-    this._logger.debug("Wger API error response body", { method, url, bodyPreview });
+    this._logger.debug("Wger API error response body", {
+      method,
+      url,
+      bodyPreview,
+    });
     if (statusCode === 401) {
       throw new WgerAuthError(
         `Authentication failed (${statusCode}). Ensure WGER_API_TOKEN is valid.`,

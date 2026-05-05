@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { GalleryImage } from "../../../domain/models/Routine.types.js";
-import { paginatedResponseSchema, galleryImageResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  galleryImageResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerGalleryResources(
   server: McpServer,
@@ -48,7 +51,11 @@ export function registerGalleryResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<GalleryImage>(`/api/v2/gallery/${id}/`, undefined, galleryImageResponseSchema);
+      const data = await client.get<GalleryImage>(
+        `/api/v2/gallery/${id}/`,
+        undefined,
+        galleryImageResponseSchema,
+      );
       return {
         contents: [
           {

@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { Routine } from "../../../domain/models/Routine.types.js";
-import { paginatedResponseSchema, routineResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  routineResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerRoutineResources(
   server: McpServer,
@@ -48,7 +51,11 @@ export function registerRoutineResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<Routine>(`/api/v2/routine/${id}/`, undefined, routineResponseSchema);
+      const data = await client.get<Routine>(
+        `/api/v2/routine/${id}/`,
+        undefined,
+        routineResponseSchema,
+      );
       return {
         contents: [
           {

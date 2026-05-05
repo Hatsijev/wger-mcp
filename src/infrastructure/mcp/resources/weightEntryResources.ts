@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { WeightEntry } from "../../../domain/models/Routine.types.js";
-import { paginatedResponseSchema, weightEntryResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  weightEntryResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerWeightEntryResources(
   server: McpServer,
@@ -48,7 +51,11 @@ export function registerWeightEntryResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<WeightEntry>(`/api/v2/weightentry/${id}/`, undefined, weightEntryResponseSchema);
+      const data = await client.get<WeightEntry>(
+        `/api/v2/weightentry/${id}/`,
+        undefined,
+        weightEntryResponseSchema,
+      );
       return {
         contents: [
           {

@@ -2,7 +2,12 @@ import { z } from "zod";
 
 export const positiveIntegerIdSchema = z.number().int().positive();
 
-export const paginationLimitSchema = z.number().int().min(1).max(100).optional();
+export const paginationLimitSchema = z
+  .number()
+  .int()
+  .min(1)
+  .max(100)
+  .optional();
 
 export const paginationOffsetSchema = z.number().int().min(0).optional();
 
@@ -56,6 +61,10 @@ const jsonValueSchema = z.lazy(() =>
 
 export { jsonValueSchema };
 
-export const nonNegativeIntegerSchema = z.number().int().min(0).max(2_147_483_647);
+export const nonNegativeIntegerSchema = z
+  .number()
+  .int()
+  .min(0)
+  .max(2_147_483_647);
 
 export const jsonConfigSchema = jsonValueSchema.nullable().optional();

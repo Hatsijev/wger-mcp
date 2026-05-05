@@ -3,7 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { Routine, RoutineRequest, PatchedRoutineRequest } from "../../../domain/models/Routine.types.js";
+import {
+  Routine,
+  RoutineRequest,
+  PatchedRoutineRequest,
+} from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +16,10 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, routineResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  routineResponseSchema,
+} from "../responseSchemas.js";
 
 const listRoutinesSchema = z.object({
   limit: paginationLimitSchema,
@@ -98,7 +105,11 @@ export function registerRoutineTools(
     },
     async (args) =>
       runTool(logger, "get_routine", async () => {
-        const data = await client.get<Routine>(`/api/v2/routine/${args.id}/`, undefined, routineResponseSchema);
+        const data = await client.get<Routine>(
+          `/api/v2/routine/${args.id}/`,
+          undefined,
+          routineResponseSchema,
+        );
         return successResult(data);
       }),
   );
@@ -179,40 +190,40 @@ export function registerRoutineTools(
   );
 
   if (enableWriteTools) {
-  server.registerTool(
-    "create_routine",
-    {
-      description: "Create a new routine",
-      inputSchema: createRoutineSchema,
-    },
-    async (args) =>
-      runTool(logger, "create_routine", async () => {
-        const data = await client.post<Routine>(
-          "/api/v2/routine/",
-          toJsonBody(args) as RoutineRequest,
-          routineResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "create_routine",
+      {
+        description: "Create a new routine",
+        inputSchema: createRoutineSchema,
+      },
+      async (args) =>
+        runTool(logger, "create_routine", async () => {
+          const data = await client.post<Routine>(
+            "/api/v2/routine/",
+            toJsonBody(args) as RoutineRequest,
+            routineResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
 
-  server.registerTool(
-    "update_routine",
-    {
-      description: "Update an existing routine",
-      inputSchema: updateRoutineSchema,
-    },
-    async (args) =>
-      runTool(logger, "update_routine", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<Routine>(
-          `/api/v2/routine/${id}/`,
-          toJsonBody(body) as PatchedRoutineRequest,
-          routineResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "update_routine",
+      {
+        description: "Update an existing routine",
+        inputSchema: updateRoutineSchema,
+      },
+      async (args) =>
+        runTool(logger, "update_routine", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<Routine>(
+            `/api/v2/routine/${id}/`,
+            toJsonBody(body) as PatchedRoutineRequest,
+            routineResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Routine tools registered");

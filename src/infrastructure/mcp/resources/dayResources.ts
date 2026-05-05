@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { Day } from "../../../domain/models/Routine.types.js";
-import { paginatedResponseSchema, dayResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  dayResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerDayResources(
   server: McpServer,
@@ -48,7 +51,11 @@ export function registerDayResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<Day>(`/api/v2/day/${id}/`, undefined, dayResponseSchema);
+      const data = await client.get<Day>(
+        `/api/v2/day/${id}/`,
+        undefined,
+        dayResponseSchema,
+      );
       return {
         contents: [
           {

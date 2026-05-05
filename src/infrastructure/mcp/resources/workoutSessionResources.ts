@@ -7,7 +7,10 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { WorkoutSession } from "../../../domain/models/Routine.types.js";
-import { paginatedResponseSchema, workoutSessionResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  workoutSessionResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerWorkoutSessionResources(
   server: McpServer,

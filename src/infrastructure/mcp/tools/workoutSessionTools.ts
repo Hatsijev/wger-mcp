@@ -3,7 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { WorkoutSession, WorkoutSessionRequest, PatchedWorkoutSessionRequest } from "../../../domain/models/Routine.types.js";
+import {
+  WorkoutSession,
+  WorkoutSessionRequest,
+  PatchedWorkoutSessionRequest,
+} from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +16,10 @@ import {
   timeStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, workoutSessionResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  workoutSessionResponseSchema,
+} from "../responseSchemas.js";
 
 const listWorkoutSessionsSchema = z.object({
   limit: paginationLimitSchema,
@@ -90,40 +97,40 @@ export function registerWorkoutSessionTools(
   );
 
   if (enableWriteTools) {
-  server.registerTool(
-    "create_workout_session",
-    {
-      description: "Create a new workout session",
-      inputSchema: createWorkoutSessionSchema,
-    },
-    async (args) =>
-      runTool(logger, "create_workout_session", async () => {
-        const data = await client.post<WorkoutSession>(
-          "/api/v2/workoutsession/",
-          toJsonBody(args) as WorkoutSessionRequest,
-          workoutSessionResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "create_workout_session",
+      {
+        description: "Create a new workout session",
+        inputSchema: createWorkoutSessionSchema,
+      },
+      async (args) =>
+        runTool(logger, "create_workout_session", async () => {
+          const data = await client.post<WorkoutSession>(
+            "/api/v2/workoutsession/",
+            toJsonBody(args) as WorkoutSessionRequest,
+            workoutSessionResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
 
-  server.registerTool(
-    "update_workout_session",
-    {
-      description: "Update an existing workout session",
-      inputSchema: updateWorkoutSessionSchema,
-    },
-    async (args) =>
-      runTool(logger, "update_workout_session", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<WorkoutSession>(
-          `/api/v2/workoutsession/${id}/`,
-          toJsonBody(body) as PatchedWorkoutSessionRequest,
-          workoutSessionResponseSchema,
-        );
-        return successResult(data);
-      }),
-  );
+    server.registerTool(
+      "update_workout_session",
+      {
+        description: "Update an existing workout session",
+        inputSchema: updateWorkoutSessionSchema,
+      },
+      async (args) =>
+        runTool(logger, "update_workout_session", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<WorkoutSession>(
+            `/api/v2/workoutsession/${id}/`,
+            toJsonBody(body) as PatchedWorkoutSessionRequest,
+            workoutSessionResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Workout session tools registered");

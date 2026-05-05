@@ -3,7 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
-import { Slot, SlotRequest, PatchedSlotRequest } from "../../../domain/models/Routine.types.js";
+import {
+  Slot,
+  SlotRequest,
+  PatchedSlotRequest,
+} from "../../../domain/models/Routine.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -12,7 +16,10 @@ import {
   jsonConfigSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import { paginatedResponseSchema, slotResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  slotResponseSchema,
+} from "../responseSchemas.js";
 
 const listSlotsSchema = z.object({
   limit: paginationLimitSchema,
@@ -74,42 +81,50 @@ export function registerSlotTools(
     },
     async (args) =>
       runTool(logger, "get_slot", async () => {
-        const data = await client.get<Slot>(`/api/v2/slot/${args.id}/`, undefined, slotResponseSchema);
-        return successResult(data);
-      }),
-  );
-
-  if (enableWriteTools) {
-  server.registerTool(
-    "create_slot",
-    {
-      description: "Create a new slot",
-      inputSchema: createSlotSchema,
-    },
-    async (args) =>
-      runTool(logger, "create_slot", async () => {
-        const data = await client.post<Slot>("/api/v2/slot/", toJsonBody(args) as SlotRequest, slotResponseSchema);
-        return successResult(data);
-      }),
-  );
-
-  server.registerTool(
-    "update_slot",
-    {
-      description: "Update an existing slot",
-      inputSchema: updateSlotSchema,
-    },
-    async (args) =>
-      runTool(logger, "update_slot", async () => {
-        const { id, ...body } = args;
-        const data = await client.patch<Slot>(
-          `/api/v2/slot/${id}/`,
-          toJsonBody(body) as PatchedSlotRequest,
+        const data = await client.get<Slot>(
+          `/api/v2/slot/${args.id}/`,
+          undefined,
           slotResponseSchema,
         );
         return successResult(data);
       }),
   );
+
+  if (enableWriteTools) {
+    server.registerTool(
+      "create_slot",
+      {
+        description: "Create a new slot",
+        inputSchema: createSlotSchema,
+      },
+      async (args) =>
+        runTool(logger, "create_slot", async () => {
+          const data = await client.post<Slot>(
+            "/api/v2/slot/",
+            toJsonBody(args) as SlotRequest,
+            slotResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
+
+    server.registerTool(
+      "update_slot",
+      {
+        description: "Update an existing slot",
+        inputSchema: updateSlotSchema,
+      },
+      async (args) =>
+        runTool(logger, "update_slot", async () => {
+          const { id, ...body } = args;
+          const data = await client.patch<Slot>(
+            `/api/v2/slot/${id}/`,
+            toJsonBody(body) as PatchedSlotRequest,
+            slotResponseSchema,
+          );
+          return successResult(data);
+        }),
+    );
   }
 
   logger.info("Slot tools registered");
