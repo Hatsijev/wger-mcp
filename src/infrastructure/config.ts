@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { Config } from "../domain/models/Config.types.js";
 import { WgerValidationError } from "../domain/errors/WgerError.js";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const logLevelSchema = z.enum(["debug", "info", "warn", "error"]);
 
