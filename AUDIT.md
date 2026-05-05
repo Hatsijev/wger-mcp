@@ -30,95 +30,37 @@ Notable improvements since the previous audit:
 - Nutrition/workout schemas were tightened in several places with shared primitives.
 - `getStatus()` no longer reports a hard-coded Wger version.
 - Write tools now have an `ENABLE_WRITE_TOOLS` registration gate.
-- HTTP requests now use `AbortController` with a 30-second timeout.
+- `ENABLE_WRITE_TOOLS` now preserves `undefined` so the documented Zod default applies.
+- HTTP requests now use `AbortController` with a configurable request timeout.
+- Response schemas are wired through most tool/resource calls.
+- The previously listed workout-log and slot-entry schema drift is fixed.
 - `npm run build` and `npm run lint` pass.
 
 ## Findings
 
-### 1. Response validation is only partially implemented
+### 1. Response validation still has small gaps
 
-`responseSchemas.ts` exists and `WgerClient` still supports optional response schemas, but almost all MCP tools/resources continue to call `client.get/post/patch` with generic type parameters and no response schema. The only observed caller passing a response schema is `list_exercises`, and it validates the paginated envelope with `paginatedResponseSchema(z.any())`, so individual exercise payloads remain unvalidated.
+`responseSchemas.ts` now contains concrete schemas and most tools/resources pass response schemas into `WgerClient`. The previous `z.any()` use is gone. Remaining gaps are narrower:
+
+- Nutritional value endpoints still return `NutritionalValues` without a response schema.
+- Some routine special endpoints still validate as `Routine`, matching the current OpenAPI schema but probably not the real semantic shape of those special responses.
+- `responseSchemas.ts` uses `jsonValueSchema as unknown as z.ZodType<Config>` for open-ended config values. This is better than `z.any()`, but it is a new `unknown` cast outside the documented MCP SDK-boundary exception.
 
 Relevant files:
 
 - `src/infrastructure/mcp/responseSchemas.ts`
-- `src/infrastructure/mcp/tools/exercises.ts:75`
-- `src/infrastructure/mcp/tools/mealTools.ts:89`
-- `src/infrastructure/mcp/resources/exercises.ts:29`
+- `src/infrastructure/mcp/tools/mealTools.ts:125`
+- `src/infrastructure/mcp/tools/mealTools.ts:175`
+- `src/infrastructure/mcp/tools/nutritionPlanTools.ts:108`
+- `src/infrastructure/mcp/tools/nutritionDiaryTools.ts:104`
 - `src/infrastructure/wger/WgerClient.ts:23`
 - `src/infrastructure/wger/WgerClient.ts:192`
 
-Risk: malformed or version-drifted Wger responses are returned as valid MCP payloads.
+Risk: malformed or version-drifted Wger responses are mostly covered now, but several endpoint families can still return unvalidated payloads.
 
-Recommendation: wire response schemas into representative high-value paths first: write responses, nutrition diary entries, workout logs, and paginated list envelopes. Avoid `z.any()` in response schemas; use JSON-compatible recursive schemas where Wger has an open-ended object.
+Recommendation: add a `nutritionalValuesResponseSchema`, use it in all nutritional-value tools, and remove or explicitly document the `unknown` cast used for config response validation.
 
-### 2. HTTP timeout exists but is not configurable
-
-`fetch` now receives an `AbortSignal`, and timeout failures are mapped to `WgerError`. The timeout is hard-coded to 30 seconds in `WgerClient`, not configurable through `Config` or environment variables.
-
-Relevant file:
-
-- `src/infrastructure/wger/WgerClient.ts:8`
-- `src/infrastructure/wger/WgerClient.ts:20`
-- `src/infrastructure/wger/WgerClient.ts:123`
-- `src/infrastructure/wger/WgerClient.ts:142`
-
-Risk: timeout behavior is improved, but deployments with slow self-hosted Wger instances cannot tune the limit without code changes.
-
-Recommendation: add `WGER_REQUEST_TIMEOUT_MS` to config with sane bounds and default `30000`.
-
-### 3. Write tool gate exists but default behavior is inconsistent
-
-Create/update tools now receive `config.enableWriteTools` and are registered only when it is true. However, documentation says `ENABLE_WRITE_TOOLS` defaults to `true`, and `configSchema` declares `default(true)`, but `loadConfig()` always passes a boolean from `parseBoolean()`. When the env var is unset, `parseBoolean(undefined)` returns `false`, so the schema default is never used and write tools are effectively disabled by default.
-
-Relevant file:
-
-- `README.md:32`
-- `docs/README.md:170`
-- `src/infrastructure/config.ts:15`
-- `src/infrastructure/config.ts:21`
-- `src/infrastructure/config.ts:34`
-- `src/infrastructure/mcp/server.ts:49`
-- `src/infrastructure/mcp/server.ts:66`
-
-Risk: operators following the documentation may expect write tools to be present by default, but they will be absent unless `ENABLE_WRITE_TOOLS=true` is explicitly set.
-
-Recommendation: either make `parseBoolean` preserve `undefined` so Zod defaults apply, or change docs/defaults to say write tools default to disabled.
-
-### 4. MCP input schemas still drift from `wger.yaml`
-
-Several previously reported examples have been fixed:
-
-- `decimalAmountSchema` no longer accepts empty strings.
-- `update_meal.time` now uses `timeStringSchema`.
-- `list_meal_items.meal` and `list_meal_items.ingredient` now use positive integer IDs.
-- `update_nutrition_plan.description` and goal fields now match the stricter create schema.
-- Day, slot, and slot-entry write `order` fields now use integer `minimum: 0`.
-
-Remaining drift still exists:
-
-- `workoutLogTools.ts` uses unconstrained `z.number()` for `iteration`, `rest`, and `rest_target`; OpenAPI requires integer bounds.
-- `slotEntryTools.ts` uses arbitrary strings for `repetition_rounding` and `weight_rounding`; OpenAPI declares decimal strings with a narrower pattern.
-- `responseSchemas.ts` introduces `z.any()` for `day.config`, which conflicts with the project’s zero-`any` policy even if it is a response boundary.
-
-Relevant files:
-
-- `src/infrastructure/mcp/sharedSchemas.ts:24`
-- `src/infrastructure/mcp/tools/mealTools.ts:32`
-- `src/infrastructure/mcp/tools/nutritionPlanTools.ts:42`
-- `src/infrastructure/mcp/tools/workoutLogTools.ts:30`
-- `src/infrastructure/mcp/tools/workoutLogTools.ts:42`
-- `src/infrastructure/mcp/tools/slotEntryTools.ts:43`
-- `src/infrastructure/mcp/responseSchemas.ts:40`
-- `wger.yaml:11298`
-- `wger.yaml:14813`
-- `wger.yaml:15842`
-
-Risk: invalid inputs reach Wger, causing avoidable upstream errors and uneven UX between create/update tools.
-
-Recommendation: finish aligning the remaining write schemas with `wger.yaml`. Replace `z.any()` with the existing recursive JSON schema or an explicit JSON-compatible response schema.
-
-### 5. Clean Architecture boundary remains thin
+### 2. Clean Architecture boundary remains thin
 
 The code is organized by MCP domain module, but MCP transport handlers still call `WgerClient` directly. The application layer is still effectively only the logger port.
 
@@ -143,7 +85,10 @@ Recommendation: before adding broad Milestone 4 coverage, introduce endpoint des
 - Tool/resource files remain split by domain.
 - `get_wger_status` no longer reports a hard-coded version.
 - Write tools are no longer registered unconditionally; they now have a gate.
-- HTTP requests now have cancellation via `AbortController`.
+- `ENABLE_WRITE_TOOLS` now defaults consistently with documentation.
+- HTTP requests now have configurable cancellation via `AbortController`.
+- The previously listed input-schema drift items are fixed.
+- Response validation is broadly wired through tools/resources.
 - Build and lint pass.
 
 ## Excluded From This Follow-up
@@ -152,8 +97,6 @@ Unit and integration tests were explicitly excluded from this verification pass.
 
 ## Suggested Next Order
 
-1. Fix `ENABLE_WRITE_TOOLS` default behavior or align docs with the actual default.
-2. Wire real response schemas into representative tools/resources and remove `z.any()`.
-3. Make request timeout configurable with env validation.
-4. Tighten remaining schema drift in workout logs and slot-entry rounding fields.
-5. Introduce application services or endpoint descriptors before Milestone 4 expansion.
+1. Add `nutritionalValuesResponseSchema` and wire it into nutritional-value tools.
+2. Remove or explicitly document the `unknown` cast in `responseSchemas.ts`.
+3. Introduce application services or endpoint descriptors before Milestone 4 expansion.
