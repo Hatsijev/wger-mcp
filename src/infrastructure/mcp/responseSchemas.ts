@@ -2,7 +2,7 @@ import { z } from "zod";
 import { jsonValueSchema } from "./sharedSchemas.js";
 import { Config } from "../../domain/models/Routine.types.js";
 
-const configResponseSchema = jsonValueSchema as unknown as z.ZodType<Config>;
+const configResponseSchema = jsonValueSchema as z.ZodType<Config>;
 
 export const wgerStatusResponseSchema = z.object({
   status: z.string(),

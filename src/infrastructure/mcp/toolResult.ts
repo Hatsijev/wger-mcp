@@ -1,28 +1,10 @@
+import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { Logger } from "../../application/ports/Logger.js";
 import { WgerValidationError } from "../../domain/errors/WgerError.js";
 
-// Index signatures use `{ [x: string]: unknown }` to satisfy the MCP SDK's
-// CallToolResult type. This is the only allowed SDK-boundary exception.
-export interface ToolSuccessResult {
-  readonly content: Array<{
-    type: "text";
-    text: string;
-  }>;
-  readonly [key: string]: unknown;
-}
+export type ToolResult = CallToolResult;
 
-export interface ToolErrorResult {
-  readonly content: Array<{
-    type: "text";
-    text: string;
-  }>;
-  readonly isError: true;
-  readonly [key: string]: unknown;
-}
-
-export type ToolResult = ToolSuccessResult | ToolErrorResult;
-
-export function successResult<T>(data: T): ToolSuccessResult {
+export function successResult<T>(data: T): ToolResult {
   return {
     content: [
       {
@@ -33,7 +15,7 @@ export function successResult<T>(data: T): ToolSuccessResult {
   };
 }
 
-export function errorResult(message: string): ToolErrorResult {
+export function errorResult(message: string): ToolResult {
   return {
     content: [
       {
@@ -41,21 +23,20 @@ export function errorResult(message: string): ToolErrorResult {
         text: JSON.stringify({ ok: false, error: message }),
       },
     ],
-    isError: true,
   };
 }
 
-export async function runTool<T extends ToolResult>(
+export async function runTool(
   logger: Logger,
   toolName: string,
-  handler: () => Promise<T>,
-): Promise<T> {
+  handler: () => Promise<ToolResult>,
+): Promise<ToolResult> {
   try {
     return await handler();
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     logger.error("Tool execution failed", { tool: toolName, error: message });
-    return errorResult(message) as T;
+    return errorResult(message);
   }
 }
 
