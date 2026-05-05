@@ -7,5 +7,5 @@ export interface WgerPaginatedResponse<T> {
 
 export interface WgerStatusResponse {
   readonly status: string;
-  readonly version: string;
+  readonly version?: string;
 }

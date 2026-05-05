@@ -67,6 +67,7 @@ export function registerWorkoutLogTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_workout_logs",
@@ -104,6 +105,7 @@ export function registerWorkoutLogTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_workout_log",
     {
@@ -136,6 +138,7 @@ export function registerWorkoutLogTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Workout log tools registered");
 }

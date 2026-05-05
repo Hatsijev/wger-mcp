@@ -20,6 +20,7 @@ WGER_BASE_URL=https://your-wger-instance.com
 WGER_API_TOKEN=your-token-here
 # Optional:
 # LOG_LEVEL=info
+# ENABLE_WRITE_TOOLS=true
 # ENABLE_DESTRUCTIVE_TOOLS=false
 # ENABLE_ADMIN_TOOLS=false
 # ENABLE_RAW_WGER_PROXY=false

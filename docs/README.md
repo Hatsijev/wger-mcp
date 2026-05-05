@@ -167,7 +167,7 @@ Welcome to the Wger MCP server documentation.
 ## Safety & Configuration
 
 - **Read tools** are always available.
-- **Write tools** (create / update) are enabled by default. The MCP server assumes the API token has appropriate write scope.
+- **Write tools** (create / update) are enabled by default (`ENABLE_WRITE_TOOLS=true`). The MCP server assumes the API token has appropriate write scope. Set `ENABLE_WRITE_TOOLS=false` to disable all create/update operations.
 - **Delete tools** require `ENABLE_DESTRUCTIVE_TOOLS=true`. No delete operations are currently exposed.
 - **Admin tools** require `ENABLE_ADMIN_TOOLS=true`.
 - **Raw proxy** requires `ENABLE_RAW_WGER_PROXY=true`.

@@ -29,6 +29,7 @@ npm run build
 | `WGER_API_TOKEN`           | Yes      | —       | API auth token               |
 | `WGER_LANGUAGE`            | No       | —       | Default language code        |
 | `LOG_LEVEL`                | No       | `info`  | Logging level                |
+| `ENABLE_WRITE_TOOLS`       | No       | `true`  | Enable create/update tools   |
 | `ENABLE_DESTRUCTIVE_TOOLS` | No       | `false` | Enable delete operations     |
 | `ENABLE_ADMIN_TOOLS`       | No       | `false` | Enable auth/admin operations |
 | `ENABLE_RAW_WGER_PROXY`    | No       | `false` | Enable raw HTTP proxy        |

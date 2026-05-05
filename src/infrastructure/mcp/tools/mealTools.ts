@@ -32,8 +32,8 @@ const getMealNutritionalValuesSchema = z.object({
 const listMealItemsSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  meal: z.number().optional(),
-  ingredient: z.number().optional(),
+  meal: positiveIntegerIdSchema.optional(),
+  ingredient: positiveIntegerIdSchema.optional(),
 });
 
 const getMealItemSchema = z.object({
@@ -53,8 +53,8 @@ const createMealSchema = z.object({
 const updateMealSchema = z.object({
   id: positiveIntegerIdSchema,
   plan: positiveIntegerIdSchema.optional(),
-  time: z.string().nullable().optional(),
-  name: z.string().max(25).optional(),
+  time: timeStringSchema.nullable().optional(),
+  name: boundedStringSchema(25).optional(),
 });
 
 const createMealItemSchema = z.object({
@@ -76,6 +76,7 @@ export function registerMealTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_meals",
@@ -175,6 +176,7 @@ export function registerMealTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_meal",
     {
@@ -237,6 +239,7 @@ export function registerMealTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Meal tools registered");
 }

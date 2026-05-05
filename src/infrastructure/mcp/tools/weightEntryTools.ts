@@ -39,6 +39,7 @@ export function registerWeightEntryTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_weight_entries",
@@ -76,6 +77,7 @@ export function registerWeightEntryTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_weight_entry",
     {
@@ -108,6 +110,7 @@ export function registerWeightEntryTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Weight entry tools registered");
 }

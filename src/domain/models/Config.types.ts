@@ -3,6 +3,7 @@ export interface Config {
   readonly wgerApiToken: string;
   readonly wgerLanguage?: string | undefined;
   readonly logLevel: LogLevel;
+  readonly enableWriteTools: boolean;
   readonly enableDestructiveTools: boolean;
   readonly enableAdminTools: boolean;
   readonly enableRawWgerProxy: boolean;

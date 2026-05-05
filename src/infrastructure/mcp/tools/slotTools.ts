@@ -25,7 +25,7 @@ const getSlotSchema = z.object({
 
 const createSlotSchema = z.object({
   day: positiveIntegerIdSchema,
-  order: z.number().optional(),
+  order: z.number().int().min(0).optional(),
   comment: boundedStringSchema(200).optional(),
   config: jsonConfigSchema,
 });
@@ -33,7 +33,7 @@ const createSlotSchema = z.object({
 const updateSlotSchema = z.object({
   id: positiveIntegerIdSchema,
   day: positiveIntegerIdSchema.optional(),
-  order: z.number().optional(),
+  order: z.number().int().min(0).optional(),
   comment: boundedStringSchema(200).optional(),
   config: jsonConfigSchema,
 });
@@ -42,6 +42,7 @@ export function registerSlotTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_slots",
@@ -76,6 +77,7 @@ export function registerSlotTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_slot",
     {
@@ -105,6 +107,7 @@ export function registerSlotTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Slot tools registered");
 }

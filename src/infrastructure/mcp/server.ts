@@ -46,14 +46,14 @@ export function createMcpServer(
 
   registerExerciseTools(server, client, logger);
   registerExerciseResources(server, client, logger);
-  registerRoutineTools(server, client, logger);
-  registerDayTools(server, client, logger);
-  registerSlotTools(server, client, logger);
-  registerSlotEntryTools(server, client, logger);
-  registerWorkoutLogTools(server, client, logger);
-  registerWorkoutSessionTools(server, client, logger);
-  registerWeightEntryTools(server, client, logger);
-  registerGalleryTools(server, client, logger);
+  registerRoutineTools(server, client, logger, config.enableWriteTools);
+  registerDayTools(server, client, logger, config.enableWriteTools);
+  registerSlotTools(server, client, logger, config.enableWriteTools);
+  registerSlotEntryTools(server, client, logger, config.enableWriteTools);
+  registerWorkoutLogTools(server, client, logger, config.enableWriteTools);
+  registerWorkoutSessionTools(server, client, logger, config.enableWriteTools);
+  registerWeightEntryTools(server, client, logger, config.enableWriteTools);
+  registerGalleryTools(server, client, logger, config.enableWriteTools);
   registerRoutineResources(server, client, logger);
   registerDayResources(server, client, logger);
   registerSlotResources(server, client, logger);
@@ -63,9 +63,9 @@ export function createMcpServer(
   registerWeightEntryResources(server, client, logger);
   registerGalleryResources(server, client, logger);
   registerIngredientTools(server, client, logger);
-  registerMealTools(server, client, logger);
-  registerNutritionPlanTools(server, client, logger);
-  registerNutritionDiaryTools(server, client, logger);
+  registerMealTools(server, client, logger, config.enableWriteTools);
+  registerNutritionPlanTools(server, client, logger, config.enableWriteTools);
+  registerNutritionDiaryTools(server, client, logger, config.enableWriteTools);
   registerIngredientResources(server, client, logger);
   registerMealResources(server, client, logger);
   registerNutritionPlanResources(server, client, logger);

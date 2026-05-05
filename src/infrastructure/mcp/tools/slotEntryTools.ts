@@ -43,7 +43,7 @@ const createSlotEntrySchema = z.object({
   repetition_rounding: z.string().nullable().optional(),
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   weight_rounding: z.string().nullable().optional(),
-  order: z.number().optional(),
+  order: z.number().int().min(0).optional(),
   comment: boundedStringSchema(100).optional(),
   config: jsonConfigSchema,
 });
@@ -69,7 +69,7 @@ const updateSlotEntrySchema = z.object({
   repetition_rounding: z.string().nullable().optional(),
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   weight_rounding: z.string().nullable().optional(),
-  order: z.number().optional(),
+  order: z.number().int().min(0).optional(),
   comment: boundedStringSchema(100).optional(),
   config: jsonConfigSchema,
 });
@@ -78,6 +78,7 @@ export function registerSlotEntryTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_slot_entries",
@@ -114,6 +115,7 @@ export function registerSlotEntryTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_slot_entry",
     {
@@ -146,6 +148,7 @@ export function registerSlotEntryTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Slot entry tools registered");
 }

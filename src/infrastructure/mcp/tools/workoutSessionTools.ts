@@ -48,6 +48,7 @@ export function registerWorkoutSessionTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_workout_sessions",
@@ -84,6 +85,7 @@ export function registerWorkoutSessionTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_workout_session",
     {
@@ -116,6 +118,7 @@ export function registerWorkoutSessionTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Workout session tools registered");
 }

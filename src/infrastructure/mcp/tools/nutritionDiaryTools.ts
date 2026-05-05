@@ -52,6 +52,7 @@ export function registerNutritionDiaryTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_nutrition_diary_entries",
@@ -103,6 +104,7 @@ export function registerNutritionDiaryTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_nutrition_diary_entry",
     {
@@ -135,6 +137,7 @@ export function registerNutritionDiaryTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Nutrition diary tools registered");
 }

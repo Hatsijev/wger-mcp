@@ -15,6 +15,7 @@ import {
   positiveIntegerIdSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult } from "../toolResult.js";
+import { paginatedResponseSchema } from "../responseSchemas.js";
 
 const listExercisesSchema = z.object({
   limit: paginationLimitSchema,
@@ -71,6 +72,7 @@ export function registerExerciseTools(
             equipment: args.equipment,
             language: args.language,
           },
+          paginatedResponseSchema(z.any()),
         );
         return successResult(data);
       }),

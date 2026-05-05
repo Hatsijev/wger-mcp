@@ -43,19 +43,20 @@ const updateNutritionPlanSchema = z.object({
   id: positiveIntegerIdSchema,
   start: isoDateStringSchema.optional(),
   end: isoDateStringSchema.nullable().optional(),
-  description: boundedStringSchema(1000).optional(),
+  description: boundedStringSchema(80).optional(),
   only_logging: z.boolean().optional(),
-  goal_energy: z.number().nullable().optional(),
-  goal_protein: z.number().nullable().optional(),
-  goal_carbohydrates: z.number().nullable().optional(),
-  goal_fat: z.number().nullable().optional(),
-  goal_fiber: z.number().nullable().optional(),
+  goal_energy: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_protein: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_carbohydrates: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_fat: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
+  goal_fiber: z.number().int().min(-2147483648).max(2147483647).nullable().optional(),
 });
 
 export function registerNutritionPlanTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_nutrition_plans",
@@ -107,6 +108,7 @@ export function registerNutritionPlanTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_nutrition_plan",
     {
@@ -139,6 +141,7 @@ export function registerNutritionPlanTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Nutrition plan tools registered");
 }

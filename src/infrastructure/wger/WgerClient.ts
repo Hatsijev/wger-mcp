@@ -5,15 +5,19 @@ import { WgerError, WgerAuthError } from "../../domain/errors/WgerError.js";
 import { WgerStatusResponse } from "./types.js";
 
 
+const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+
 export class WgerClient {
   private readonly _baseUrl: string;
   private readonly _token: string;
   private readonly _logger: Logger;
+  private readonly _timeoutMs: number;
 
   constructor(config: Config, logger: Logger) {
     this._baseUrl = config.wgerBaseUrl.replace(/\/$/, "");
     this._token = config.wgerApiToken;
     this._logger = logger;
+    this._timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS;
   }
 
   async get<T>(
@@ -64,7 +68,7 @@ export class WgerClient {
 
   async getStatus(): Promise<WgerStatusResponse> {
     await this.get<{ readonly id: number }>("/api/v2/exerciseinfo/", { limit: 1 });
-    return { status: "ok", version: "2.5.0" };
+    return { status: "ok" };
   }
 
   private _buildUrl(
@@ -116,9 +120,13 @@ export class WgerClient {
       "Content-Type": "application/json",
     };
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this._timeoutMs);
+
     const options: RequestInit = {
       method,
       headers,
+      signal: controller.signal,
     };
 
     if (body !== undefined) {
@@ -126,8 +134,15 @@ export class WgerClient {
     }
 
     try {
-      return await fetch(url, options);
+      const response = await fetch(url, options);
+      clearTimeout(timeoutId);
+      return response;
     } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === "AbortError") {
+        this._logger.error("Wger API request timed out", { method, url, timeoutMs: this._timeoutMs });
+        throw new WgerError(`Request timed out after ${this._timeoutMs}ms`, { statusCode: 408 });
+      }
       const message = error instanceof Error ? error.message : "Network error";
       this._logger.error("Wger API request failed", {
         method,

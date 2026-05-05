@@ -24,7 +24,7 @@ export const timeStringSchema = z
 export const decimalAmountSchema = z
   .string()
   .regex(
-    /^-?\d{0,4}(?:\.\d{0,2})?$/,
+    /^-?\d{1,4}(?:\.\d{0,2})?$/,
     "Expected decimal with up to 4 integer and 2 fractional digits",
   );
 

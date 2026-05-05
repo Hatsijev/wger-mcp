@@ -50,7 +50,7 @@ const getIngredientImageSchema = z.object({
 const listIngredientWeightUnitsSchema = z.object({
   limit: paginationLimitSchema,
   offset: paginationOffsetSchema,
-  ingredient: z.number().optional(),
+  ingredient: positiveIntegerIdSchema.optional(),
 });
 
 const getIngredientWeightUnitSchema = z.object({

@@ -67,6 +67,7 @@ export function registerRoutineTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_routines",
@@ -175,6 +176,7 @@ export function registerRoutineTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_routine",
     {
@@ -207,6 +209,7 @@ export function registerRoutineTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Routine tools registered");
 }

@@ -39,6 +39,7 @@ export function registerGalleryTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_gallery_images",
@@ -74,6 +75,7 @@ export function registerGalleryTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_gallery_image",
     {
@@ -106,6 +108,7 @@ export function registerGalleryTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Gallery tools registered");
 }

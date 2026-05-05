@@ -25,7 +25,7 @@ const getDaySchema = z.object({
 
 const createDaySchema = z.object({
   routine: positiveIntegerIdSchema,
-  order: z.number().optional(),
+  order: z.number().int().min(0).optional(),
   name: boundedStringSchema(20).optional(),
   description: boundedStringSchema(1000).optional(),
   is_rest: z.boolean().optional(),
@@ -39,7 +39,7 @@ const createDaySchema = z.object({
 const updateDaySchema = z.object({
   id: positiveIntegerIdSchema,
   routine: positiveIntegerIdSchema.optional(),
-  order: z.number().optional(),
+  order: z.number().int().min(0).optional(),
   name: boundedStringSchema(20).optional(),
   description: boundedStringSchema(1000).optional(),
   is_rest: z.boolean().optional(),
@@ -54,6 +54,7 @@ export function registerDayTools(
   server: McpServer,
   client: WgerClient,
   logger: Logger,
+  enableWriteTools = true,
 ): void {
   server.registerTool(
     "list_days",
@@ -88,6 +89,7 @@ export function registerDayTools(
       }),
   );
 
+  if (enableWriteTools) {
   server.registerTool(
     "create_day",
     {
@@ -117,6 +119,7 @@ export function registerDayTools(
         return successResult(data);
       }),
   );
+  }
 
   logger.info("Day tools registered");
 }
