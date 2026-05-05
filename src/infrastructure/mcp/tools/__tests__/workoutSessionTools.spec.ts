@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -50,13 +56,23 @@ describe("registerWorkoutSessionTools", () => {
   });
 
   it("skips write tools when enableWriteTools is false", () => {
-    registerWorkoutSessionTools(server as never, client as never, logger, false);
+    registerWorkoutSessionTools(
+      server as never,
+      client as never,
+      logger,
+      false,
+    );
     expect(server.registerTool).toHaveBeenCalledTimes(2);
     expect(server.tools.has("create_workout_session")).toBe(false);
   });
 
   it("list_workout_sessions calls GET /api/v2/workoutsession/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerWorkoutSessionTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_workout_sessions")!;
     await handler({ date: "2024-01-01" });
@@ -72,7 +88,11 @@ describe("registerWorkoutSessionTools", () => {
     registerWorkoutSessionTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_workout_session")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/workoutsession/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/workoutsession/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_workout_session calls POST /api/v2/workoutsession/", async () => {
@@ -101,14 +121,18 @@ describe("registerWorkoutSessionTools", () => {
 
   it("impression schema accepts 1, 2, 3 only", () => {
     registerWorkoutSessionTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_workout_session") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_workout_session") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ impression: "1" })).not.toThrow();
     expect(() => schema.parse({ impression: "4" })).toThrow();
   });
 
   it("time fields use timeStringSchema", () => {
     registerWorkoutSessionTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_workout_session") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_workout_session") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ time_start: "not-a-time" })).toThrow();
     expect(() => schema.parse({ time_start: "08:00" })).not.toThrow();
   });

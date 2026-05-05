@@ -6,7 +6,10 @@ import {
   ImpressionEnum,
 } from "../../../domain/models/Routine.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, workoutSessionResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  workoutSessionResponseSchema,
+} from "../responseSchemas.js";
 
 export const listWorkoutSessionsEndpoint: EndpointDescriptor<
   {

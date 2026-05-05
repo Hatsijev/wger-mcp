@@ -120,7 +120,9 @@ describe("registerConfigTools", () => {
       registerConfigTools(server as never, client as never, logger, true);
       const handler = server.getTool("delete_max_repetitions_config")!;
       await handler({ id: 1 });
-      expect(client.delete).toHaveBeenCalledWith("/api/v2/max-repetitions-config/1/");
+      expect(client.delete).toHaveBeenCalledWith(
+        "/api/v2/max-repetitions-config/1/",
+      );
     });
   });
 

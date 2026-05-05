@@ -1,7 +1,10 @@
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { Routine } from "../../../domain/models/Routine.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, routineResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  routineResponseSchema,
+} from "../responseSchemas.js";
 
 export const listTemplatesEndpoint: EndpointDescriptor<
   {
@@ -27,11 +30,12 @@ export const listTemplatesEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(routineResponseSchema),
 };
 
-export const getTemplateEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
-  method: "GET",
-  path: (args) => `/api/v2/templates/${args.id}/`,
-  responseSchema: routineResponseSchema,
-};
+export const getTemplateEndpoint: EndpointDescriptor<{ id: number }, Routine> =
+  {
+    method: "GET",
+    path: (args) => `/api/v2/templates/${args.id}/`,
+    responseSchema: routineResponseSchema,
+  };
 
 export const listPublicTemplatesEndpoint: EndpointDescriptor<
   {
@@ -57,7 +61,10 @@ export const listPublicTemplatesEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(routineResponseSchema),
 };
 
-export const getPublicTemplateEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
+export const getPublicTemplateEndpoint: EndpointDescriptor<
+  { id: number },
+  Routine
+> = {
   method: "GET",
   path: (args) => `/api/v2/public-templates/${args.id}/`,
   responseSchema: routineResponseSchema,

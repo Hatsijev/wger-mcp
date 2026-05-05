@@ -231,70 +231,150 @@ export function registerConfigTools(
 
   server.registerTool(
     "list_max_repetitions_configs",
-    { description: "List max repetitions configs", inputSchema: listMaxRepetitionsConfigsSchema },
-    endpointHandler(client, logger, "list_max_repetitions_configs", listMaxRepetitionsConfigsEndpoint),
+    {
+      description: "List max repetitions configs",
+      inputSchema: listMaxRepetitionsConfigsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_max_repetitions_configs",
+      listMaxRepetitionsConfigsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_max_repetitions_config",
-    { description: "Get a max repetitions config by ID", inputSchema: getMaxRepetitionsConfigSchema },
-    endpointHandler(client, logger, "get_max_repetitions_config", getMaxRepetitionsConfigEndpoint),
+    {
+      description: "Get a max repetitions config by ID",
+      inputSchema: getMaxRepetitionsConfigSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_max_repetitions_config",
+      getMaxRepetitionsConfigEndpoint,
+    ),
   );
 
   // ── Max Rest Config Tools ─────────────────────────────────────────────
 
   server.registerTool(
     "list_max_rest_configs",
-    { description: "List max rest configs", inputSchema: listMaxRestConfigsSchema },
-    endpointHandler(client, logger, "list_max_rest_configs", listMaxRestConfigsEndpoint),
+    {
+      description: "List max rest configs",
+      inputSchema: listMaxRestConfigsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_max_rest_configs",
+      listMaxRestConfigsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_max_rest_config",
-    { description: "Get a max rest config by ID", inputSchema: getMaxRestConfigSchema },
-    endpointHandler(client, logger, "get_max_rest_config", getMaxRestConfigEndpoint),
+    {
+      description: "Get a max rest config by ID",
+      inputSchema: getMaxRestConfigSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_max_rest_config",
+      getMaxRestConfigEndpoint,
+    ),
   );
 
   // ── Max RiR Config Tools ──────────────────────────────────────────────
 
   server.registerTool(
     "list_max_rir_configs",
-    { description: "List max RiR configs", inputSchema: listMaxRiRConfigsSchema },
-    endpointHandler(client, logger, "list_max_rir_configs", listMaxRiRConfigsEndpoint),
+    {
+      description: "List max RiR configs",
+      inputSchema: listMaxRiRConfigsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_max_rir_configs",
+      listMaxRiRConfigsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_max_rir_config",
-    { description: "Get a max RiR config by ID", inputSchema: getMaxRiRConfigSchema },
-    endpointHandler(client, logger, "get_max_rir_config", getMaxRiRConfigEndpoint),
+    {
+      description: "Get a max RiR config by ID",
+      inputSchema: getMaxRiRConfigSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_max_rir_config",
+      getMaxRiRConfigEndpoint,
+    ),
   );
 
   // ── Max Set Nr Config Tools ───────────────────────────────────────────
 
   server.registerTool(
     "list_max_set_nr_configs",
-    { description: "List max set number configs", inputSchema: listMaxSetNrConfigsSchema },
-    endpointHandler(client, logger, "list_max_set_nr_configs", listMaxSetNrConfigsEndpoint),
+    {
+      description: "List max set number configs",
+      inputSchema: listMaxSetNrConfigsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_max_set_nr_configs",
+      listMaxSetNrConfigsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_max_set_nr_config",
-    { description: "Get a max set number config by ID", inputSchema: getMaxSetNrConfigSchema },
-    endpointHandler(client, logger, "get_max_set_nr_config", getMaxSetNrConfigEndpoint),
+    {
+      description: "Get a max set number config by ID",
+      inputSchema: getMaxSetNrConfigSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_max_set_nr_config",
+      getMaxSetNrConfigEndpoint,
+    ),
   );
 
   // ── Max Weight Config Tools ───────────────────────────────────────────
 
   server.registerTool(
     "list_max_weight_configs",
-    { description: "List max weight configs", inputSchema: listMaxWeightConfigsSchema },
-    endpointHandler(client, logger, "list_max_weight_configs", listMaxWeightConfigsEndpoint),
+    {
+      description: "List max weight configs",
+      inputSchema: listMaxWeightConfigsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_max_weight_configs",
+      listMaxWeightConfigsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_max_weight_config",
-    { description: "Get a max weight config by ID", inputSchema: getMaxWeightConfigSchema },
-    endpointHandler(client, logger, "get_max_weight_config", getMaxWeightConfigEndpoint),
+    {
+      description: "Get a max weight config by ID",
+      inputSchema: getMaxWeightConfigSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_max_weight_config",
+      getMaxWeightConfigEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
@@ -302,100 +382,220 @@ export function registerConfigTools(
 
     server.registerTool(
       "create_max_repetitions_config",
-      { description: "Create a max repetitions config", inputSchema: createMaxRepetitionsConfigSchema },
-      endpointHandler(client, logger, "create_max_repetitions_config", createMaxRepetitionsConfigEndpoint),
+      {
+        description: "Create a max repetitions config",
+        inputSchema: createMaxRepetitionsConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_max_repetitions_config",
+        createMaxRepetitionsConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_max_repetitions_config",
-      { description: "Update a max repetitions config", inputSchema: updateMaxRepetitionsConfigSchema },
-      endpointHandler(client, logger, "update_max_repetitions_config", updateMaxRepetitionsConfigEndpoint),
+      {
+        description: "Update a max repetitions config",
+        inputSchema: updateMaxRepetitionsConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_max_repetitions_config",
+        updateMaxRepetitionsConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "delete_max_repetitions_config",
-      { description: "Delete a max repetitions config", inputSchema: deleteMaxRepetitionsConfigSchema },
-      endpointHandler(client, logger, "delete_max_repetitions_config", deleteMaxRepetitionsConfigEndpoint),
+      {
+        description: "Delete a max repetitions config",
+        inputSchema: deleteMaxRepetitionsConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "delete_max_repetitions_config",
+        deleteMaxRepetitionsConfigEndpoint,
+      ),
     );
 
     // ── Max Rest Config Write Tools ─────────────────────────────────────
 
     server.registerTool(
       "create_max_rest_config",
-      { description: "Create a max rest config", inputSchema: createMaxRestConfigSchema },
-      endpointHandler(client, logger, "create_max_rest_config", createMaxRestConfigEndpoint),
+      {
+        description: "Create a max rest config",
+        inputSchema: createMaxRestConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_max_rest_config",
+        createMaxRestConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_max_rest_config",
-      { description: "Update a max rest config", inputSchema: updateMaxRestConfigSchema },
-      endpointHandler(client, logger, "update_max_rest_config", updateMaxRestConfigEndpoint),
+      {
+        description: "Update a max rest config",
+        inputSchema: updateMaxRestConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_max_rest_config",
+        updateMaxRestConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "delete_max_rest_config",
-      { description: "Delete a max rest config", inputSchema: deleteMaxRestConfigSchema },
-      endpointHandler(client, logger, "delete_max_rest_config", deleteMaxRestConfigEndpoint),
+      {
+        description: "Delete a max rest config",
+        inputSchema: deleteMaxRestConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "delete_max_rest_config",
+        deleteMaxRestConfigEndpoint,
+      ),
     );
 
     // ── Max RiR Config Write Tools ──────────────────────────────────────
 
     server.registerTool(
       "create_max_rir_config",
-      { description: "Create a max RiR config", inputSchema: createMaxRiRConfigSchema },
-      endpointHandler(client, logger, "create_max_rir_config", createMaxRiRConfigEndpoint),
+      {
+        description: "Create a max RiR config",
+        inputSchema: createMaxRiRConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_max_rir_config",
+        createMaxRiRConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_max_rir_config",
-      { description: "Update a max RiR config", inputSchema: updateMaxRiRConfigSchema },
-      endpointHandler(client, logger, "update_max_rir_config", updateMaxRiRConfigEndpoint),
+      {
+        description: "Update a max RiR config",
+        inputSchema: updateMaxRiRConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_max_rir_config",
+        updateMaxRiRConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "delete_max_rir_config",
-      { description: "Delete a max RiR config", inputSchema: deleteMaxRiRConfigSchema },
-      endpointHandler(client, logger, "delete_max_rir_config", deleteMaxRiRConfigEndpoint),
+      {
+        description: "Delete a max RiR config",
+        inputSchema: deleteMaxRiRConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "delete_max_rir_config",
+        deleteMaxRiRConfigEndpoint,
+      ),
     );
 
     // ── Max Set Nr Config Write Tools ───────────────────────────────────
 
     server.registerTool(
       "create_max_set_nr_config",
-      { description: "Create a max set number config", inputSchema: createMaxSetNrConfigSchema },
-      endpointHandler(client, logger, "create_max_set_nr_config", createMaxSetNrConfigEndpoint),
+      {
+        description: "Create a max set number config",
+        inputSchema: createMaxSetNrConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_max_set_nr_config",
+        createMaxSetNrConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_max_set_nr_config",
-      { description: "Update a max set number config", inputSchema: updateMaxSetNrConfigSchema },
-      endpointHandler(client, logger, "update_max_set_nr_config", updateMaxSetNrConfigEndpoint),
+      {
+        description: "Update a max set number config",
+        inputSchema: updateMaxSetNrConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_max_set_nr_config",
+        updateMaxSetNrConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "delete_max_set_nr_config",
-      { description: "Delete a max set number config", inputSchema: deleteMaxSetNrConfigSchema },
-      endpointHandler(client, logger, "delete_max_set_nr_config", deleteMaxSetNrConfigEndpoint),
+      {
+        description: "Delete a max set number config",
+        inputSchema: deleteMaxSetNrConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "delete_max_set_nr_config",
+        deleteMaxSetNrConfigEndpoint,
+      ),
     );
 
     // ── Max Weight Config Write Tools ───────────────────────────────────
 
     server.registerTool(
       "create_max_weight_config",
-      { description: "Create a max weight config", inputSchema: createMaxWeightConfigSchema },
-      endpointHandler(client, logger, "create_max_weight_config", createMaxWeightConfigEndpoint),
+      {
+        description: "Create a max weight config",
+        inputSchema: createMaxWeightConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_max_weight_config",
+        createMaxWeightConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_max_weight_config",
-      { description: "Update a max weight config", inputSchema: updateMaxWeightConfigSchema },
-      endpointHandler(client, logger, "update_max_weight_config", updateMaxWeightConfigEndpoint),
+      {
+        description: "Update a max weight config",
+        inputSchema: updateMaxWeightConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_max_weight_config",
+        updateMaxWeightConfigEndpoint,
+      ),
     );
 
     server.registerTool(
       "delete_max_weight_config",
-      { description: "Delete a max weight config", inputSchema: deleteMaxWeightConfigSchema },
-      endpointHandler(client, logger, "delete_max_weight_config", deleteMaxWeightConfigEndpoint),
+      {
+        description: "Delete a max weight config",
+        inputSchema: deleteMaxWeightConfigSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "delete_max_weight_config",
+        deleteMaxWeightConfigEndpoint,
+      ),
     );
   }
 

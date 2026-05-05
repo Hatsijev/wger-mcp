@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -56,7 +62,12 @@ describe("registerGalleryTools", () => {
   });
 
   it("list_gallery_images calls GET /api/v2/gallery/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerGalleryTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_gallery_images")!;
     await handler({});
@@ -72,7 +83,11 @@ describe("registerGalleryTools", () => {
     registerGalleryTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_gallery_image")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/gallery/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/gallery/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_gallery_image calls POST /api/v2/gallery/", async () => {
@@ -82,7 +97,10 @@ describe("registerGalleryTools", () => {
     await handler({ date: "2024-01-01", image: "https://example.com/img.jpg" });
     expect(client.post).toHaveBeenCalledWith(
       "/api/v2/gallery/",
-      expect.objectContaining({ date: "2024-01-01", image: "https://example.com/img.jpg" }),
+      expect.objectContaining({
+        date: "2024-01-01",
+        image: "https://example.com/img.jpg",
+      }),
       expect.anything(),
     );
   });
@@ -101,7 +119,9 @@ describe("registerGalleryTools", () => {
 
   it("create schema requires date and image", () => {
     registerGalleryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_gallery_image") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_gallery_image") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ date: "2024-01-01" })).toThrow();
   });
 });

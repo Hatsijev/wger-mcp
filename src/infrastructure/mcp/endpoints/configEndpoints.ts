@@ -46,7 +46,10 @@ export const listMaxRepetitionsConfigsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(maxRepetitionsConfigResponseSchema),
 };
 
-export const getMaxRepetitionsConfigEndpoint: EndpointDescriptor<{ id: number }, MaxRepetitionsConfig> = {
+export const getMaxRepetitionsConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  MaxRepetitionsConfig
+> = {
   method: "GET",
   path: (args) => `/api/v2/max-repetitions-config/${args.id}/`,
   responseSchema: maxRepetitionsConfigResponseSchema,
@@ -91,7 +94,10 @@ export const updateMaxRepetitionsConfigEndpoint: EndpointDescriptor<
   responseSchema: maxRepetitionsConfigResponseSchema,
 };
 
-export const deleteMaxRepetitionsConfigEndpoint: EndpointDescriptor<{ id: number }, never> = {
+export const deleteMaxRepetitionsConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  never
+> = {
   method: "DELETE",
   path: (args) => `/api/v2/max-repetitions-config/${args.id}/`,
 };
@@ -116,7 +122,10 @@ export const listMaxRestConfigsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(maxRestConfigResponseSchema),
 };
 
-export const getMaxRestConfigEndpoint: EndpointDescriptor<{ id: number }, MaxRestConfig> = {
+export const getMaxRestConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  MaxRestConfig
+> = {
   method: "GET",
   path: (args) => `/api/v2/max-rest-config/${args.id}/`,
   responseSchema: maxRestConfigResponseSchema,
@@ -161,7 +170,10 @@ export const updateMaxRestConfigEndpoint: EndpointDescriptor<
   responseSchema: maxRestConfigResponseSchema,
 };
 
-export const deleteMaxRestConfigEndpoint: EndpointDescriptor<{ id: number }, never> = {
+export const deleteMaxRestConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  never
+> = {
   method: "DELETE",
   path: (args) => `/api/v2/max-rest-config/${args.id}/`,
 };
@@ -186,7 +198,10 @@ export const listMaxRiRConfigsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(maxRiRConfigResponseSchema),
 };
 
-export const getMaxRiRConfigEndpoint: EndpointDescriptor<{ id: number }, MaxRiRConfig> = {
+export const getMaxRiRConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  MaxRiRConfig
+> = {
   method: "GET",
   path: (args) => `/api/v2/max-rir-config/${args.id}/`,
   responseSchema: maxRiRConfigResponseSchema,
@@ -231,7 +246,10 @@ export const updateMaxRiRConfigEndpoint: EndpointDescriptor<
   responseSchema: maxRiRConfigResponseSchema,
 };
 
-export const deleteMaxRiRConfigEndpoint: EndpointDescriptor<{ id: number }, never> = {
+export const deleteMaxRiRConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  never
+> = {
   method: "DELETE",
   path: (args) => `/api/v2/max-rir-config/${args.id}/`,
 };
@@ -256,7 +274,10 @@ export const listMaxSetNrConfigsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(maxSetNrConfigResponseSchema),
 };
 
-export const getMaxSetNrConfigEndpoint: EndpointDescriptor<{ id: number }, MaxSetNrConfig> = {
+export const getMaxSetNrConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  MaxSetNrConfig
+> = {
   method: "GET",
   path: (args) => `/api/v2/max-sets-config/${args.id}/`,
   responseSchema: maxSetNrConfigResponseSchema,
@@ -301,7 +322,10 @@ export const updateMaxSetNrConfigEndpoint: EndpointDescriptor<
   responseSchema: maxSetNrConfigResponseSchema,
 };
 
-export const deleteMaxSetNrConfigEndpoint: EndpointDescriptor<{ id: number }, never> = {
+export const deleteMaxSetNrConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  never
+> = {
   method: "DELETE",
   path: (args) => `/api/v2/max-sets-config/${args.id}/`,
 };
@@ -326,7 +350,10 @@ export const listMaxWeightConfigsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(maxWeightConfigResponseSchema),
 };
 
-export const getMaxWeightConfigEndpoint: EndpointDescriptor<{ id: number }, MaxWeightConfig> = {
+export const getMaxWeightConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  MaxWeightConfig
+> = {
   method: "GET",
   path: (args) => `/api/v2/max-weight-config/${args.id}/`,
   responseSchema: maxWeightConfigResponseSchema,
@@ -371,7 +398,10 @@ export const updateMaxWeightConfigEndpoint: EndpointDescriptor<
   responseSchema: maxWeightConfigResponseSchema,
 };
 
-export const deleteMaxWeightConfigEndpoint: EndpointDescriptor<{ id: number }, never> = {
+export const deleteMaxWeightConfigEndpoint: EndpointDescriptor<
+  { id: number },
+  never
+> = {
   method: "DELETE",
   path: (args) => `/api/v2/max-weight-config/${args.id}/`,
 };

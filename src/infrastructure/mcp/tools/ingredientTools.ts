@@ -72,7 +72,12 @@ export function registerIngredientTools(
       description: "List ingredients",
       inputSchema: listIngredientsSchema,
     },
-    endpointHandler(client, logger, "list_ingredients", listIngredientsEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_ingredients",
+      listIngredientsEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -90,7 +95,12 @@ export function registerIngredientTools(
       description: "Search ingredients",
       inputSchema: searchIngredientsSchema,
     },
-    endpointHandler(client, logger, "search_ingredients", searchIngredientsEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "search_ingredients",
+      searchIngredientsEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -99,7 +109,12 @@ export function registerIngredientTools(
       description: "Get nutritional values for an ingredient",
       inputSchema: getIngredientValuesSchema,
     },
-    endpointHandler(client, logger, "get_ingredient_values", getIngredientValuesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_ingredient_values",
+      getIngredientValuesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -108,7 +123,12 @@ export function registerIngredientTools(
       description: "List ingredient images",
       inputSchema: listIngredientImagesSchema,
     },
-    endpointHandler(client, logger, "list_ingredient_images", listIngredientImagesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_ingredient_images",
+      listIngredientImagesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -117,7 +137,12 @@ export function registerIngredientTools(
       description: "Get ingredient image by ID",
       inputSchema: getIngredientImageSchema,
     },
-    endpointHandler(client, logger, "get_ingredient_image", getIngredientImageEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_ingredient_image",
+      getIngredientImageEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -126,7 +151,12 @@ export function registerIngredientTools(
       description: "List ingredient weight units",
       inputSchema: listIngredientWeightUnitsSchema,
     },
-    endpointHandler(client, logger, "list_ingredient_weight_units", listIngredientWeightUnitsEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_ingredient_weight_units",
+      listIngredientWeightUnitsEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -135,7 +165,12 @@ export function registerIngredientTools(
       description: "Get ingredient weight unit by ID",
       inputSchema: getIngredientWeightUnitSchema,
     },
-    endpointHandler(client, logger, "get_ingredient_weight_unit", getIngredientWeightUnitEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_ingredient_weight_unit",
+      getIngredientWeightUnitEndpoint,
+    ),
   );
 
   logger.info("Ingredient tools registered");

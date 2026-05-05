@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -56,7 +62,12 @@ describe("registerSlotTools", () => {
   });
 
   it("list_slots calls GET /api/v2/slot/ with params", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerSlotTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_slots")!;
     await handler({ day: 1 });
@@ -72,7 +83,11 @@ describe("registerSlotTools", () => {
     registerSlotTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_slot")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/slot/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/slot/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_slot calls POST /api/v2/slot/", async () => {
@@ -101,13 +116,17 @@ describe("registerSlotTools", () => {
 
   it("create_slot schema requires day", () => {
     registerSlotTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_slot") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_slot") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ comment: "Hi" })).toThrow();
   });
 
   it("create_slot schema rejects comment over 200 chars", () => {
     registerSlotTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_slot") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_slot") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ day: 1, comment: "x".repeat(201) })).toThrow();
   });
 });

@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -56,7 +62,12 @@ describe("registerWorkoutLogTools", () => {
   });
 
   it("list_workout_logs calls GET /api/v2/workoutlog/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerWorkoutLogTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_workout_logs")!;
     await handler({ routine: 1, date: "2024-01-01" });
@@ -72,7 +83,11 @@ describe("registerWorkoutLogTools", () => {
     registerWorkoutLogTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_workout_log")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/workoutlog/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/workoutlog/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_workout_log calls POST /api/v2/workoutlog/", async () => {
@@ -101,14 +116,18 @@ describe("registerWorkoutLogTools", () => {
 
   it("rir schema rejects values with more than 1 integer + 1 decimal digit", () => {
     registerWorkoutLogTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_workout_log") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_workout_log") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ exercise: 1, rir: "99.99" })).toThrow();
     expect(() => schema.parse({ exercise: 1, rir: "9.9" })).not.toThrow();
   });
 
   it("rest and iteration use nonNegativeIntegerSchema", () => {
     registerWorkoutLogTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_workout_log") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_workout_log") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ exercise: 1, rest: -1 })).toThrow();
     expect(() => schema.parse({ exercise: 1, rest: 60 })).not.toThrow();
   });

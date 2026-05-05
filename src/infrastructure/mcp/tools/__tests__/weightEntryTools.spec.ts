@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -56,13 +62,21 @@ describe("registerWeightEntryTools", () => {
   });
 
   it("list_weight_entries calls GET /api/v2/weightentry/ with date filters", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerWeightEntryTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_weight_entries")!;
     await handler({ date__gt: "2024-01-01", date__gte: "2024-01-01" });
     expect(client.get).toHaveBeenCalledWith(
       "/api/v2/weightentry/",
-      expect.objectContaining({ date__gt: "2024-01-01", date__gte: "2024-01-01" }),
+      expect.objectContaining({
+        date__gt: "2024-01-01",
+        date__gte: "2024-01-01",
+      }),
       expect.anything(),
     );
   });
@@ -72,7 +86,11 @@ describe("registerWeightEntryTools", () => {
     registerWeightEntryTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_weight_entry")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/weightentry/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/weightentry/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_weight_entry calls POST /api/v2/weightentry/", async () => {
@@ -101,14 +119,22 @@ describe("registerWeightEntryTools", () => {
 
   it("weight schema rejects more than 3 integer digits", () => {
     registerWeightEntryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_weight_entry") as { parse: (v: unknown) => unknown };
-    expect(() => schema.parse({ date: "2024-01-01", weight: "9999.99" })).toThrow();
-    expect(() => schema.parse({ date: "2024-01-01", weight: "999.99" })).not.toThrow();
+    const schema = server.getSchema("create_weight_entry") as {
+      parse: (v: unknown) => unknown;
+    };
+    expect(() =>
+      schema.parse({ date: "2024-01-01", weight: "9999.99" }),
+    ).toThrow();
+    expect(() =>
+      schema.parse({ date: "2024-01-01", weight: "999.99" }),
+    ).not.toThrow();
   });
 
   it("create schema requires date and weight", () => {
     registerWeightEntryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_weight_entry") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_weight_entry") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ date: "2024-01-01" })).toThrow();
     expect(() => schema.parse({ weight: "75.5" })).toThrow();
   });

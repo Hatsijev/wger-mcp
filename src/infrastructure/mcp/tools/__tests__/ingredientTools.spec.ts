@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -54,7 +60,12 @@ describe("registerIngredientTools", () => {
   });
 
   it("list_ingredients calls GET /api/v2/ingredientinfo/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerIngredientTools(server as never, client as never, logger);
     const handler = server.getTool("list_ingredients")!;
     await handler({ search: "rice", language: 1 });
@@ -70,11 +81,20 @@ describe("registerIngredientTools", () => {
     registerIngredientTools(server as never, client as never, logger);
     const handler = server.getTool("get_ingredient")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/ingredientinfo/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/ingredientinfo/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("search_ingredients maps term to name__search", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerIngredientTools(server as never, client as never, logger);
     const handler = server.getTool("search_ingredients")!;
     await handler({ term: "chicken" });
@@ -90,11 +110,20 @@ describe("registerIngredientTools", () => {
     registerIngredientTools(server as never, client as never, logger);
     const handler = server.getTool("get_ingredient_values")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/ingredientinfo/1/get_values/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/ingredientinfo/1/get_values/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("list_ingredient_weight_units calls GET /api/v2/ingredientweightunit/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerIngredientTools(server as never, client as never, logger);
     const handler = server.getTool("list_ingredient_weight_units")!;
     await handler({ ingredient: 1 });
@@ -107,7 +136,9 @@ describe("registerIngredientTools", () => {
 
   it("search_ingredients schema requires term", () => {
     registerIngredientTools(server as never, client as never, logger);
-    const schema = server.getSchema("search_ingredients") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("search_ingredients") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ limit: 10 })).toThrow();
   });
 });

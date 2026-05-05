@@ -5,7 +5,10 @@ import {
   PatchedRoutineRequest,
 } from "../../../domain/models/Routine.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, routineResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  routineResponseSchema,
+} from "../responseSchemas.js";
 
 export const listRoutinesEndpoint: EndpointDescriptor<
   { limit?: number | undefined; offset?: number | undefined },
@@ -23,17 +26,26 @@ export const getRoutineEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
   responseSchema: routineResponseSchema,
 };
 
-export const getRoutineStructureEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
+export const getRoutineStructureEndpoint: EndpointDescriptor<
+  { id: number },
+  Routine
+> = {
   method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/structure/`,
 };
 
-export const getRoutineLogsEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
+export const getRoutineLogsEndpoint: EndpointDescriptor<
+  { id: number },
+  Routine
+> = {
   method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/logs/`,
 };
 
-export const getRoutineStatsEndpoint: EndpointDescriptor<{ id: number }, Routine> = {
+export const getRoutineStatsEndpoint: EndpointDescriptor<
+  { id: number },
+  Routine
+> = {
   method: "GET_RAW",
   path: (args) => `/api/v2/routine/${args.id}/stats/`,
 };

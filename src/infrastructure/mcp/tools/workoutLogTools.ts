@@ -78,7 +78,12 @@ export function registerWorkoutLogTools(
   server.registerTool(
     "list_workout_logs",
     { description: "List workout logs", inputSchema: listWorkoutLogsSchema },
-    endpointHandler(client, logger, "list_workout_logs", listWorkoutLogsEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_workout_logs",
+      listWorkoutLogsEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -90,14 +95,30 @@ export function registerWorkoutLogTools(
   if (enableWriteTools) {
     server.registerTool(
       "create_workout_log",
-      { description: "Create a new workout log", inputSchema: createWorkoutLogSchema },
-      endpointHandler(client, logger, "create_workout_log", createWorkoutLogEndpoint),
+      {
+        description: "Create a new workout log",
+        inputSchema: createWorkoutLogSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_workout_log",
+        createWorkoutLogEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_workout_log",
-      { description: "Update an existing workout log", inputSchema: updateWorkoutLogSchema },
-      endpointHandler(client, logger, "update_workout_log", updateWorkoutLogEndpoint),
+      {
+        description: "Update an existing workout log",
+        inputSchema: updateWorkoutLogSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_workout_log",
+        updateWorkoutLogEndpoint,
+      ),
     );
   }
 

@@ -92,8 +92,16 @@ export function registerRoutineTools(
 
   server.registerTool(
     "get_routine_structure",
-    { description: "Get routine structure", inputSchema: getRoutineStructureSchema },
-    endpointHandler(client, logger, "get_routine_structure", getRoutineStructureEndpoint),
+    {
+      description: "Get routine structure",
+      inputSchema: getRoutineStructureSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_routine_structure",
+      getRoutineStructureEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -105,19 +113,40 @@ export function registerRoutineTools(
   server.registerTool(
     "get_routine_stats",
     { description: "Get routine stats", inputSchema: getRoutineStatsSchema },
-    endpointHandler(client, logger, "get_routine_stats", getRoutineStatsEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_routine_stats",
+      getRoutineStatsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_routine_date_sequence_display",
-    { description: "Get routine display date sequence", inputSchema: getRoutineDateSequenceDisplaySchema },
-    endpointHandler(client, logger, "get_routine_date_sequence_display", getRoutineDateSequenceDisplayEndpoint),
+    {
+      description: "Get routine display date sequence",
+      inputSchema: getRoutineDateSequenceDisplaySchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_routine_date_sequence_display",
+      getRoutineDateSequenceDisplayEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_routine_date_sequence_gym",
-    { description: "Get routine gym date sequence", inputSchema: getRoutineDateSequenceGymSchema },
-    endpointHandler(client, logger, "get_routine_date_sequence_gym", getRoutineDateSequenceGymEndpoint),
+    {
+      description: "Get routine gym date sequence",
+      inputSchema: getRoutineDateSequenceGymSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_routine_date_sequence_gym",
+      getRoutineDateSequenceGymEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
@@ -129,7 +158,10 @@ export function registerRoutineTools(
 
     server.registerTool(
       "update_routine",
-      { description: "Update an existing routine", inputSchema: updateRoutineSchema },
+      {
+        description: "Update an existing routine",
+        inputSchema: updateRoutineSchema,
+      },
       endpointHandler(client, logger, "update_routine", updateRoutineEndpoint),
     );
   }

@@ -47,27 +47,59 @@ export function registerGalleryTools(
 ): void {
   server.registerTool(
     "list_gallery_images",
-    { description: "List gallery images", inputSchema: listGalleryImagesSchema },
-    endpointHandler(client, logger, "list_gallery_images", listGalleryImagesEndpoint),
+    {
+      description: "List gallery images",
+      inputSchema: listGalleryImagesSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_gallery_images",
+      listGalleryImagesEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_gallery_image",
-    { description: "Get gallery image by ID", inputSchema: getGalleryImageSchema },
-    endpointHandler(client, logger, "get_gallery_image", getGalleryImageEndpoint),
+    {
+      description: "Get gallery image by ID",
+      inputSchema: getGalleryImageSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_gallery_image",
+      getGalleryImageEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_gallery_image",
-      { description: "Create a new gallery image", inputSchema: createGalleryImageSchema },
-      endpointHandler(client, logger, "create_gallery_image", createGalleryImageEndpoint),
+      {
+        description: "Create a new gallery image",
+        inputSchema: createGalleryImageSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_gallery_image",
+        createGalleryImageEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_gallery_image",
-      { description: "Update an existing gallery image", inputSchema: updateGalleryImageSchema },
-      endpointHandler(client, logger, "update_gallery_image", updateGalleryImageEndpoint),
+      {
+        description: "Update an existing gallery image",
+        inputSchema: updateGalleryImageSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_gallery_image",
+        updateGalleryImageEndpoint,
+      ),
     );
   }
 

@@ -7,7 +7,10 @@ import {
 } from "../../../domain/models/Routine.types.js";
 import { JsonValue } from "../../../domain/models/Json.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, slotEntryResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  slotEntryResponseSchema,
+} from "../responseSchemas.js";
 
 export const listSlotEntriesEndpoint: EndpointDescriptor<
   {
@@ -27,7 +30,10 @@ export const listSlotEntriesEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(slotEntryResponseSchema),
 };
 
-export const getSlotEntryEndpoint: EndpointDescriptor<{ id: number }, SlotEntry> = {
+export const getSlotEntryEndpoint: EndpointDescriptor<
+  { id: number },
+  SlotEntry
+> = {
   method: "GET",
   path: (args) => `/api/v2/slot-entry/${args.id}/`,
   responseSchema: slotEntryResponseSchema,

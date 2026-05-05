@@ -5,7 +5,10 @@ import {
   PatchedWorkoutLogRequest,
 } from "../../../domain/models/Routine.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, workoutLogResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  workoutLogResponseSchema,
+} from "../responseSchemas.js";
 
 export const listWorkoutLogsEndpoint: EndpointDescriptor<
   {
@@ -27,7 +30,10 @@ export const listWorkoutLogsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(workoutLogResponseSchema),
 };
 
-export const getWorkoutLogEndpoint: EndpointDescriptor<{ id: number }, WorkoutLog> = {
+export const getWorkoutLogEndpoint: EndpointDescriptor<
+  { id: number },
+  WorkoutLog
+> = {
   method: "GET",
   path: (args) => `/api/v2/workoutlog/${args.id}/`,
   responseSchema: workoutLogResponseSchema,

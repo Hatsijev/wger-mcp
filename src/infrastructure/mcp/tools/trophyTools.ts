@@ -28,7 +28,9 @@ const listTrophiesSchema = z.object({
   is_hidden: z.boolean().optional(),
   is_progressive: z.boolean().optional(),
   is_repeatable: z.boolean().optional(),
-  trophy_type: z.enum(["time", "volume", "count", "sequence", "date", "pr", "other"]).optional(),
+  trophy_type: z
+    .enum(["time", "volume", "count", "sequence", "date", "pr", "other"])
+    .optional(),
   trophy_type__in: z.string().optional(),
 });
 
@@ -59,7 +61,9 @@ const listUserTrophiesSchema = z.object({
   trophy__is_active: z.boolean().optional(),
   trophy__is_hidden: z.boolean().optional(),
   trophy__is_repeatable: z.boolean().optional(),
-  trophy__trophy_type: z.enum(["time", "volume", "count", "sequence", "date", "pr", "other"]).optional(),
+  trophy__trophy_type: z
+    .enum(["time", "volume", "count", "sequence", "date", "pr", "other"])
+    .optional(),
   trophy__trophy_type__in: z.string().optional(),
 });
 
@@ -96,32 +100,67 @@ export function registerTrophyTools(
 
   server.registerTool(
     "list_trophy_progress",
-    { description: "List trophy progress for the current user", inputSchema: listTrophyProgressSchema },
-    endpointHandler(client, logger, "list_trophy_progress", listTrophyProgressEndpoint),
+    {
+      description: "List trophy progress for the current user",
+      inputSchema: listTrophyProgressSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_trophy_progress",
+      listTrophyProgressEndpoint,
+    ),
   );
 
   server.registerTool(
     "list_user_trophies",
-    { description: "List trophies earned by the current user", inputSchema: listUserTrophiesSchema },
-    endpointHandler(client, logger, "list_user_trophies", listUserTrophiesEndpoint),
+    {
+      description: "List trophies earned by the current user",
+      inputSchema: listUserTrophiesSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_user_trophies",
+      listUserTrophiesEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_user_trophy",
-    { description: "Get a user trophy by ID", inputSchema: getUserTrophySchema },
+    {
+      description: "Get a user trophy by ID",
+      inputSchema: getUserTrophySchema,
+    },
     endpointHandler(client, logger, "get_user_trophy", getUserTrophyEndpoint),
   );
 
   server.registerTool(
     "list_user_statistics",
-    { description: "List user statistics", inputSchema: listUserStatisticsSchema },
-    endpointHandler(client, logger, "list_user_statistics", listUserStatisticsEndpoint),
+    {
+      description: "List user statistics",
+      inputSchema: listUserStatisticsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_user_statistics",
+      listUserStatisticsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_user_statistics",
-    { description: "Get user statistics by ID", inputSchema: getUserStatisticsSchema },
-    endpointHandler(client, logger, "get_user_statistics", getUserStatisticsEndpoint),
+    {
+      description: "Get user statistics by ID",
+      inputSchema: getUserStatisticsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_user_statistics",
+      getUserStatisticsEndpoint,
+    ),
   );
 
   logger.info("Trophy tools registered");

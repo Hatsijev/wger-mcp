@@ -15,7 +15,13 @@ import {
 import { GetEndpointDescriptor } from "../EndpointDescriptor.js";
 
 export const listExercisesEndpoint: GetEndpointDescriptor<
-  { limit?: number | undefined; offset?: number | undefined; category?: number | undefined; equipment?: number | undefined; language?: number | undefined },
+  {
+    limit?: number | undefined;
+    offset?: number | undefined;
+    category?: number | undefined;
+    equipment?: number | undefined;
+    language?: number | undefined;
+  },
   WgerPaginatedResponse<ExerciseInfo>
 > = {
   method: "GET",

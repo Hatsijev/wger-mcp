@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -45,7 +51,9 @@ describe("registerNutritionPlanTools", () => {
     expect(server.registerTool).toHaveBeenCalledTimes(5);
     expect(server.tools.has("list_nutrition_plans")).toBe(true);
     expect(server.tools.has("get_nutrition_plan")).toBe(true);
-    expect(server.tools.has("get_nutrition_plan_nutritional_values")).toBe(true);
+    expect(server.tools.has("get_nutrition_plan_nutritional_values")).toBe(
+      true,
+    );
     expect(server.tools.has("create_nutrition_plan")).toBe(true);
     expect(server.tools.has("update_nutrition_plan")).toBe(true);
   });
@@ -57,7 +65,12 @@ describe("registerNutritionPlanTools", () => {
   });
 
   it("list_nutrition_plans calls GET /api/v2/nutritionplan/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerNutritionPlanTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_nutrition_plans")!;
     await handler({ description: "Bulk" });
@@ -73,7 +86,11 @@ describe("registerNutritionPlanTools", () => {
     registerNutritionPlanTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_nutrition_plan")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/nutritionplan/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/nutritionplan/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("get_nutrition_plan_nutritional_values calls GET /api/v2/nutritionplan/{id}/nutritional_values/", async () => {
@@ -81,7 +98,11 @@ describe("registerNutritionPlanTools", () => {
     registerNutritionPlanTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_nutrition_plan_nutritional_values")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/nutritionplan/1/nutritional_values/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/nutritionplan/1/nutritional_values/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_nutrition_plan calls POST /api/v2/nutritionplan/", async () => {
@@ -110,13 +131,17 @@ describe("registerNutritionPlanTools", () => {
 
   it("goal fields accept null", () => {
     registerNutritionPlanTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_nutrition_plan") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_nutrition_plan") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ goal_energy: null })).not.toThrow();
   });
 
   it("description max length 80", () => {
     registerNutritionPlanTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_nutrition_plan") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_nutrition_plan") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ description: "a".repeat(81) })).toThrow();
     expect(() => schema.parse({ description: "a".repeat(80) })).not.toThrow();
   });

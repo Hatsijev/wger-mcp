@@ -5,7 +5,10 @@ import {
   PatchedImageRequest,
 } from "../../../domain/models/Routine.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, galleryImageResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  galleryImageResponseSchema,
+} from "../responseSchemas.js";
 
 export const listGalleryImagesEndpoint: EndpointDescriptor<
   { limit?: number | undefined; offset?: number | undefined },
@@ -38,7 +41,12 @@ export const createGalleryImageEndpoint: EndpointDescriptor<
 };
 
 export const updateGalleryImageEndpoint: EndpointDescriptor<
-  { id: number; date?: string | undefined; image?: string | undefined; description?: string | undefined },
+  {
+    id: number;
+    date?: string | undefined;
+    image?: string | undefined;
+    description?: string | undefined;
+  },
   GalleryImage,
   PatchedImageRequest
 > = {

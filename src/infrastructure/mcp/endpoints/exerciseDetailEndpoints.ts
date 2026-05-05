@@ -198,7 +198,11 @@ export const createExerciseCommentEndpoint: EndpointDescriptor<
 };
 
 export const updateExerciseCommentEndpoint: EndpointDescriptor<
-  { id: number; translation?: number | undefined; comment?: string | undefined },
+  {
+    id: number;
+    translation?: number | undefined;
+    comment?: string | undefined;
+  },
   ExerciseComment,
   PatchedExerciseCommentRequest
 > = {

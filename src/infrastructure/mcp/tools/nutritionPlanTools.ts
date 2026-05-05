@@ -129,7 +129,12 @@ export function registerNutritionPlanTools(
       description: "List nutrition plans",
       inputSchema: listNutritionPlansSchema,
     },
-    endpointHandler(client, logger, "list_nutrition_plans", listNutritionPlansEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_nutrition_plans",
+      listNutritionPlansEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -138,7 +143,12 @@ export function registerNutritionPlanTools(
       description: "Get nutrition plan by ID",
       inputSchema: getNutritionPlanSchema,
     },
-    endpointHandler(client, logger, "get_nutrition_plan", getNutritionPlanEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_nutrition_plan",
+      getNutritionPlanEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -147,7 +157,12 @@ export function registerNutritionPlanTools(
       description: "Get nutritional values for a nutrition plan",
       inputSchema: getNutritionPlanNutritionalValuesSchema,
     },
-    endpointHandler(client, logger, "get_nutrition_plan_nutritional_values", getNutritionPlanNutritionalValuesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_nutrition_plan_nutritional_values",
+      getNutritionPlanNutritionalValuesEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
@@ -157,7 +172,12 @@ export function registerNutritionPlanTools(
         description: "Create a new nutrition plan",
         inputSchema: createNutritionPlanSchema,
       },
-      endpointHandler(client, logger, "create_nutrition_plan", createNutritionPlanEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "create_nutrition_plan",
+        createNutritionPlanEndpoint,
+      ),
     );
 
     server.registerTool(
@@ -166,7 +186,12 @@ export function registerNutritionPlanTools(
         description: "Update an existing nutrition plan",
         inputSchema: updateNutritionPlanSchema,
       },
-      endpointHandler(client, logger, "update_nutrition_plan", updateNutritionPlanEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "update_nutrition_plan",
+        updateNutritionPlanEndpoint,
+      ),
     );
   }
 

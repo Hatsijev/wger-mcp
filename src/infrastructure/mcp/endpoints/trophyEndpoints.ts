@@ -120,7 +120,10 @@ export const listUserTrophiesEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(userTrophyResponseSchema),
 };
 
-export const getUserTrophyEndpoint: EndpointDescriptor<{ id: number }, UserTrophy> = {
+export const getUserTrophyEndpoint: EndpointDescriptor<
+  { id: number },
+  UserTrophy
+> = {
   method: "GET",
   path: (args) => `/api/v2/user-trophy/${args.id}/`,
   responseSchema: userTrophyResponseSchema,
@@ -144,7 +147,10 @@ export const listUserStatisticsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(userStatisticsResponseSchema),
 };
 
-export const getUserStatisticsEndpoint: EndpointDescriptor<{ id: number }, UserStatistics> = {
+export const getUserStatisticsEndpoint: EndpointDescriptor<
+  { id: number },
+  UserStatistics
+> = {
   method: "GET",
   path: (args) => `/api/v2/user-statistics/${args.id}/`,
   responseSchema: userStatisticsResponseSchema,

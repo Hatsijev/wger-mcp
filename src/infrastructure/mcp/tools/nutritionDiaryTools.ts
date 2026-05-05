@@ -65,7 +65,12 @@ export function registerNutritionDiaryTools(
       description: "List nutrition diary entries",
       inputSchema: listNutritionDiaryEntriesSchema,
     },
-    endpointHandler(client, logger, "list_nutrition_diary_entries", listNutritionDiaryEntriesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_nutrition_diary_entries",
+      listNutritionDiaryEntriesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -74,7 +79,12 @@ export function registerNutritionDiaryTools(
       description: "Get nutrition diary entry by ID",
       inputSchema: getNutritionDiaryEntrySchema,
     },
-    endpointHandler(client, logger, "get_nutrition_diary_entry", getNutritionDiaryEntryEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_nutrition_diary_entry",
+      getNutritionDiaryEntryEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -83,7 +93,12 @@ export function registerNutritionDiaryTools(
       description: "Get nutritional values for a diary entry",
       inputSchema: getNutritionDiaryNutritionalValuesSchema,
     },
-    endpointHandler(client, logger, "get_nutrition_diary_nutritional_values", getNutritionDiaryNutritionalValuesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_nutrition_diary_nutritional_values",
+      getNutritionDiaryNutritionalValuesEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
@@ -93,7 +108,12 @@ export function registerNutritionDiaryTools(
         description: "Create a new nutrition diary entry",
         inputSchema: createNutritionDiaryEntrySchema,
       },
-      endpointHandler(client, logger, "create_nutrition_diary_entry", createNutritionDiaryEntryEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "create_nutrition_diary_entry",
+        createNutritionDiaryEntryEndpoint,
+      ),
     );
 
     server.registerTool(
@@ -102,7 +122,12 @@ export function registerNutritionDiaryTools(
         description: "Update an existing nutrition diary entry",
         inputSchema: updateNutritionDiaryEntrySchema,
       },
-      endpointHandler(client, logger, "update_nutrition_diary_entry", updateNutritionDiaryEntryEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "update_nutrition_diary_entry",
+        updateNutritionDiaryEntryEndpoint,
+      ),
     );
   }
 

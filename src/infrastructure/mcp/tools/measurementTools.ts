@@ -83,51 +83,110 @@ export function registerMeasurementTools(
 ): void {
   server.registerTool(
     "list_measurements",
-    { description: "List body measurements", inputSchema: listMeasurementsSchema },
-    endpointHandler(client, logger, "list_measurements", listMeasurementsEndpoint),
+    {
+      description: "List body measurements",
+      inputSchema: listMeasurementsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_measurements",
+      listMeasurementsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_measurement",
-    { description: "Get a measurement by ID", inputSchema: getMeasurementSchema },
+    {
+      description: "Get a measurement by ID",
+      inputSchema: getMeasurementSchema,
+    },
     endpointHandler(client, logger, "get_measurement", getMeasurementEndpoint),
   );
 
   server.registerTool(
     "list_measurement_categories",
-    { description: "List measurement categories", inputSchema: listMeasurementCategoriesSchema },
-    endpointHandler(client, logger, "list_measurement_categories", listMeasurementCategoriesEndpoint),
+    {
+      description: "List measurement categories",
+      inputSchema: listMeasurementCategoriesSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_measurement_categories",
+      listMeasurementCategoriesEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_measurement_category",
-    { description: "Get a measurement category by ID", inputSchema: getMeasurementCategorySchema },
-    endpointHandler(client, logger, "get_measurement_category", getMeasurementCategoryEndpoint),
+    {
+      description: "Get a measurement category by ID",
+      inputSchema: getMeasurementCategorySchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_measurement_category",
+      getMeasurementCategoryEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_measurement",
-      { description: "Create a new body measurement", inputSchema: createMeasurementSchema },
-      endpointHandler(client, logger, "create_measurement", createMeasurementEndpoint),
+      {
+        description: "Create a new body measurement",
+        inputSchema: createMeasurementSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_measurement",
+        createMeasurementEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_measurement",
-      { description: "Update an existing body measurement", inputSchema: updateMeasurementSchema },
-      endpointHandler(client, logger, "update_measurement", updateMeasurementEndpoint),
+      {
+        description: "Update an existing body measurement",
+        inputSchema: updateMeasurementSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_measurement",
+        updateMeasurementEndpoint,
+      ),
     );
 
     server.registerTool(
       "create_measurement_category",
-      { description: "Create a new measurement category", inputSchema: createMeasurementCategorySchema },
-      endpointHandler(client, logger, "create_measurement_category", createMeasurementCategoryEndpoint),
+      {
+        description: "Create a new measurement category",
+        inputSchema: createMeasurementCategorySchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_measurement_category",
+        createMeasurementCategoryEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_measurement_category",
-      { description: "Update an existing measurement category", inputSchema: updateMeasurementCategorySchema },
-      endpointHandler(client, logger, "update_measurement_category", updateMeasurementCategoryEndpoint),
+      {
+        description: "Update an existing measurement category",
+        inputSchema: updateMeasurementCategorySchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_measurement_category",
+        updateMeasurementCategoryEndpoint,
+      ),
     );
   }
 

@@ -88,7 +88,12 @@ export function registerSlotEntryTools(
   server.registerTool(
     "list_slot_entries",
     { description: "List slot entries", inputSchema: listSlotEntriesSchema },
-    endpointHandler(client, logger, "list_slot_entries", listSlotEntriesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_slot_entries",
+      listSlotEntriesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -100,14 +105,30 @@ export function registerSlotEntryTools(
   if (enableWriteTools) {
     server.registerTool(
       "create_slot_entry",
-      { description: "Create a new slot entry", inputSchema: createSlotEntrySchema },
-      endpointHandler(client, logger, "create_slot_entry", createSlotEntryEndpoint),
+      {
+        description: "Create a new slot entry",
+        inputSchema: createSlotEntrySchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_slot_entry",
+        createSlotEntryEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_slot_entry",
-      { description: "Update an existing slot entry", inputSchema: updateSlotEntrySchema },
-      endpointHandler(client, logger, "update_slot_entry", updateSlotEntryEndpoint),
+      {
+        description: "Update an existing slot entry",
+        inputSchema: updateSlotEntrySchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_slot_entry",
+        updateSlotEntryEndpoint,
+      ),
     );
   }
 

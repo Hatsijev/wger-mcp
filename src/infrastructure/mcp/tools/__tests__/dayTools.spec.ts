@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -58,7 +64,12 @@ describe("registerDayTools", () => {
   });
 
   it("list_days calls GET /api/v2/day/ with params", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerDayTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_days")!;
     await handler({ limit: 10, offset: 5, routine: 3 });
@@ -74,7 +85,11 @@ describe("registerDayTools", () => {
     registerDayTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_day")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/day/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/day/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_day calls POST /api/v2/day/", async () => {
@@ -103,19 +118,25 @@ describe("registerDayTools", () => {
 
   it("create_day schema rejects missing routine", () => {
     registerDayTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_day") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_day") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ name: "Leg Day" })).toThrow();
   });
 
   it("create_day schema accepts valid type enum", () => {
     registerDayTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_day") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_day") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ routine: 1, type: "amrap" })).not.toThrow();
   });
 
   it("create_day schema rejects invalid type", () => {
     registerDayTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_day") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_day") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ routine: 1, type: "invalid" })).toThrow();
   });
 });

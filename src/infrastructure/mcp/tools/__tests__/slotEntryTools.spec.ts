@@ -18,10 +18,16 @@ function createMockServer() {
   const tools = new Map<string, (args: unknown) => Promise<unknown>>();
   const schemas = new Map<string, unknown>();
   return {
-    registerTool: vi.fn((name: string, schema: { inputSchema: unknown }, handler: (args: unknown) => Promise<unknown>) => {
-      tools.set(name, handler);
-      schemas.set(name, schema.inputSchema);
-    }),
+    registerTool: vi.fn(
+      (
+        name: string,
+        schema: { inputSchema: unknown },
+        handler: (args: unknown) => Promise<unknown>,
+      ) => {
+        tools.set(name, handler);
+        schemas.set(name, schema.inputSchema);
+      },
+    ),
     getTool: (name: string) => tools.get(name),
     getSchema: (name: string) => schemas.get(name),
     tools,
@@ -56,7 +62,12 @@ describe("registerSlotEntryTools", () => {
   });
 
   it("list_slot_entries calls GET /api/v2/slot-entry/", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerSlotEntryTools(server as never, client as never, logger, true);
     const handler = server.getTool("list_slot_entries")!;
     await handler({ slot: 1 });
@@ -72,7 +83,11 @@ describe("registerSlotEntryTools", () => {
     registerSlotEntryTools(server as never, client as never, logger, true);
     const handler = server.getTool("get_slot_entry")!;
     await handler({ id: 1 });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/slot-entry/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/slot-entry/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 
   it("create_slot_entry calls POST /api/v2/slot-entry/", async () => {
@@ -101,26 +116,42 @@ describe("registerSlotEntryTools", () => {
 
   it("create_slot_entry schema requires slot and exercise", () => {
     registerSlotEntryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_slot_entry") as { parse: (v: unknown) => unknown };
+    const schema = server.getSchema("create_slot_entry") as {
+      parse: (v: unknown) => unknown;
+    };
     expect(() => schema.parse({ slot: 1 })).toThrow();
   });
 
   it("create_slot_entry schema accepts valid type enum", () => {
     registerSlotEntryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_slot_entry") as { parse: (v: unknown) => unknown };
-    expect(() => schema.parse({ slot: 1, exercise: 2, type: "dropset" })).not.toThrow();
+    const schema = server.getSchema("create_slot_entry") as {
+      parse: (v: unknown) => unknown;
+    };
+    expect(() =>
+      schema.parse({ slot: 1, exercise: 2, type: "dropset" }),
+    ).not.toThrow();
   });
 
   it("create_slot_entry schema rejects invalid type", () => {
     registerSlotEntryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_slot_entry") as { parse: (v: unknown) => unknown };
-    expect(() => schema.parse({ slot: 1, exercise: 2, type: "invalid" })).toThrow();
+    const schema = server.getSchema("create_slot_entry") as {
+      parse: (v: unknown) => unknown;
+    };
+    expect(() =>
+      schema.parse({ slot: 1, exercise: 2, type: "invalid" }),
+    ).toThrow();
   });
 
   it("rounding fields use roundingDecimalSchema", () => {
     registerSlotEntryTools(server as never, client as never, logger, true);
-    const schema = server.getSchema("create_slot_entry") as { parse: (v: unknown) => unknown };
-    expect(() => schema.parse({ slot: 1, exercise: 2, repetition_rounding: "999.99" })).toThrow();
-    expect(() => schema.parse({ slot: 1, exercise: 2, repetition_rounding: "2.5" })).not.toThrow();
+    const schema = server.getSchema("create_slot_entry") as {
+      parse: (v: unknown) => unknown;
+    };
+    expect(() =>
+      schema.parse({ slot: 1, exercise: 2, repetition_rounding: "999.99" }),
+    ).toThrow();
+    expect(() =>
+      schema.parse({ slot: 1, exercise: 2, repetition_rounding: "2.5" }),
+    ).not.toThrow();
   });
 });

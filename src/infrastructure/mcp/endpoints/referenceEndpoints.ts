@@ -42,14 +42,12 @@ export const listLanguagesEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(languageResponseSchema),
 };
 
-export const getLanguageEndpoint: EndpointDescriptor<
-  { id: number },
-  Language
-> = {
-  method: "GET",
-  path: (args) => `/api/v2/language/${args.id}/`,
-  responseSchema: languageResponseSchema,
-};
+export const getLanguageEndpoint: EndpointDescriptor<{ id: number }, Language> =
+  {
+    method: "GET",
+    path: (args) => `/api/v2/language/${args.id}/`,
+    responseSchema: languageResponseSchema,
+  };
 
 export const listLicensesEndpoint: EndpointDescriptor<
   {
@@ -75,10 +73,7 @@ export const listLicensesEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(licenseResponseSchema),
 };
 
-export const getLicenseEndpoint: EndpointDescriptor<
-  { id: number },
-  License
-> = {
+export const getLicenseEndpoint: EndpointDescriptor<{ id: number }, License> = {
   method: "GET",
   path: (args) => `/api/v2/license/${args.id}/`,
   responseSchema: licenseResponseSchema,

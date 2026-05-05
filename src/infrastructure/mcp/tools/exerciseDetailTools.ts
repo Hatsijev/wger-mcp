@@ -144,99 +144,227 @@ export function registerExerciseDetailTools(
 ): void {
   server.registerTool(
     "list_exercise_translations",
-    { description: "List exercise translations", inputSchema: listExerciseTranslationsSchema },
-    endpointHandler(client, logger, "list_exercise_translations", listExerciseTranslationsEndpoint),
+    {
+      description: "List exercise translations",
+      inputSchema: listExerciseTranslationsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_exercise_translations",
+      listExerciseTranslationsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_exercise_translation",
-    { description: "Get an exercise translation by ID", inputSchema: getExerciseTranslationSchema },
-    endpointHandler(client, logger, "get_exercise_translation", getExerciseTranslationEndpoint),
+    {
+      description: "Get an exercise translation by ID",
+      inputSchema: getExerciseTranslationSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_exercise_translation",
+      getExerciseTranslationEndpoint,
+    ),
   );
 
   server.registerTool(
     "list_exercise_aliases",
-    { description: "List exercise aliases", inputSchema: listExerciseAliasesSchema },
-    endpointHandler(client, logger, "list_exercise_aliases", listExerciseAliasesEndpoint),
+    {
+      description: "List exercise aliases",
+      inputSchema: listExerciseAliasesSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_exercise_aliases",
+      listExerciseAliasesEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_exercise_alias",
-    { description: "Get an exercise alias by ID", inputSchema: getExerciseAliasSchema },
-    endpointHandler(client, logger, "get_exercise_alias", getExerciseAliasEndpoint),
+    {
+      description: "Get an exercise alias by ID",
+      inputSchema: getExerciseAliasSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_exercise_alias",
+      getExerciseAliasEndpoint,
+    ),
   );
 
   server.registerTool(
     "list_exercise_comments",
-    { description: "List exercise comments", inputSchema: listExerciseCommentsSchema },
-    endpointHandler(client, logger, "list_exercise_comments", listExerciseCommentsEndpoint),
+    {
+      description: "List exercise comments",
+      inputSchema: listExerciseCommentsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_exercise_comments",
+      listExerciseCommentsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_exercise_comment",
-    { description: "Get an exercise comment by ID", inputSchema: getExerciseCommentSchema },
-    endpointHandler(client, logger, "get_exercise_comment", getExerciseCommentEndpoint),
+    {
+      description: "Get an exercise comment by ID",
+      inputSchema: getExerciseCommentSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_exercise_comment",
+      getExerciseCommentEndpoint,
+    ),
   );
 
   server.registerTool(
     "list_exercise_images",
-    { description: "List exercise images", inputSchema: listExerciseImagesSchema },
-    endpointHandler(client, logger, "list_exercise_images", listExerciseImagesEndpoint),
+    {
+      description: "List exercise images",
+      inputSchema: listExerciseImagesSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_exercise_images",
+      listExerciseImagesEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_exercise_image",
-    { description: "Get an exercise image by ID", inputSchema: getExerciseImageSchema },
-    endpointHandler(client, logger, "get_exercise_image", getExerciseImageEndpoint),
+    {
+      description: "Get an exercise image by ID",
+      inputSchema: getExerciseImageSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_exercise_image",
+      getExerciseImageEndpoint,
+    ),
   );
 
   server.registerTool(
     "list_exercise_videos",
-    { description: "List exercise videos", inputSchema: listExerciseVideosSchema },
-    endpointHandler(client, logger, "list_exercise_videos", listExerciseVideosEndpoint),
+    {
+      description: "List exercise videos",
+      inputSchema: listExerciseVideosSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_exercise_videos",
+      listExerciseVideosEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_exercise_video",
-    { description: "Get an exercise video by ID", inputSchema: getExerciseVideoSchema },
-    endpointHandler(client, logger, "get_exercise_video", getExerciseVideoEndpoint),
+    {
+      description: "Get an exercise video by ID",
+      inputSchema: getExerciseVideoSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_exercise_video",
+      getExerciseVideoEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_exercise_translation",
-      { description: "Create a new exercise translation", inputSchema: createExerciseTranslationSchema },
-      endpointHandler(client, logger, "create_exercise_translation", createExerciseTranslationEndpoint),
+      {
+        description: "Create a new exercise translation",
+        inputSchema: createExerciseTranslationSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_exercise_translation",
+        createExerciseTranslationEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_exercise_translation",
-      { description: "Update an existing exercise translation", inputSchema: updateExerciseTranslationSchema },
-      endpointHandler(client, logger, "update_exercise_translation", updateExerciseTranslationEndpoint),
+      {
+        description: "Update an existing exercise translation",
+        inputSchema: updateExerciseTranslationSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_exercise_translation",
+        updateExerciseTranslationEndpoint,
+      ),
     );
 
     server.registerTool(
       "create_exercise_alias",
-      { description: "Create a new exercise alias", inputSchema: createExerciseAliasSchema },
-      endpointHandler(client, logger, "create_exercise_alias", createExerciseAliasEndpoint),
+      {
+        description: "Create a new exercise alias",
+        inputSchema: createExerciseAliasSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_exercise_alias",
+        createExerciseAliasEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_exercise_alias",
-      { description: "Update an existing exercise alias", inputSchema: updateExerciseAliasSchema },
-      endpointHandler(client, logger, "update_exercise_alias", updateExerciseAliasEndpoint),
+      {
+        description: "Update an existing exercise alias",
+        inputSchema: updateExerciseAliasSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_exercise_alias",
+        updateExerciseAliasEndpoint,
+      ),
     );
 
     server.registerTool(
       "create_exercise_comment",
-      { description: "Create a new exercise comment", inputSchema: createExerciseCommentSchema },
-      endpointHandler(client, logger, "create_exercise_comment", createExerciseCommentEndpoint),
+      {
+        description: "Create a new exercise comment",
+        inputSchema: createExerciseCommentSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_exercise_comment",
+        createExerciseCommentEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_exercise_comment",
-      { description: "Update an existing exercise comment", inputSchema: updateExerciseCommentSchema },
-      endpointHandler(client, logger, "update_exercise_comment", updateExerciseCommentEndpoint),
+      {
+        description: "Update an existing exercise comment",
+        inputSchema: updateExerciseCommentSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_exercise_comment",
+        updateExerciseCommentEndpoint,
+      ),
     );
   }
 

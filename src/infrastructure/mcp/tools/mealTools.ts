@@ -112,7 +112,12 @@ export function registerMealTools(
       description: "Get nutritional values for a meal",
       inputSchema: getMealNutritionalValuesSchema,
     },
-    endpointHandler(client, logger, "get_meal_nutritional_values", getMealNutritionalValuesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_meal_nutritional_values",
+      getMealNutritionalValuesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -139,7 +144,12 @@ export function registerMealTools(
       description: "Get nutritional values for a meal item",
       inputSchema: getMealItemNutritionalValuesSchema,
     },
-    endpointHandler(client, logger, "get_meal_item_nutritional_values", getMealItemNutritionalValuesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "get_meal_item_nutritional_values",
+      getMealItemNutritionalValuesEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
@@ -167,7 +177,12 @@ export function registerMealTools(
         description: "Create a new meal item",
         inputSchema: createMealItemSchema,
       },
-      endpointHandler(client, logger, "create_meal_item", createMealItemEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "create_meal_item",
+        createMealItemEndpoint,
+      ),
     );
 
     server.registerTool(
@@ -176,7 +191,12 @@ export function registerMealTools(
         description: "Update an existing meal item",
         inputSchema: updateMealItemSchema,
       },
-      endpointHandler(client, logger, "update_meal_item", updateMealItemEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "update_meal_item",
+        updateMealItemEndpoint,
+      ),
     );
   }
 

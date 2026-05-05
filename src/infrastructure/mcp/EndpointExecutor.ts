@@ -4,11 +4,18 @@ import { Logger } from "../../application/ports/Logger.js";
 import { EndpointDescriptor } from "./EndpointDescriptor.js";
 import { runTool, successResult, toJsonBody } from "./toolResult.js";
 
-function resolvePath<TArgs>(path: string | ((args: TArgs) => string), args: TArgs): string {
+function resolvePath<TArgs>(
+  path: string | ((args: TArgs) => string),
+  args: TArgs,
+): string {
   return typeof path === "function" ? path(args) : path;
 }
 
-export function endpointHandler<TArgs extends object, TResponse, TBody extends object = object>(
+export function endpointHandler<
+  TArgs extends object,
+  TResponse,
+  TBody extends object = object,
+>(
   client: WgerClient,
   logger: Logger,
   toolName: string,

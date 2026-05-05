@@ -56,27 +56,59 @@ export function registerWorkoutSessionTools(
 ): void {
   server.registerTool(
     "list_workout_sessions",
-    { description: "List workout sessions", inputSchema: listWorkoutSessionsSchema },
-    endpointHandler(client, logger, "list_workout_sessions", listWorkoutSessionsEndpoint),
+    {
+      description: "List workout sessions",
+      inputSchema: listWorkoutSessionsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_workout_sessions",
+      listWorkoutSessionsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_workout_session",
-    { description: "Get workout session by ID", inputSchema: getWorkoutSessionSchema },
-    endpointHandler(client, logger, "get_workout_session", getWorkoutSessionEndpoint),
+    {
+      description: "Get workout session by ID",
+      inputSchema: getWorkoutSessionSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_workout_session",
+      getWorkoutSessionEndpoint,
+    ),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_workout_session",
-      { description: "Create a new workout session", inputSchema: createWorkoutSessionSchema },
-      endpointHandler(client, logger, "create_workout_session", createWorkoutSessionEndpoint),
+      {
+        description: "Create a new workout session",
+        inputSchema: createWorkoutSessionSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "create_workout_session",
+        createWorkoutSessionEndpoint,
+      ),
     );
 
     server.registerTool(
       "update_workout_session",
-      { description: "Update an existing workout session", inputSchema: updateWorkoutSessionSchema },
-      endpointHandler(client, logger, "update_workout_session", updateWorkoutSessionEndpoint),
+      {
+        description: "Update an existing workout session",
+        inputSchema: updateWorkoutSessionSchema,
+      },
+      endpointHandler(
+        client,
+        logger,
+        "update_workout_session",
+        updateWorkoutSessionEndpoint,
+      ),
     );
   }
 

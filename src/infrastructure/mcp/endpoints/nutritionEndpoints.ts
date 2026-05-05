@@ -199,11 +199,12 @@ export const listMealItemsEndpoint: EndpointDescriptor<
   responseSchema: paginatedResponseSchema(mealItemResponseSchema),
 };
 
-export const getMealItemEndpoint: EndpointDescriptor<{ id: number }, MealItem> = {
-  method: "GET",
-  path: (args) => `/api/v2/mealitem/${args.id}/`,
-  responseSchema: mealItemResponseSchema,
-};
+export const getMealItemEndpoint: EndpointDescriptor<{ id: number }, MealItem> =
+  {
+    method: "GET",
+    path: (args) => `/api/v2/mealitem/${args.id}/`,
+    responseSchema: mealItemResponseSchema,
+  };
 
 export const getMealItemNutritionalValuesEndpoint: EndpointDescriptor<
   { id: number },

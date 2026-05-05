@@ -7,7 +7,10 @@ import {
 } from "../../../domain/models/Routine.types.js";
 import { JsonValue } from "../../../domain/models/Json.types.js";
 import { EndpointDescriptor } from "../EndpointDescriptor.js";
-import { paginatedResponseSchema, dayResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  dayResponseSchema,
+} from "../responseSchemas.js";
 
 export const listDaysEndpoint: EndpointDescriptor<
   {

@@ -16,15 +16,33 @@ function createMockClient() {
 
 function createMockServer() {
   const resources = new Map<string, () => Promise<unknown>>();
-  const templates = new Map<string, (uri: URL, vars: Record<string, string>) => Promise<unknown>>();
+  const templates = new Map<
+    string,
+    (uri: URL, vars: Record<string, string>) => Promise<unknown>
+  >();
   return {
-    registerResource: vi.fn((name: string, _uri: unknown, _meta: unknown, handler: (() => Promise<unknown>) | ((uri: URL, vars: Record<string, string>) => Promise<unknown>)) => {
-      if (name.includes("by-id")) {
-        templates.set(name, handler as (uri: URL, vars: Record<string, string>) => Promise<unknown>);
-      } else {
-        resources.set(name, handler as () => Promise<unknown>);
-      }
-    }),
+    registerResource: vi.fn(
+      (
+        name: string,
+        _uri: unknown,
+        _meta: unknown,
+        handler:
+          | (() => Promise<unknown>)
+          | ((uri: URL, vars: Record<string, string>) => Promise<unknown>),
+      ) => {
+        if (name.includes("by-id")) {
+          templates.set(
+            name,
+            handler as (
+              uri: URL,
+              vars: Record<string, string>,
+            ) => Promise<unknown>,
+          );
+        } else {
+          resources.set(name, handler as () => Promise<unknown>);
+        }
+      },
+    ),
     getResource: (name: string) => resources.get(name),
     getTemplate: (name: string) => templates.get(name),
     resources,
@@ -49,7 +67,12 @@ describe("registerNutritionDiaryResources", () => {
   });
 
   it("nutrition-diary resource fetches with limit=20", async () => {
-    client.get.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+    client.get.mockResolvedValue({
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    });
     registerNutritionDiaryResources(server as never, client as never, logger);
     const handler = server.getResource("nutrition-diary")!;
     await handler();
@@ -65,6 +88,10 @@ describe("registerNutritionDiaryResources", () => {
     registerNutritionDiaryResources(server as never, client as never, logger);
     const handler = server.getTemplate("nutrition-diary-entry-by-id")!;
     await handler(new URL("wger://nutrition-diary/1"), { id: "1" });
-    expect(client.get).toHaveBeenCalledWith("/api/v2/nutritiondiary/1/", undefined, expect.anything());
+    expect(client.get).toHaveBeenCalledWith(
+      "/api/v2/nutritiondiary/1/",
+      undefined,
+      expect.anything(),
+    );
   });
 });

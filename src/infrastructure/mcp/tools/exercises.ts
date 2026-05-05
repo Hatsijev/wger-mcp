@@ -79,7 +79,12 @@ export function registerExerciseTools(
       description: "Search exercises by name or description",
       inputSchema: searchExercisesSchema,
     },
-    endpointHandler(client, logger, "search_exercises", searchExercisesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "search_exercises",
+      searchExercisesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -106,7 +111,12 @@ export function registerExerciseTools(
       description: "List all exercise categories",
       inputSchema: listExerciseCategoriesSchema,
     },
-    endpointHandler(client, logger, "list_exercise_categories", listExerciseCategoriesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_exercise_categories",
+      listExerciseCategoriesEndpoint,
+    ),
   );
 
   server.registerTool(

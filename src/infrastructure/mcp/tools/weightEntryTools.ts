@@ -51,7 +51,12 @@ export function registerWeightEntryTools(
       description: "List weight entries",
       inputSchema: listWeightEntriesSchema,
     },
-    endpointHandler(client, logger, "list_weight_entries", listWeightEntriesEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_weight_entries",
+      listWeightEntriesEndpoint,
+    ),
   );
 
   server.registerTool(
@@ -70,7 +75,12 @@ export function registerWeightEntryTools(
         description: "Create a new weight entry",
         inputSchema: createWeightEntrySchema,
       },
-      endpointHandler(client, logger, "create_weight_entry", createWeightEntryEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "create_weight_entry",
+        createWeightEntryEndpoint,
+      ),
     );
 
     server.registerTool(
@@ -79,7 +89,12 @@ export function registerWeightEntryTools(
         description: "Update an existing weight entry",
         inputSchema: updateWeightEntrySchema,
       },
-      endpointHandler(client, logger, "update_weight_entry", updateWeightEntryEndpoint),
+      endpointHandler(
+        client,
+        logger,
+        "update_weight_entry",
+        updateWeightEntryEndpoint,
+      ),
     );
   }
 

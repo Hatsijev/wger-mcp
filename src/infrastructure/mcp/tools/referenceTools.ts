@@ -79,7 +79,10 @@ export function registerReferenceTools(
 ): void {
   server.registerTool(
     "list_languages",
-    { description: "List languages used in the application", inputSchema: listLanguagesSchema },
+    {
+      description: "List languages used in the application",
+      inputSchema: listLanguagesSchema,
+    },
     endpointHandler(client, logger, "list_languages", listLanguagesEndpoint),
   );
 
@@ -103,50 +106,83 @@ export function registerReferenceTools(
 
   server.registerTool(
     "list_repetition_units",
-    { description: "List repetition units", inputSchema: listRepetitionUnitsSchema },
-    endpointHandler(client, logger, "list_repetition_units", listRepetitionUnitsEndpoint),
+    {
+      description: "List repetition units",
+      inputSchema: listRepetitionUnitsSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_repetition_units",
+      listRepetitionUnitsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_repetition_unit",
-    { description: "Get a repetition unit by ID", inputSchema: getRepetitionUnitSchema },
-    endpointHandler(client, logger, "get_repetition_unit", getRepetitionUnitEndpoint),
+    {
+      description: "Get a repetition unit by ID",
+      inputSchema: getRepetitionUnitSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_repetition_unit",
+      getRepetitionUnitEndpoint,
+    ),
   );
 
   server.registerTool(
     "list_weight_units",
     { description: "List weight units", inputSchema: listWeightUnitsSchema },
-    endpointHandler(client, logger, "list_weight_units", listWeightUnitsEndpoint),
+    endpointHandler(
+      client,
+      logger,
+      "list_weight_units",
+      listWeightUnitsEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_weight_unit",
-    { description: "Get a weight unit by ID", inputSchema: getWeightUnitSchema },
+    {
+      description: "Get a weight unit by ID",
+      inputSchema: getWeightUnitSchema,
+    },
     endpointHandler(client, logger, "get_weight_unit", getWeightUnitEndpoint),
   );
 
   server.registerTool(
     "get_wger_version",
     { description: "Get the Wger application version" },
-    directToolHandler(logger, "get_wger_version", () => client.get("/api/v2/version/")),
+    directToolHandler(logger, "get_wger_version", () =>
+      client.get("/api/v2/version/"),
+    ),
   );
 
   server.registerTool(
     "get_wger_schema",
-    { description: "Get the Wger OpenAPI schema", inputSchema: getSchemaSchema },
+    {
+      description: "Get the Wger OpenAPI schema",
+      inputSchema: getSchemaSchema,
+    },
     endpointHandler(client, logger, "get_wger_schema", getSchemaEndpoint),
   );
 
   server.registerTool(
     "get_min_app_version",
     { description: "Get the minimum required app version" },
-    directToolHandler(logger, "get_min_app_version", () => client.get("/api/v2/min-app-version/")),
+    directToolHandler(logger, "get_min_app_version", () =>
+      client.get("/api/v2/min-app-version/"),
+    ),
   );
 
   server.registerTool(
     "get_min_server_version",
     { description: "Get the minimum required server version for sync" },
-    directToolHandler(logger, "get_min_server_version", () => client.get("/api/v2/min-server-version/")),
+    directToolHandler(logger, "get_min_server_version", () =>
+      client.get("/api/v2/min-server-version/"),
+    ),
   );
 
   logger.info("Reference tools registered");

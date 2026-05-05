@@ -48,26 +48,48 @@ export function registerTemplateTools(
 ): void {
   server.registerTool(
     "list_templates",
-    { description: "List routine templates for the current user", inputSchema: listTemplatesSchema },
+    {
+      description: "List routine templates for the current user",
+      inputSchema: listTemplatesSchema,
+    },
     endpointHandler(client, logger, "list_templates", listTemplatesEndpoint),
   );
 
   server.registerTool(
     "get_template",
-    { description: "Get a routine template by ID", inputSchema: getTemplateSchema },
+    {
+      description: "Get a routine template by ID",
+      inputSchema: getTemplateSchema,
+    },
     endpointHandler(client, logger, "get_template", getTemplateEndpoint),
   );
 
   server.registerTool(
     "list_public_templates",
-    { description: "List public routine templates", inputSchema: listPublicTemplatesSchema },
-    endpointHandler(client, logger, "list_public_templates", listPublicTemplatesEndpoint),
+    {
+      description: "List public routine templates",
+      inputSchema: listPublicTemplatesSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "list_public_templates",
+      listPublicTemplatesEndpoint,
+    ),
   );
 
   server.registerTool(
     "get_public_template",
-    { description: "Get a public routine template by ID", inputSchema: getPublicTemplateSchema },
-    endpointHandler(client, logger, "get_public_template", getPublicTemplateEndpoint),
+    {
+      description: "Get a public routine template by ID",
+      inputSchema: getPublicTemplateSchema,
+    },
+    endpointHandler(
+      client,
+      logger,
+      "get_public_template",
+      getPublicTemplateEndpoint,
+    ),
   );
 
   logger.info("Template tools registered");
