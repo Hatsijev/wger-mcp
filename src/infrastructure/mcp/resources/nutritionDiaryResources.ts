@@ -7,6 +7,7 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { NutritionDiaryEntry } from "../../../domain/models/Nutrition.types.js";
+import { paginatedResponseSchema, nutritionDiaryEntryResponseSchema } from "../responseSchemas.js";
 
 export function registerNutritionDiaryResources(
   server: McpServer,
@@ -24,6 +25,7 @@ export function registerNutritionDiaryResources(
       const data = await client.get<WgerPaginatedResponse<NutritionDiaryEntry>>(
         "/api/v2/nutritiondiary/",
         { limit: 20 },
+        paginatedResponseSchema(nutritionDiaryEntryResponseSchema),
       );
       return {
         contents: [
@@ -48,6 +50,8 @@ export function registerNutritionDiaryResources(
       const id = validateResourceId(variables.id);
       const data = await client.get<NutritionDiaryEntry>(
         `/api/v2/nutritiondiary/${id}/`,
+        undefined,
+        nutritionDiaryEntryResponseSchema,
       );
       return {
         contents: [

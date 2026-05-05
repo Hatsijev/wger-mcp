@@ -12,6 +12,7 @@ import {
   timeStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, workoutSessionResponseSchema } from "../responseSchemas.js";
 
 const listWorkoutSessionsSchema = z.object({
   limit: paginationLimitSchema,
@@ -65,6 +66,7 @@ export function registerWorkoutSessionTools(
             offset: args.offset,
             date: args.date,
           },
+          paginatedResponseSchema(workoutSessionResponseSchema),
         );
         return successResult(data);
       }),
@@ -80,6 +82,8 @@ export function registerWorkoutSessionTools(
       runTool(logger, "get_workout_session", async () => {
         const data = await client.get<WorkoutSession>(
           `/api/v2/workoutsession/${args.id}/`,
+          undefined,
+          workoutSessionResponseSchema,
         );
         return successResult(data);
       }),
@@ -97,6 +101,7 @@ export function registerWorkoutSessionTools(
         const data = await client.post<WorkoutSession>(
           "/api/v2/workoutsession/",
           toJsonBody(args) as WorkoutSessionRequest,
+          workoutSessionResponseSchema,
         );
         return successResult(data);
       }),
@@ -114,6 +119,7 @@ export function registerWorkoutSessionTools(
         const data = await client.patch<WorkoutSession>(
           `/api/v2/workoutsession/${id}/`,
           toJsonBody(body) as PatchedWorkoutSessionRequest,
+          workoutSessionResponseSchema,
         );
         return successResult(data);
       }),

@@ -13,6 +13,7 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, mealResponseSchema, mealItemResponseSchema } from "../responseSchemas.js";
 
 const listMealsSchema = z.object({
   limit: paginationLimitSchema,
@@ -94,6 +95,7 @@ export function registerMealTools(
             plan: args.plan,
             order: args.order,
           },
+          paginatedResponseSchema(mealResponseSchema),
         );
         return successResult(data);
       }),
@@ -107,7 +109,7 @@ export function registerMealTools(
     },
     async (args) =>
       runTool(logger, "get_meal", async () => {
-        const data = await client.get<Meal>(`/api/v2/meal/${args.id}/`);
+        const data = await client.get<Meal>(`/api/v2/meal/${args.id}/`, undefined, mealResponseSchema);
         return successResult(data);
       }),
   );
@@ -143,6 +145,7 @@ export function registerMealTools(
             meal: args.meal,
             ingredient: args.ingredient,
           },
+          paginatedResponseSchema(mealItemResponseSchema),
         );
         return successResult(data);
       }),
@@ -156,7 +159,7 @@ export function registerMealTools(
     },
     async (args) =>
       runTool(logger, "get_meal_item", async () => {
-        const data = await client.get<MealItem>(`/api/v2/mealitem/${args.id}/`);
+        const data = await client.get<MealItem>(`/api/v2/mealitem/${args.id}/`, undefined, mealItemResponseSchema);
         return successResult(data);
       }),
   );
@@ -185,7 +188,7 @@ export function registerMealTools(
     },
     async (args) =>
       runTool(logger, "create_meal", async () => {
-        const data = await client.post<Meal>("/api/v2/meal/", toJsonBody(args) as MealRequest);
+        const data = await client.post<Meal>("/api/v2/meal/", toJsonBody(args) as MealRequest, mealResponseSchema);
         return successResult(data);
       }),
   );
@@ -202,6 +205,7 @@ export function registerMealTools(
         const data = await client.patch<Meal>(
           `/api/v2/meal/${id}/`,
           toJsonBody(body) as PatchedMealRequest,
+          mealResponseSchema,
         );
         return successResult(data);
       }),
@@ -218,6 +222,7 @@ export function registerMealTools(
         const data = await client.post<MealItem>(
           "/api/v2/mealitem/",
           toJsonBody(args) as MealItemRequest,
+          mealItemResponseSchema,
         );
         return successResult(data);
       }),
@@ -235,6 +240,7 @@ export function registerMealTools(
         const data = await client.patch<MealItem>(
           `/api/v2/mealitem/${id}/`,
           toJsonBody(body) as PatchedMealItemRequest,
+          mealItemResponseSchema,
         );
         return successResult(data);
       }),

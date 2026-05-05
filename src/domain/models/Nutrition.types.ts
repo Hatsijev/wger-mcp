@@ -22,80 +22,80 @@ export interface IngredientImage {
   readonly size: number;
   readonly width: number;
   readonly height: number;
-  readonly license?: number;
-  readonly license_title?: string;
-  readonly license_object_url?: string;
-  readonly license_author?: string | null;
-  readonly license_author_url?: string;
-  readonly license_derivative_source_url?: string;
+  readonly license?: number | undefined;
+  readonly license_title?: string | undefined;
+  readonly license_object_url?: string | undefined;
+  readonly license_author?: string | null | undefined;
+  readonly license_author_url?: string | undefined;
+  readonly license_derivative_source_url?: string | undefined;
 }
 
 export interface Ingredient {
   readonly id: number;
   readonly uuid: string;
-  readonly remote_id?: string | null;
-  readonly source_name?: string | null;
-  readonly source_url?: string | null;
-  readonly code?: string | null;
+  readonly remote_id?: string | null | undefined;
+  readonly source_name?: string | null | undefined;
+  readonly source_url?: string | null | undefined;
+  readonly code?: string | null | undefined;
   readonly name: string;
-  readonly common_name?: string | null;
-  readonly brand?: string | null;
+  readonly common_name?: string | null | undefined;
+  readonly brand?: string | null | undefined;
   readonly created: string;
   readonly last_update: string;
   readonly last_imported: string | null;
   readonly energy: number;
   readonly protein: string;
   readonly carbohydrates: string;
-  readonly carbohydrates_sugar?: string | null;
+  readonly carbohydrates_sugar?: string | null | undefined;
   readonly fat: string;
-  readonly fat_saturated?: string | null;
-  readonly fiber?: string | null;
-  readonly sodium?: string | null;
-  readonly is_vegan?: boolean | null;
-  readonly is_vegetarian?: boolean | null;
+  readonly fat_saturated?: string | null | undefined;
+  readonly fiber?: string | null | undefined;
+  readonly sodium?: string | null | undefined;
+  readonly is_vegan?: boolean | null | undefined;
+  readonly is_vegetarian?: boolean | null | undefined;
   readonly weight_units: ReadonlyArray<IngredientWeightUnitInfo>;
-  readonly nutriscore?: Nutriscore;
+  readonly nutriscore?: Nutriscore | undefined;
   readonly license: number;
-  readonly license_title?: string;
-  readonly license_object_url?: string;
-  readonly license_author?: string | null;
-  readonly license_author_url?: string;
-  readonly license_derivative_source_url?: string;
+  readonly license_title?: string | undefined;
+  readonly license_object_url?: string | undefined;
+  readonly license_author?: string | null | undefined;
+  readonly license_author_url?: string | undefined;
+  readonly license_derivative_source_url?: string | undefined;
   readonly language: number;
 }
 
 export interface IngredientInfo {
   readonly id: number;
   readonly uuid: string;
-  readonly remote_id?: string | null;
-  readonly source_name?: string | null;
-  readonly source_url?: string | null;
-  readonly code?: string | null;
+  readonly remote_id?: string | null | undefined;
+  readonly source_name?: string | null | undefined;
+  readonly source_url?: string | null | undefined;
+  readonly code?: string | null | undefined;
   readonly name: string;
-  readonly common_name?: string | null;
-  readonly brand?: string | null;
+  readonly common_name?: string | null | undefined;
+  readonly brand?: string | null | undefined;
   readonly created: string;
   readonly last_update: string;
   readonly last_imported: string | null;
   readonly energy: number;
   readonly protein: string;
   readonly carbohydrates: string;
-  readonly carbohydrates_sugar?: string | null;
+  readonly carbohydrates_sugar?: string | null | undefined;
   readonly fat: string;
-  readonly fat_saturated?: string | null;
-  readonly fiber?: string | null;
-  readonly sodium?: string | null;
-  readonly is_vegan?: boolean | null;
-  readonly is_vegetarian?: boolean | null;
-  readonly nutriscore?: Nutriscore;
+  readonly fat_saturated?: string | null | undefined;
+  readonly fiber?: string | null | undefined;
+  readonly sodium?: string | null | undefined;
+  readonly is_vegan?: boolean | null | undefined;
+  readonly is_vegetarian?: boolean | null | undefined;
+  readonly nutriscore?: Nutriscore | undefined;
   readonly weight_units: ReadonlyArray<IngredientWeightUnitInfo>;
   readonly language: Nested;
   readonly license: Nested;
-  readonly license_title?: string;
-  readonly license_object_url?: string;
-  readonly license_author?: string | null;
-  readonly license_author_url?: string;
-  readonly license_derivative_source_url?: string;
+  readonly license_title?: string | undefined;
+  readonly license_object_url?: string | undefined;
+  readonly license_author?: string | null | undefined;
+  readonly license_author_url?: string | undefined;
+  readonly license_derivative_source_url?: string | undefined;
   readonly image: IngredientImage;
   readonly thumbnails: string;
 }
@@ -123,8 +123,8 @@ export interface MealInfo {
   readonly id: number;
   readonly plan: number;
   readonly order: number;
-  readonly time?: string | null;
-  readonly name?: string;
+  readonly time?: string | null | undefined;
+  readonly name?: string | undefined;
   readonly meal_items: ReadonlyArray<MealItemInfo>;
   readonly nutritional_values: NutritionalValues;
 }
@@ -133,15 +133,15 @@ export interface Meal {
   readonly id: number;
   readonly plan: number;
   readonly order: number;
-  readonly time?: string | null;
-  readonly name?: string;
+  readonly time?: string | null | undefined;
+  readonly name?: string | undefined;
 }
 
 export interface MealItem {
   readonly id: number;
   readonly meal: number;
   readonly ingredient: number;
-  readonly weight_unit?: number | null;
+  readonly weight_unit?: number | null | undefined;
   readonly order: number;
   readonly amount: string;
 }
@@ -149,38 +149,38 @@ export interface MealItem {
 export interface NutritionPlan {
   readonly id: number;
   readonly creation_date: string;
-  readonly start?: string;
-  readonly end?: string | null;
-  readonly description?: string;
-  readonly only_logging?: boolean;
-  readonly goal_energy?: number | null;
-  readonly goal_protein?: number | null;
-  readonly goal_carbohydrates?: number | null;
-  readonly goal_fat?: number | null;
-  readonly goal_fiber?: number | null;
+  readonly start?: string | undefined;
+  readonly end?: string | null | undefined;
+  readonly description?: string | undefined;
+  readonly only_logging?: boolean | undefined;
+  readonly goal_energy?: number | null | undefined;
+  readonly goal_protein?: number | null | undefined;
+  readonly goal_carbohydrates?: number | null | undefined;
+  readonly goal_fat?: number | null | undefined;
+  readonly goal_fiber?: number | null | undefined;
 }
 
 export interface NutritionPlanInfo {
   readonly id: number;
   readonly creation_date: string;
-  readonly start?: string;
-  readonly end?: string | null;
-  readonly description?: string;
-  readonly only_logging?: boolean;
-  readonly goal_energy?: number | null;
-  readonly goal_protein?: number | null;
-  readonly goal_carbohydrates?: number | null;
-  readonly goal_fat?: number | null;
-  readonly goal_fiber?: number | null;
+  readonly start?: string | undefined;
+  readonly end?: string | null | undefined;
+  readonly description?: string | undefined;
+  readonly only_logging?: boolean | undefined;
+  readonly goal_energy?: number | null | undefined;
+  readonly goal_protein?: number | null | undefined;
+  readonly goal_carbohydrates?: number | null | undefined;
+  readonly goal_fat?: number | null | undefined;
+  readonly goal_fiber?: number | null | undefined;
   readonly meals: ReadonlyArray<MealInfo>;
 }
 
 export interface NutritionDiaryEntry {
   readonly id: number;
   readonly plan: number;
-  readonly meal?: number | null;
+  readonly meal?: number | null | undefined;
   readonly ingredient: number;
-  readonly weight_unit?: number | null;
+  readonly weight_unit?: number | null | undefined;
   readonly datetime: string;
   readonly amount: string;
 }
@@ -200,70 +200,70 @@ export interface NutritionalValues {
 
 export interface MealRequest {
   readonly plan: number;
-  readonly time?: string | null;
-  readonly name?: string;
+  readonly time?: string | null | undefined;
+  readonly name?: string | undefined;
 }
 
 export interface MealItemRequest {
   readonly meal: number;
   readonly ingredient: number;
-  readonly weight_unit?: number | null;
+  readonly weight_unit?: number | null | undefined;
   readonly amount: string;
 }
 
 export interface NutritionPlanRequest {
-  readonly start?: string;
-  readonly end?: string | null;
-  readonly description?: string;
-  readonly only_logging?: boolean;
-  readonly goal_energy?: number | null;
-  readonly goal_protein?: number | null;
-  readonly goal_carbohydrates?: number | null;
-  readonly goal_fat?: number | null;
-  readonly goal_fiber?: number | null;
+  readonly start?: string | undefined;
+  readonly end?: string | null | undefined;
+  readonly description?: string | undefined;
+  readonly only_logging?: boolean | undefined;
+  readonly goal_energy?: number | null | undefined;
+  readonly goal_protein?: number | null | undefined;
+  readonly goal_carbohydrates?: number | null | undefined;
+  readonly goal_fat?: number | null | undefined;
+  readonly goal_fiber?: number | null | undefined;
 }
 
 export interface LogItemRequest {
   readonly plan: number;
-  readonly meal?: number | null;
+  readonly meal?: number | null | undefined;
   readonly ingredient: number;
-  readonly weight_unit?: number | null;
-  readonly datetime?: string;
+  readonly weight_unit?: number | null | undefined;
+  readonly datetime?: string | undefined;
   readonly amount: string;
 }
 
 // ── PATCH body types (exact from wger.yaml Patched*Request) ──────────────
 
 export interface PatchedMealRequest {
-  readonly plan?: number;
-  readonly time?: string | null;
-  readonly name?: string;
+  readonly plan?: number | undefined;
+  readonly time?: string | null | undefined;
+  readonly name?: string | undefined;
 }
 
 export interface PatchedMealItemRequest {
-  readonly meal?: number;
-  readonly ingredient?: number;
-  readonly weight_unit?: number | null;
-  readonly amount?: string;
+  readonly meal?: number | undefined;
+  readonly ingredient?: number | undefined;
+  readonly weight_unit?: number | null | undefined;
+  readonly amount?: string | undefined;
 }
 
 export interface PatchedNutritionPlanRequest {
-  readonly start?: string;
-  readonly end?: string | null;
-  readonly description?: string;
-  readonly only_logging?: boolean;
-  readonly goal_energy?: number | null;
-  readonly goal_protein?: number | null;
-  readonly goal_carbohydrates?: number | null;
-  readonly goal_fat?: number | null;
-  readonly goal_fiber?: number | null;
+  readonly start?: string | undefined;
+  readonly end?: string | null | undefined;
+  readonly description?: string | undefined;
+  readonly only_logging?: boolean | undefined;
+  readonly goal_energy?: number | null | undefined;
+  readonly goal_protein?: number | null | undefined;
+  readonly goal_carbohydrates?: number | null | undefined;
+  readonly goal_fat?: number | null | undefined;
+  readonly goal_fiber?: number | null | undefined;
 }
 
 export interface PatchedLogItemRequest {
-  readonly plan?: number;
-  readonly meal?: number | null;
-  readonly ingredient?: number;
-  readonly weight_unit?: number | null;
-  readonly datetime?: string;
-  readonly amount?: string;
+  readonly plan?: number | undefined;
+  readonly meal?: number | null | undefined;
+  readonly ingredient?: number | undefined;
+  readonly weight_unit?: number | null | undefined;
+  readonly datetime?: string | undefined;
+  readonly amount?: string | undefined;
 }

@@ -12,6 +12,7 @@ import {
   jsonConfigSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, dayResponseSchema } from "../responseSchemas.js";
 
 const listDaysSchema = z.object({
   limit: paginationLimitSchema,
@@ -71,6 +72,7 @@ export function registerDayTools(
             offset: args.offset,
             routine: args.routine,
           },
+          paginatedResponseSchema(dayResponseSchema),
         );
         return successResult(data);
       }),
@@ -84,7 +86,7 @@ export function registerDayTools(
     },
     async (args) =>
       runTool(logger, "get_day", async () => {
-        const data = await client.get<Day>(`/api/v2/day/${args.id}/`);
+        const data = await client.get<Day>(`/api/v2/day/${args.id}/`, undefined, dayResponseSchema);
         return successResult(data);
       }),
   );
@@ -98,7 +100,7 @@ export function registerDayTools(
     },
     async (args) =>
       runTool(logger, "create_day", async () => {
-        const data = await client.post<Day>("/api/v2/day/", toJsonBody(args) as DayRequest);
+        const data = await client.post<Day>("/api/v2/day/", toJsonBody(args) as DayRequest, dayResponseSchema);
         return successResult(data);
       }),
   );
@@ -115,6 +117,7 @@ export function registerDayTools(
         const data = await client.patch<Day>(
           `/api/v2/day/${id}/`,
           toJsonBody(body) as PatchedDayRequest,
+          dayResponseSchema,
         );
         return successResult(data);
       }),

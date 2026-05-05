@@ -10,8 +10,10 @@ import {
   positiveIntegerIdSchema,
   isoDateStringSchema,
   decimalAmountSchema,
+  nonNegativeIntegerSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, workoutLogResponseSchema } from "../responseSchemas.js";
 
 const listWorkoutLogsSchema = z.object({
   limit: paginationLimitSchema,
@@ -27,7 +29,7 @@ const getWorkoutLogSchema = z.object({
 const createWorkoutLogSchema = z.object({
   date: isoDateStringSchema.optional(),
   routine: positiveIntegerIdSchema.nullable().optional(),
-  iteration: z.number().nullable().optional(),
+  iteration: nonNegativeIntegerSchema.nullable().optional(),
   slot_entry: positiveIntegerIdSchema.nullable().optional(),
   next_log: positiveIntegerIdSchema.nullable().optional(),
   exercise: positiveIntegerIdSchema,
@@ -39,15 +41,15 @@ const createWorkoutLogSchema = z.object({
   weight_target: decimalAmountSchema.nullable().optional(),
   rir: decimalAmountSchema.nullable().optional(),
   rir_target: decimalAmountSchema.nullable().optional(),
-  rest: z.number().nullable().optional(),
-  rest_target: z.number().nullable().optional(),
+  rest: nonNegativeIntegerSchema.nullable().optional(),
+  rest_target: nonNegativeIntegerSchema.nullable().optional(),
 });
 
 const updateWorkoutLogSchema = z.object({
   id: positiveIntegerIdSchema,
   date: isoDateStringSchema.optional(),
   routine: positiveIntegerIdSchema.nullable().optional(),
-  iteration: z.number().nullable().optional(),
+  iteration: nonNegativeIntegerSchema.nullable().optional(),
   slot_entry: positiveIntegerIdSchema.nullable().optional(),
   next_log: positiveIntegerIdSchema.nullable().optional(),
   exercise: positiveIntegerIdSchema.optional(),
@@ -59,8 +61,8 @@ const updateWorkoutLogSchema = z.object({
   weight_target: decimalAmountSchema.nullable().optional(),
   rir: decimalAmountSchema.nullable().optional(),
   rir_target: decimalAmountSchema.nullable().optional(),
-  rest: z.number().nullable().optional(),
-  rest_target: z.number().nullable().optional(),
+  rest: nonNegativeIntegerSchema.nullable().optional(),
+  rest_target: nonNegativeIntegerSchema.nullable().optional(),
 });
 
 export function registerWorkoutLogTools(
@@ -85,6 +87,7 @@ export function registerWorkoutLogTools(
             routine: args.routine,
             date: args.date,
           },
+          paginatedResponseSchema(workoutLogResponseSchema),
         );
         return successResult(data);
       }),
@@ -100,6 +103,8 @@ export function registerWorkoutLogTools(
       runTool(logger, "get_workout_log", async () => {
         const data = await client.get<WorkoutLog>(
           `/api/v2/workoutlog/${args.id}/`,
+          undefined,
+          workoutLogResponseSchema,
         );
         return successResult(data);
       }),
@@ -117,6 +122,7 @@ export function registerWorkoutLogTools(
         const data = await client.post<WorkoutLog>(
           "/api/v2/workoutlog/",
           toJsonBody(args) as WorkoutLogRequest,
+          workoutLogResponseSchema,
         );
         return successResult(data);
       }),
@@ -134,6 +140,7 @@ export function registerWorkoutLogTools(
         const data = await client.patch<WorkoutLog>(
           `/api/v2/workoutlog/${id}/`,
           toJsonBody(body) as PatchedWorkoutLogRequest,
+          workoutLogResponseSchema,
         );
         return successResult(data);
       }),

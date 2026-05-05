@@ -5,8 +5,6 @@ import { WgerError, WgerAuthError } from "../../domain/errors/WgerError.js";
 import { WgerStatusResponse } from "./types.js";
 
 
-const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
-
 export class WgerClient {
   private readonly _baseUrl: string;
   private readonly _token: string;
@@ -17,7 +15,7 @@ export class WgerClient {
     this._baseUrl = config.wgerBaseUrl.replace(/\/$/, "");
     this._token = config.wgerApiToken;
     this._logger = logger;
-    this._timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS;
+    this._timeoutMs = config.wgerRequestTimeoutMs;
   }
 
   async get<T>(

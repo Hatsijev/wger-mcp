@@ -7,6 +7,7 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { WorkoutLog } from "../../../domain/models/Routine.types.js";
+import { paginatedResponseSchema, workoutLogResponseSchema } from "../responseSchemas.js";
 
 export function registerWorkoutLogResources(
   server: McpServer,
@@ -24,6 +25,7 @@ export function registerWorkoutLogResources(
       const data = await client.get<WgerPaginatedResponse<WorkoutLog>>(
         "/api/v2/workoutlog/",
         { limit: 20 },
+        paginatedResponseSchema(workoutLogResponseSchema),
       );
       return {
         contents: [
@@ -46,7 +48,7 @@ export function registerWorkoutLogResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<WorkoutLog>(`/api/v2/workoutlog/${id}/`);
+      const data = await client.get<WorkoutLog>(`/api/v2/workoutlog/${id}/`, undefined, workoutLogResponseSchema);
       return {
         contents: [
           {

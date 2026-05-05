@@ -7,6 +7,7 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { Meal, MealItem } from "../../../domain/models/Nutrition.types.js";
+import { paginatedResponseSchema, mealResponseSchema, mealItemResponseSchema } from "../responseSchemas.js";
 
 export function registerMealResources(
   server: McpServer,
@@ -24,6 +25,7 @@ export function registerMealResources(
       const data = await client.get<WgerPaginatedResponse<Meal>>(
         "/api/v2/meal/",
         { limit: 20 },
+        paginatedResponseSchema(mealResponseSchema),
       );
       return {
         contents: [
@@ -46,7 +48,7 @@ export function registerMealResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<Meal>(`/api/v2/meal/${id}/`);
+      const data = await client.get<Meal>(`/api/v2/meal/${id}/`, undefined, mealResponseSchema);
       return {
         contents: [
           {
@@ -70,6 +72,7 @@ export function registerMealResources(
       const data = await client.get<WgerPaginatedResponse<MealItem>>(
         "/api/v2/mealitem/",
         { limit: 20 },
+        paginatedResponseSchema(mealItemResponseSchema),
       );
       return {
         contents: [
@@ -92,7 +95,7 @@ export function registerMealResources(
     },
     async (uri, variables) => {
       const id = validateResourceId(variables.id);
-      const data = await client.get<MealItem>(`/api/v2/mealitem/${id}/`);
+      const data = await client.get<MealItem>(`/api/v2/mealitem/${id}/`, undefined, mealItemResponseSchema);
       return {
         contents: [
           {

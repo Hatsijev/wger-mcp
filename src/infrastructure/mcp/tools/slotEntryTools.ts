@@ -10,8 +10,10 @@ import {
   positiveIntegerIdSchema,
   boundedStringSchema,
   jsonConfigSchema,
+  roundingDecimalSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, slotEntryResponseSchema } from "../responseSchemas.js";
 
 const listSlotEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -40,9 +42,9 @@ const createSlotEntrySchema = z.object({
     ])
     .optional(),
   repetition_unit: positiveIntegerIdSchema.nullable().optional(),
-  repetition_rounding: z.string().nullable().optional(),
+  repetition_rounding: roundingDecimalSchema.nullable().optional(),
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
-  weight_rounding: z.string().nullable().optional(),
+  weight_rounding: roundingDecimalSchema.nullable().optional(),
   order: z.number().int().min(0).optional(),
   comment: boundedStringSchema(100).optional(),
   config: jsonConfigSchema,
@@ -66,9 +68,9 @@ const updateSlotEntrySchema = z.object({
     ])
     .optional(),
   repetition_unit: positiveIntegerIdSchema.nullable().optional(),
-  repetition_rounding: z.string().nullable().optional(),
+  repetition_rounding: roundingDecimalSchema.nullable().optional(),
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
-  weight_rounding: z.string().nullable().optional(),
+  weight_rounding: roundingDecimalSchema.nullable().optional(),
   order: z.number().int().min(0).optional(),
   comment: boundedStringSchema(100).optional(),
   config: jsonConfigSchema,
@@ -95,6 +97,7 @@ export function registerSlotEntryTools(
             offset: args.offset,
             slot: args.slot,
           },
+          paginatedResponseSchema(slotEntryResponseSchema),
         );
         return successResult(data);
       }),
@@ -110,6 +113,8 @@ export function registerSlotEntryTools(
       runTool(logger, "get_slot_entry", async () => {
         const data = await client.get<SlotEntry>(
           `/api/v2/slot-entry/${args.id}/`,
+          undefined,
+          slotEntryResponseSchema,
         );
         return successResult(data);
       }),
@@ -127,6 +132,7 @@ export function registerSlotEntryTools(
         const data = await client.post<SlotEntry>(
           "/api/v2/slot-entry/",
           toJsonBody(args) as SlotEntryRequest,
+          slotEntryResponseSchema,
         );
         return successResult(data);
       }),
@@ -144,6 +150,7 @@ export function registerSlotEntryTools(
         const data = await client.patch<SlotEntry>(
           `/api/v2/slot-entry/${id}/`,
           toJsonBody(body) as PatchedSlotEntryRequest,
+          slotEntryResponseSchema,
         );
         return successResult(data);
       }),

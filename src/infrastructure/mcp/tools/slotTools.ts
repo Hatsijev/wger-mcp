@@ -12,6 +12,7 @@ import {
   jsonConfigSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, slotResponseSchema } from "../responseSchemas.js";
 
 const listSlotsSchema = z.object({
   limit: paginationLimitSchema,
@@ -59,6 +60,7 @@ export function registerSlotTools(
             offset: args.offset,
             day: args.day,
           },
+          paginatedResponseSchema(slotResponseSchema),
         );
         return successResult(data);
       }),
@@ -72,7 +74,7 @@ export function registerSlotTools(
     },
     async (args) =>
       runTool(logger, "get_slot", async () => {
-        const data = await client.get<Slot>(`/api/v2/slot/${args.id}/`);
+        const data = await client.get<Slot>(`/api/v2/slot/${args.id}/`, undefined, slotResponseSchema);
         return successResult(data);
       }),
   );
@@ -86,7 +88,7 @@ export function registerSlotTools(
     },
     async (args) =>
       runTool(logger, "create_slot", async () => {
-        const data = await client.post<Slot>("/api/v2/slot/", toJsonBody(args) as SlotRequest);
+        const data = await client.post<Slot>("/api/v2/slot/", toJsonBody(args) as SlotRequest, slotResponseSchema);
         return successResult(data);
       }),
   );
@@ -103,6 +105,7 @@ export function registerSlotTools(
         const data = await client.patch<Slot>(
           `/api/v2/slot/${id}/`,
           toJsonBody(body) as PatchedSlotRequest,
+          slotResponseSchema,
         );
         return successResult(data);
       }),

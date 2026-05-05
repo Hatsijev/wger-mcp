@@ -7,6 +7,7 @@ import { validateResourceId } from "../toolResult.js";
 import { Logger } from "../../../application/ports/Logger.js";
 import { WgerPaginatedResponse } from "../../wger/types.js";
 import { IngredientInfo } from "../../../domain/models/Nutrition.types.js";
+import { paginatedResponseSchema, ingredientInfoResponseSchema } from "../responseSchemas.js";
 
 export function registerIngredientResources(
   server: McpServer,
@@ -24,6 +25,7 @@ export function registerIngredientResources(
       const data = await client.get<WgerPaginatedResponse<IngredientInfo>>(
         "/api/v2/ingredientinfo/",
         { limit: 20 },
+        paginatedResponseSchema(ingredientInfoResponseSchema),
       );
       return {
         contents: [
@@ -48,6 +50,8 @@ export function registerIngredientResources(
       const id = validateResourceId(variables.id);
       const data = await client.get<IngredientInfo>(
         `/api/v2/ingredientinfo/${id}/`,
+        undefined,
+        ingredientInfoResponseSchema,
       );
       return {
         contents: [

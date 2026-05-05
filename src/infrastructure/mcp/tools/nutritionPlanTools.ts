@@ -12,6 +12,7 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, nutritionPlanResponseSchema } from "../responseSchemas.js";
 
 const listNutritionPlansSchema = z.object({
   limit: paginationLimitSchema,
@@ -73,6 +74,7 @@ export function registerNutritionPlanTools(
             offset: args.offset,
             description: args.description,
           },
+          paginatedResponseSchema(nutritionPlanResponseSchema),
         );
         return successResult(data);
       }),
@@ -88,6 +90,8 @@ export function registerNutritionPlanTools(
       runTool(logger, "get_nutrition_plan", async () => {
         const data = await client.get<NutritionPlan>(
           `/api/v2/nutritionplan/${args.id}/`,
+          undefined,
+          nutritionPlanResponseSchema,
         );
         return successResult(data);
       }),
@@ -120,6 +124,7 @@ export function registerNutritionPlanTools(
         const data = await client.post<NutritionPlan>(
           "/api/v2/nutritionplan/",
           toJsonBody(args) as NutritionPlanRequest,
+          nutritionPlanResponseSchema,
         );
         return successResult(data);
       }),
@@ -137,6 +142,7 @@ export function registerNutritionPlanTools(
         const data = await client.patch<NutritionPlan>(
           `/api/v2/nutritionplan/${id}/`,
           toJsonBody(body) as PatchedNutritionPlanRequest,
+          nutritionPlanResponseSchema,
         );
         return successResult(data);
       }),

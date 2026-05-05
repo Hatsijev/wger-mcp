@@ -15,7 +15,13 @@ import {
   positiveIntegerIdSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult } from "../toolResult.js";
-import { paginatedResponseSchema } from "../responseSchemas.js";
+import {
+  paginatedResponseSchema,
+  exerciseInfoResponseSchema,
+  muscleResponseSchema,
+  equipmentResponseSchema,
+  exerciseCategoryResponseSchema,
+} from "../responseSchemas.js";
 
 const listExercisesSchema = z.object({
   limit: paginationLimitSchema,
@@ -72,7 +78,7 @@ export function registerExerciseTools(
             equipment: args.equipment,
             language: args.language,
           },
-          paginatedResponseSchema(z.any()),
+          paginatedResponseSchema(exerciseInfoResponseSchema),
         );
         return successResult(data);
       }),
@@ -88,6 +94,8 @@ export function registerExerciseTools(
       runTool(logger, "get_exercise", async () => {
         const data = await client.get<ExerciseInfo>(
           `/api/v2/exerciseinfo/${args.id}/`,
+          undefined,
+          exerciseInfoResponseSchema,
         );
         return successResult(data);
       }),
@@ -108,6 +116,7 @@ export function registerExerciseTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(exerciseInfoResponseSchema),
         );
         return successResult(data);
       }),
@@ -127,6 +136,7 @@ export function registerExerciseTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(muscleResponseSchema),
         );
         return successResult(data);
       }),
@@ -146,6 +156,7 @@ export function registerExerciseTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(equipmentResponseSchema),
         );
         return successResult(data);
       }),
@@ -165,6 +176,7 @@ export function registerExerciseTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(exerciseCategoryResponseSchema),
         );
         return successResult(data);
       }),

@@ -6,8 +6,8 @@ export interface ExerciseCategory {
 export interface Muscle {
   readonly id: number;
   readonly name: string;
-  readonly name_en?: string;
-  readonly is_front?: boolean;
+  readonly name_en?: string | undefined;
+  readonly is_front?: boolean | undefined;
   readonly image_url_main: string;
   readonly image_url_secondary: string;
 }
@@ -34,7 +34,7 @@ export interface Nested {
   readonly id: number;
   readonly full_name: string;
   readonly short_name: string;
-  readonly url?: string | null;
+  readonly url?: string | null | undefined;
 }
 
 export interface ExerciseImage {
@@ -43,16 +43,16 @@ export interface ExerciseImage {
   readonly exercise: number;
   readonly exercise_uuid: string;
   readonly image: string;
-  readonly is_main?: boolean;
-  readonly style?: number;
-  readonly license?: number;
-  readonly license_title?: string;
-  readonly license_object_url?: string;
-  readonly license_author?: string | null;
-  readonly license_author_url?: string;
-  readonly license_derivative_source_url?: string;
+  readonly is_main?: boolean | undefined;
+  readonly style?: number | undefined;
+  readonly license?: number | undefined;
+  readonly license_title?: string | undefined;
+  readonly license_object_url?: string | undefined;
+  readonly license_author?: string | null | undefined;
+  readonly license_author_url?: string | undefined;
+  readonly license_derivative_source_url?: string | undefined;
   readonly author_history: ReadonlyArray<string>;
-  readonly is_ai_generated?: boolean;
+  readonly is_ai_generated?: boolean | undefined;
 }
 
 export interface ExerciseVideoInfo {
@@ -60,19 +60,19 @@ export interface ExerciseVideoInfo {
   readonly uuid: string;
   readonly exercise: number;
   readonly video: string;
-  readonly is_main?: boolean;
+  readonly is_main?: boolean | undefined;
   readonly size: number;
   readonly duration: string;
   readonly width: number;
   readonly height: number;
   readonly codec: string;
   readonly codec_long: string;
-  readonly license?: number;
-  readonly license_title?: string;
-  readonly license_object_url?: string;
-  readonly license_author?: string | null;
-  readonly license_author_url?: string;
-  readonly license_derivative_source_url?: string;
+  readonly license?: number | undefined;
+  readonly license_title?: string | undefined;
+  readonly license_object_url?: string | undefined;
+  readonly license_author?: string | null | undefined;
+  readonly license_author_url?: string | undefined;
+  readonly license_derivative_source_url?: string | undefined;
   readonly author_history: ReadonlyArray<string>;
 }
 
@@ -86,12 +86,12 @@ export interface ExerciseTranslationBaseInfo {
   readonly language: number;
   readonly aliases: ReadonlyArray<ExerciseInfoAlias>;
   readonly notes: ReadonlyArray<ExerciseComment>;
-  readonly license?: number;
-  readonly license_title?: string;
-  readonly license_object_url?: string;
-  readonly license_author?: string | null;
-  readonly license_author_url?: string;
-  readonly license_derivative_source_url?: string;
+  readonly license?: number | undefined;
+  readonly license_title?: string | undefined;
+  readonly license_object_url?: string | undefined;
+  readonly license_author?: string | null | undefined;
+  readonly license_author_url?: string | undefined;
+  readonly license_derivative_source_url?: string | undefined;
   readonly author_history: ReadonlyArray<string>;
 }
 
@@ -106,10 +106,10 @@ export interface ExerciseInfo {
   readonly muscles_secondary: ReadonlyArray<Muscle>;
   readonly equipment: ReadonlyArray<Equipment>;
   readonly license: Nested;
-  readonly license_author?: string | null;
+  readonly license_author?: string | null | undefined;
   readonly images: ReadonlyArray<ExerciseImage>;
   readonly translations: ReadonlyArray<ExerciseTranslationBaseInfo>;
-  readonly variation_group?: string | null;
+  readonly variation_group?: string | null | undefined;
   readonly videos: ReadonlyArray<ExerciseVideoInfo>;
   readonly author_history: ReadonlyArray<string>;
   readonly total_authors_history: ReadonlyArray<string>;

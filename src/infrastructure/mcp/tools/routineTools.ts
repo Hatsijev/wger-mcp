@@ -12,6 +12,7 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, routineResponseSchema } from "../responseSchemas.js";
 
 const listRoutinesSchema = z.object({
   limit: paginationLimitSchema,
@@ -83,6 +84,7 @@ export function registerRoutineTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(routineResponseSchema),
         );
         return successResult(data);
       }),
@@ -96,7 +98,7 @@ export function registerRoutineTools(
     },
     async (args) =>
       runTool(logger, "get_routine", async () => {
-        const data = await client.get<Routine>(`/api/v2/routine/${args.id}/`);
+        const data = await client.get<Routine>(`/api/v2/routine/${args.id}/`, undefined, routineResponseSchema);
         return successResult(data);
       }),
   );
@@ -188,6 +190,7 @@ export function registerRoutineTools(
         const data = await client.post<Routine>(
           "/api/v2/routine/",
           toJsonBody(args) as RoutineRequest,
+          routineResponseSchema,
         );
         return successResult(data);
       }),
@@ -205,6 +208,7 @@ export function registerRoutineTools(
         const data = await client.patch<Routine>(
           `/api/v2/routine/${id}/`,
           toJsonBody(body) as PatchedRoutineRequest,
+          routineResponseSchema,
         );
         return successResult(data);
       }),

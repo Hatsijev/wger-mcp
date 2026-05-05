@@ -12,6 +12,7 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, galleryImageResponseSchema } from "../responseSchemas.js";
 
 const listGalleryImagesSchema = z.object({
   limit: paginationLimitSchema,
@@ -55,6 +56,7 @@ export function registerGalleryTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(galleryImageResponseSchema),
         );
         return successResult(data);
       }),
@@ -70,6 +72,8 @@ export function registerGalleryTools(
       runTool(logger, "get_gallery_image", async () => {
         const data = await client.get<GalleryImage>(
           `/api/v2/gallery/${args.id}/`,
+          undefined,
+          galleryImageResponseSchema,
         );
         return successResult(data);
       }),
@@ -87,6 +91,7 @@ export function registerGalleryTools(
         const data = await client.post<GalleryImage>(
           "/api/v2/gallery/",
           toJsonBody(args) as ImageRequest,
+          galleryImageResponseSchema,
         );
         return successResult(data);
       }),
@@ -104,6 +109,7 @@ export function registerGalleryTools(
         const data = await client.patch<GalleryImage>(
           `/api/v2/gallery/${id}/`,
           toJsonBody(body) as PatchedImageRequest,
+          galleryImageResponseSchema,
         );
         return successResult(data);
       }),

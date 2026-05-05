@@ -12,6 +12,13 @@ import {
   Equipment,
   ExerciseCategory,
 } from "../../../domain/models/Exercise.types.js";
+import {
+  paginatedResponseSchema,
+  exerciseInfoResponseSchema,
+  muscleResponseSchema,
+  equipmentResponseSchema,
+  exerciseCategoryResponseSchema,
+} from "../responseSchemas.js";
 
 export function registerExerciseResources(
   server: McpServer,
@@ -29,6 +36,7 @@ export function registerExerciseResources(
       const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
         "/api/v2/exerciseinfo/",
         { limit: 20 },
+        paginatedResponseSchema(exerciseInfoResponseSchema),
       );
       return {
         contents: [
@@ -53,6 +61,7 @@ export function registerExerciseResources(
       const data = await client.get<WgerPaginatedResponse<Muscle>>(
         "/api/v2/muscle/",
         { limit: 20 },
+        paginatedResponseSchema(muscleResponseSchema),
       );
       return {
         contents: [
@@ -77,6 +86,7 @@ export function registerExerciseResources(
       const data = await client.get<WgerPaginatedResponse<Equipment>>(
         "/api/v2/equipment/",
         { limit: 20 },
+        paginatedResponseSchema(equipmentResponseSchema),
       );
       return {
         contents: [
@@ -101,6 +111,7 @@ export function registerExerciseResources(
       const data = await client.get<WgerPaginatedResponse<ExerciseCategory>>(
         "/api/v2/exercisecategory/",
         { limit: 20 },
+        paginatedResponseSchema(exerciseCategoryResponseSchema),
       );
       return {
         contents: [
@@ -125,6 +136,8 @@ export function registerExerciseResources(
       const id = validateResourceId(variables.id);
       const data = await client.get<ExerciseInfo>(
         `/api/v2/exerciseinfo/${id}/`,
+        undefined,
+        exerciseInfoResponseSchema,
       );
       return {
         contents: [

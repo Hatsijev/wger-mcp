@@ -15,6 +15,12 @@ import {
   boundedStringSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult } from "../toolResult.js";
+import {
+  paginatedResponseSchema,
+  ingredientInfoResponseSchema,
+  ingredientImageResponseSchema,
+  ingredientWeightUnitResponseSchema,
+} from "../responseSchemas.js";
 
 const listIngredientsSchema = z.object({
   limit: paginationLimitSchema,
@@ -78,6 +84,7 @@ export function registerIngredientTools(
             name__search: args.search,
             language: args.language,
           },
+          paginatedResponseSchema(ingredientInfoResponseSchema),
         );
         return successResult(data);
       }),
@@ -93,6 +100,8 @@ export function registerIngredientTools(
       runTool(logger, "get_ingredient", async () => {
         const data = await client.get<IngredientInfo>(
           `/api/v2/ingredientinfo/${args.id}/`,
+          undefined,
+          ingredientInfoResponseSchema,
         );
         return successResult(data);
       }),
@@ -113,6 +122,7 @@ export function registerIngredientTools(
             limit: args.limit,
             offset: args.offset,
           },
+          paginatedResponseSchema(ingredientInfoResponseSchema),
         );
         return successResult(data);
       }),
@@ -128,6 +138,8 @@ export function registerIngredientTools(
       runTool(logger, "get_ingredient_values", async () => {
         const data = await client.get<IngredientInfo>(
           `/api/v2/ingredientinfo/${args.id}/get_values/`,
+          undefined,
+          ingredientInfoResponseSchema,
         );
         return successResult(data);
       }),
@@ -148,6 +160,7 @@ export function registerIngredientTools(
             offset: args.offset,
             ingredient_id: args.ingredient_id,
           },
+          paginatedResponseSchema(ingredientImageResponseSchema),
         );
         return successResult(data);
       }),
@@ -163,6 +176,8 @@ export function registerIngredientTools(
       runTool(logger, "get_ingredient_image", async () => {
         const data = await client.get<IngredientImage>(
           `/api/v2/ingredient-image/${args.id}/`,
+          undefined,
+          ingredientImageResponseSchema,
         );
         return successResult(data);
       }),
@@ -182,7 +197,8 @@ export function registerIngredientTools(
           limit: args.limit,
           offset: args.offset,
           ingredient: args.ingredient,
-        });
+        },
+        paginatedResponseSchema(ingredientWeightUnitResponseSchema));
         return successResult(data);
       }),
   );
@@ -197,6 +213,8 @@ export function registerIngredientTools(
       runTool(logger, "get_ingredient_weight_unit", async () => {
         const data = await client.get<IngredientWeightUnit>(
           `/api/v2/ingredientweightunit/${args.id}/`,
+          undefined,
+          ingredientWeightUnitResponseSchema,
         );
         return successResult(data);
       }),

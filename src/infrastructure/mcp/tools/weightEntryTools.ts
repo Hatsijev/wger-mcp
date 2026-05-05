@@ -12,6 +12,7 @@ import {
   decimalAmountSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, weightEntryResponseSchema } from "../responseSchemas.js";
 
 const listWeightEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -57,6 +58,7 @@ export function registerWeightEntryTools(
             date__gt: args.date__gt,
             date__gte: args.date__gte,
           },
+          paginatedResponseSchema(weightEntryResponseSchema),
         );
         return successResult(data);
       }),
@@ -72,6 +74,8 @@ export function registerWeightEntryTools(
       runTool(logger, "get_weight_entry", async () => {
         const data = await client.get<WeightEntry>(
           `/api/v2/weightentry/${args.id}/`,
+          undefined,
+          weightEntryResponseSchema,
         );
         return successResult(data);
       }),
@@ -89,6 +93,7 @@ export function registerWeightEntryTools(
         const data = await client.post<WeightEntry>(
           "/api/v2/weightentry/",
           toJsonBody(args) as WeightEntryRequest,
+          weightEntryResponseSchema,
         );
         return successResult(data);
       }),
@@ -106,6 +111,7 @@ export function registerWeightEntryTools(
         const data = await client.patch<WeightEntry>(
           `/api/v2/weightentry/${id}/`,
           toJsonBody(body) as PatchedWeightEntryRequest,
+          weightEntryResponseSchema,
         );
         return successResult(data);
       }),

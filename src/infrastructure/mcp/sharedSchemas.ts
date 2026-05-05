@@ -28,6 +28,13 @@ export const decimalAmountSchema = z
     "Expected decimal with up to 4 integer and 2 fractional digits",
   );
 
+export const roundingDecimalSchema = z
+  .string()
+  .regex(
+    /^-?\d{0,2}(?:\.\d{0,2})?$/,
+    "Expected decimal with up to 2 integer and 2 fractional digits",
+  );
+
 export function boundedStringSchema(maxLength: number) {
   return z.string().max(maxLength);
 }
@@ -46,5 +53,9 @@ const jsonValueSchema = z.lazy(() =>
     z.array(jsonValueSchema),
   ]),
 ) as z.ZodType<JsonValue>;
+
+export { jsonValueSchema };
+
+export const nonNegativeIntegerSchema = z.number().int().min(0).max(2_147_483_647);
 
 export const jsonConfigSchema = jsonValueSchema.nullable().optional();

@@ -13,6 +13,7 @@ import {
   decimalAmountSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
+import { paginatedResponseSchema, nutritionDiaryEntryResponseSchema } from "../responseSchemas.js";
 
 const listNutritionDiaryEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -69,7 +70,8 @@ export function registerNutritionDiaryTools(
           offset: args.offset,
           plan: args.plan,
           datetime__date: args.date,
-        });
+        },
+        paginatedResponseSchema(nutritionDiaryEntryResponseSchema));
         return successResult(data);
       }),
   );
@@ -84,6 +86,8 @@ export function registerNutritionDiaryTools(
       runTool(logger, "get_nutrition_diary_entry", async () => {
         const data = await client.get<NutritionDiaryEntry>(
           `/api/v2/nutritiondiary/${args.id}/`,
+          undefined,
+          nutritionDiaryEntryResponseSchema,
         );
         return successResult(data);
       }),
@@ -116,6 +120,7 @@ export function registerNutritionDiaryTools(
         const data = await client.post<NutritionDiaryEntry>(
           "/api/v2/nutritiondiary/",
           toJsonBody(args) as LogItemRequest,
+          nutritionDiaryEntryResponseSchema,
         );
         return successResult(data);
       }),
@@ -133,6 +138,7 @@ export function registerNutritionDiaryTools(
         const data = await client.patch<NutritionDiaryEntry>(
           `/api/v2/nutritiondiary/${id}/`,
           toJsonBody(body) as PatchedLogItemRequest,
+          nutritionDiaryEntryResponseSchema,
         );
         return successResult(data);
       }),

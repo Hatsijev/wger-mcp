@@ -2,6 +2,7 @@ export interface Config {
   readonly wgerBaseUrl: string;
   readonly wgerApiToken: string;
   readonly wgerLanguage?: string | undefined;
+  readonly wgerRequestTimeoutMs: number;
   readonly logLevel: LogLevel;
   readonly enableWriteTools: boolean;
   readonly enableDestructiveTools: boolean;
