@@ -2,12 +2,13 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  Day,
-  DayRequest,
-  PatchedDayRequest,
-} from "../../../domain/models/Routine.types.js";
+  listDaysEndpoint,
+  getDayEndpoint,
+  createDayEndpoint,
+  updateDayEndpoint,
+} from "../endpoints/dayEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -15,11 +16,6 @@ import {
   boundedStringSchema,
   jsonConfigSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  dayResponseSchema,
-} from "../responseSchemas.js";
 
 const listDaysSchema = z.object({
   limit: paginationLimitSchema,
@@ -66,76 +62,27 @@ export function registerDayTools(
 ): void {
   server.registerTool(
     "list_days",
-    {
-      description: "List routine days",
-      inputSchema: listDaysSchema,
-    },
-    async (args) =>
-      runTool(logger, "list_days", async () => {
-        const data = await client.get<WgerPaginatedResponse<Day>>(
-          "/api/v2/day/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            routine: args.routine,
-          },
-          paginatedResponseSchema(dayResponseSchema),
-        );
-        return successResult(data);
-      }),
+    { description: "List routine days", inputSchema: listDaysSchema },
+    endpointHandler(client, logger, "list_days", listDaysEndpoint),
   );
 
   server.registerTool(
     "get_day",
-    {
-      description: "Get day by ID",
-      inputSchema: getDaySchema,
-    },
-    async (args) =>
-      runTool(logger, "get_day", async () => {
-        const data = await client.get<Day>(
-          `/api/v2/day/${args.id}/`,
-          undefined,
-          dayResponseSchema,
-        );
-        return successResult(data);
-      }),
+    { description: "Get day by ID", inputSchema: getDaySchema },
+    endpointHandler(client, logger, "get_day", getDayEndpoint),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_day",
-      {
-        description: "Create a new day",
-        inputSchema: createDaySchema,
-      },
-      async (args) =>
-        runTool(logger, "create_day", async () => {
-          const data = await client.post<Day>(
-            "/api/v2/day/",
-            toJsonBody(args) as DayRequest,
-            dayResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Create a new day", inputSchema: createDaySchema },
+      endpointHandler(client, logger, "create_day", createDayEndpoint),
     );
 
     server.registerTool(
       "update_day",
-      {
-        description: "Update an existing day",
-        inputSchema: updateDaySchema,
-      },
-      async (args) =>
-        runTool(logger, "update_day", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<Day>(
-            `/api/v2/day/${id}/`,
-            toJsonBody(body) as PatchedDayRequest,
-            dayResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Update an existing day", inputSchema: updateDaySchema },
+      endpointHandler(client, logger, "update_day", updateDayEndpoint),
     );
   }
 

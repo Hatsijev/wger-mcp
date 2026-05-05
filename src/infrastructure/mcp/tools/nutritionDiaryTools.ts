@@ -2,13 +2,14 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  NutritionDiaryEntry,
-  NutritionalValues,
-  LogItemRequest,
-  PatchedLogItemRequest,
-} from "../../../domain/models/Nutrition.types.js";
+  listNutritionDiaryEntriesEndpoint,
+  getNutritionDiaryEntryEndpoint,
+  getNutritionDiaryNutritionalValuesEndpoint,
+  createNutritionDiaryEntryEndpoint,
+  updateNutritionDiaryEntryEndpoint,
+} from "../endpoints/nutritionEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -17,12 +18,6 @@ import {
   isoDateTimeStringSchema,
   decimalAmountSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  nutritionDiaryEntryResponseSchema,
-  nutritionalValuesResponseSchema,
-} from "../responseSchemas.js";
 
 const listNutritionDiaryEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -70,22 +65,7 @@ export function registerNutritionDiaryTools(
       description: "List nutrition diary entries",
       inputSchema: listNutritionDiaryEntriesSchema,
     },
-    async (args) =>
-      runTool(logger, "list_nutrition_diary_entries", async () => {
-        const data = await client.get<
-          WgerPaginatedResponse<NutritionDiaryEntry>
-        >(
-          "/api/v2/nutritiondiary/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            plan: args.plan,
-            datetime__date: args.date,
-          },
-          paginatedResponseSchema(nutritionDiaryEntryResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_nutrition_diary_entries", listNutritionDiaryEntriesEndpoint),
   );
 
   server.registerTool(
@@ -94,15 +74,7 @@ export function registerNutritionDiaryTools(
       description: "Get nutrition diary entry by ID",
       inputSchema: getNutritionDiaryEntrySchema,
     },
-    async (args) =>
-      runTool(logger, "get_nutrition_diary_entry", async () => {
-        const data = await client.get<NutritionDiaryEntry>(
-          `/api/v2/nutritiondiary/${args.id}/`,
-          undefined,
-          nutritionDiaryEntryResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_nutrition_diary_entry", getNutritionDiaryEntryEndpoint),
   );
 
   server.registerTool(
@@ -111,15 +83,7 @@ export function registerNutritionDiaryTools(
       description: "Get nutritional values for a diary entry",
       inputSchema: getNutritionDiaryNutritionalValuesSchema,
     },
-    async (args) =>
-      runTool(logger, "get_nutrition_diary_nutritional_values", async () => {
-        const data = await client.get<NutritionalValues>(
-          `/api/v2/nutritiondiary/${args.id}/nutritional_values/`,
-          undefined,
-          nutritionalValuesResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_nutrition_diary_nutritional_values", getNutritionDiaryNutritionalValuesEndpoint),
   );
 
   if (enableWriteTools) {
@@ -129,15 +93,7 @@ export function registerNutritionDiaryTools(
         description: "Create a new nutrition diary entry",
         inputSchema: createNutritionDiaryEntrySchema,
       },
-      async (args) =>
-        runTool(logger, "create_nutrition_diary_entry", async () => {
-          const data = await client.post<NutritionDiaryEntry>(
-            "/api/v2/nutritiondiary/",
-            toJsonBody(args) as LogItemRequest,
-            nutritionDiaryEntryResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "create_nutrition_diary_entry", createNutritionDiaryEntryEndpoint),
     );
 
     server.registerTool(
@@ -146,16 +102,7 @@ export function registerNutritionDiaryTools(
         description: "Update an existing nutrition diary entry",
         inputSchema: updateNutritionDiaryEntrySchema,
       },
-      async (args) =>
-        runTool(logger, "update_nutrition_diary_entry", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<NutritionDiaryEntry>(
-            `/api/v2/nutritiondiary/${id}/`,
-            toJsonBody(body) as PatchedLogItemRequest,
-            nutritionDiaryEntryResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "update_nutrition_diary_entry", updateNutritionDiaryEntryEndpoint),
     );
   }
 

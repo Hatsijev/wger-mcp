@@ -2,12 +2,13 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  WorkoutLog,
-  WorkoutLogRequest,
-  PatchedWorkoutLogRequest,
-} from "../../../domain/models/Routine.types.js";
+  listWorkoutLogsEndpoint,
+  getWorkoutLogEndpoint,
+  createWorkoutLogEndpoint,
+  updateWorkoutLogEndpoint,
+} from "../endpoints/workoutLogEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -17,11 +18,6 @@ import {
   nonNegativeIntegerSchema,
   rirDecimalSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  workoutLogResponseSchema,
-} from "../responseSchemas.js";
 
 const listWorkoutLogsSchema = z.object({
   limit: paginationLimitSchema,
@@ -81,77 +77,27 @@ export function registerWorkoutLogTools(
 ): void {
   server.registerTool(
     "list_workout_logs",
-    {
-      description: "List workout logs",
-      inputSchema: listWorkoutLogsSchema,
-    },
-    async (args) =>
-      runTool(logger, "list_workout_logs", async () => {
-        const data = await client.get<WgerPaginatedResponse<WorkoutLog>>(
-          "/api/v2/workoutlog/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            routine: args.routine,
-            date: args.date,
-          },
-          paginatedResponseSchema(workoutLogResponseSchema),
-        );
-        return successResult(data);
-      }),
+    { description: "List workout logs", inputSchema: listWorkoutLogsSchema },
+    endpointHandler(client, logger, "list_workout_logs", listWorkoutLogsEndpoint),
   );
 
   server.registerTool(
     "get_workout_log",
-    {
-      description: "Get workout log by ID",
-      inputSchema: getWorkoutLogSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_workout_log", async () => {
-        const data = await client.get<WorkoutLog>(
-          `/api/v2/workoutlog/${args.id}/`,
-          undefined,
-          workoutLogResponseSchema,
-        );
-        return successResult(data);
-      }),
+    { description: "Get workout log by ID", inputSchema: getWorkoutLogSchema },
+    endpointHandler(client, logger, "get_workout_log", getWorkoutLogEndpoint),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_workout_log",
-      {
-        description: "Create a new workout log",
-        inputSchema: createWorkoutLogSchema,
-      },
-      async (args) =>
-        runTool(logger, "create_workout_log", async () => {
-          const data = await client.post<WorkoutLog>(
-            "/api/v2/workoutlog/",
-            toJsonBody(args) as WorkoutLogRequest,
-            workoutLogResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Create a new workout log", inputSchema: createWorkoutLogSchema },
+      endpointHandler(client, logger, "create_workout_log", createWorkoutLogEndpoint),
     );
 
     server.registerTool(
       "update_workout_log",
-      {
-        description: "Update an existing workout log",
-        inputSchema: updateWorkoutLogSchema,
-      },
-      async (args) =>
-        runTool(logger, "update_workout_log", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<WorkoutLog>(
-            `/api/v2/workoutlog/${id}/`,
-            toJsonBody(body) as PatchedWorkoutLogRequest,
-            workoutLogResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Update an existing workout log", inputSchema: updateWorkoutLogSchema },
+      endpointHandler(client, logger, "update_workout_log", updateWorkoutLogEndpoint),
     );
   }
 

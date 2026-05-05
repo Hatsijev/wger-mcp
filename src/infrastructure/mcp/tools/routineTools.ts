@@ -2,12 +2,18 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  Routine,
-  RoutineRequest,
-  PatchedRoutineRequest,
-} from "../../../domain/models/Routine.types.js";
+  listRoutinesEndpoint,
+  getRoutineEndpoint,
+  getRoutineStructureEndpoint,
+  getRoutineLogsEndpoint,
+  getRoutineStatsEndpoint,
+  getRoutineDateSequenceDisplayEndpoint,
+  getRoutineDateSequenceGymEndpoint,
+  createRoutineEndpoint,
+  updateRoutineEndpoint,
+} from "../endpoints/routineEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -15,11 +21,6 @@ import {
   isoDateStringSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  routineResponseSchema,
-} from "../responseSchemas.js";
 
 const listRoutinesSchema = z.object({
   limit: paginationLimitSchema,
@@ -79,150 +80,57 @@ export function registerRoutineTools(
 ): void {
   server.registerTool(
     "list_routines",
-    {
-      description: "List routines",
-      inputSchema: listRoutinesSchema,
-    },
-    async (args) =>
-      runTool(logger, "list_routines", async () => {
-        const data = await client.get<WgerPaginatedResponse<Routine>>(
-          "/api/v2/routine/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-          },
-          paginatedResponseSchema(routineResponseSchema),
-        );
-        return successResult(data);
-      }),
+    { description: "List routines", inputSchema: listRoutinesSchema },
+    endpointHandler(client, logger, "list_routines", listRoutinesEndpoint),
   );
 
   server.registerTool(
     "get_routine",
-    {
-      description: "Get routine by ID",
-      inputSchema: getRoutineSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_routine", async () => {
-        const data = await client.get<Routine>(
-          `/api/v2/routine/${args.id}/`,
-          undefined,
-          routineResponseSchema,
-        );
-        return successResult(data);
-      }),
+    { description: "Get routine by ID", inputSchema: getRoutineSchema },
+    endpointHandler(client, logger, "get_routine", getRoutineEndpoint),
   );
 
   server.registerTool(
     "get_routine_structure",
-    {
-      description: "Get routine structure",
-      inputSchema: getRoutineStructureSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_routine_structure", async () => {
-        const data = await client.get<Routine>(
-          `/api/v2/routine/${args.id}/structure/`,
-        );
-        return successResult(data);
-      }),
+    { description: "Get routine structure", inputSchema: getRoutineStructureSchema },
+    endpointHandler(client, logger, "get_routine_structure", getRoutineStructureEndpoint),
   );
 
   server.registerTool(
     "get_routine_logs",
-    {
-      description: "Get routine logs",
-      inputSchema: getRoutineLogsSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_routine_logs", async () => {
-        const data = await client.get<Routine>(
-          `/api/v2/routine/${args.id}/logs/`,
-        );
-        return successResult(data);
-      }),
+    { description: "Get routine logs", inputSchema: getRoutineLogsSchema },
+    endpointHandler(client, logger, "get_routine_logs", getRoutineLogsEndpoint),
   );
 
   server.registerTool(
     "get_routine_stats",
-    {
-      description: "Get routine stats",
-      inputSchema: getRoutineStatsSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_routine_stats", async () => {
-        const data = await client.get<Routine>(
-          `/api/v2/routine/${args.id}/stats/`,
-        );
-        return successResult(data);
-      }),
+    { description: "Get routine stats", inputSchema: getRoutineStatsSchema },
+    endpointHandler(client, logger, "get_routine_stats", getRoutineStatsEndpoint),
   );
 
   server.registerTool(
     "get_routine_date_sequence_display",
-    {
-      description: "Get routine display date sequence",
-      inputSchema: getRoutineDateSequenceDisplaySchema,
-    },
-    async (args) =>
-      runTool(logger, "get_routine_date_sequence_display", async () => {
-        const data = await client.get<Routine>(
-          `/api/v2/routine/${args.id}/date-sequence-display/`,
-        );
-        return successResult(data);
-      }),
+    { description: "Get routine display date sequence", inputSchema: getRoutineDateSequenceDisplaySchema },
+    endpointHandler(client, logger, "get_routine_date_sequence_display", getRoutineDateSequenceDisplayEndpoint),
   );
 
   server.registerTool(
     "get_routine_date_sequence_gym",
-    {
-      description: "Get routine gym date sequence",
-      inputSchema: getRoutineDateSequenceGymSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_routine_date_sequence_gym", async () => {
-        const data = await client.get<Routine>(
-          `/api/v2/routine/${args.id}/date-sequence-gym/`,
-        );
-        return successResult(data);
-      }),
+    { description: "Get routine gym date sequence", inputSchema: getRoutineDateSequenceGymSchema },
+    endpointHandler(client, logger, "get_routine_date_sequence_gym", getRoutineDateSequenceGymEndpoint),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_routine",
-      {
-        description: "Create a new routine",
-        inputSchema: createRoutineSchema,
-      },
-      async (args) =>
-        runTool(logger, "create_routine", async () => {
-          const data = await client.post<Routine>(
-            "/api/v2/routine/",
-            toJsonBody(args) as RoutineRequest,
-            routineResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Create a new routine", inputSchema: createRoutineSchema },
+      endpointHandler(client, logger, "create_routine", createRoutineEndpoint),
     );
 
     server.registerTool(
       "update_routine",
-      {
-        description: "Update an existing routine",
-        inputSchema: updateRoutineSchema,
-      },
-      async (args) =>
-        runTool(logger, "update_routine", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<Routine>(
-            `/api/v2/routine/${id}/`,
-            toJsonBody(body) as PatchedRoutineRequest,
-            routineResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Update an existing routine", inputSchema: updateRoutineSchema },
+      endpointHandler(client, logger, "update_routine", updateRoutineEndpoint),
     );
   }
 

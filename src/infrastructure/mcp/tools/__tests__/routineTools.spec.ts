@@ -114,7 +114,7 @@ describe("registerRoutineTools", () => {
       registerRoutineTools(server as never, client as never, logger, true);
       const handler = server.getTool("get_routine_structure")!;
       await handler({ id: 1 });
-      expect(client.get).toHaveBeenCalledWith("/api/v2/routine/1/structure/");
+      expect(client.get).toHaveBeenCalledWith("/api/v2/routine/1/structure/", undefined, undefined);
     });
 
     it("6.12.2: get_routine_logs", async () => {
@@ -122,7 +122,7 @@ describe("registerRoutineTools", () => {
       registerRoutineTools(server as never, client as never, logger, true);
       const handler = server.getTool("get_routine_logs")!;
       await handler({ id: 1 });
-      expect(client.get).toHaveBeenCalledWith("/api/v2/routine/1/logs/");
+      expect(client.get).toHaveBeenCalledWith("/api/v2/routine/1/logs/", undefined, undefined);
     });
   });
 

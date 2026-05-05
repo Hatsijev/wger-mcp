@@ -2,13 +2,14 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  NutritionPlan,
-  NutritionalValues,
-  NutritionPlanRequest,
-  PatchedNutritionPlanRequest,
-} from "../../../domain/models/Nutrition.types.js";
+  listNutritionPlansEndpoint,
+  getNutritionPlanEndpoint,
+  getNutritionPlanNutritionalValuesEndpoint,
+  createNutritionPlanEndpoint,
+  updateNutritionPlanEndpoint,
+} from "../endpoints/nutritionEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -16,12 +17,6 @@ import {
   isoDateStringSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  nutritionPlanResponseSchema,
-  nutritionalValuesResponseSchema,
-} from "../responseSchemas.js";
 
 const listNutritionPlansSchema = z.object({
   limit: paginationLimitSchema,
@@ -134,19 +129,7 @@ export function registerNutritionPlanTools(
       description: "List nutrition plans",
       inputSchema: listNutritionPlansSchema,
     },
-    async (args) =>
-      runTool(logger, "list_nutrition_plans", async () => {
-        const data = await client.get<WgerPaginatedResponse<NutritionPlan>>(
-          "/api/v2/nutritionplan/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            description: args.description,
-          },
-          paginatedResponseSchema(nutritionPlanResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_nutrition_plans", listNutritionPlansEndpoint),
   );
 
   server.registerTool(
@@ -155,15 +138,7 @@ export function registerNutritionPlanTools(
       description: "Get nutrition plan by ID",
       inputSchema: getNutritionPlanSchema,
     },
-    async (args) =>
-      runTool(logger, "get_nutrition_plan", async () => {
-        const data = await client.get<NutritionPlan>(
-          `/api/v2/nutritionplan/${args.id}/`,
-          undefined,
-          nutritionPlanResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_nutrition_plan", getNutritionPlanEndpoint),
   );
 
   server.registerTool(
@@ -172,15 +147,7 @@ export function registerNutritionPlanTools(
       description: "Get nutritional values for a nutrition plan",
       inputSchema: getNutritionPlanNutritionalValuesSchema,
     },
-    async (args) =>
-      runTool(logger, "get_nutrition_plan_nutritional_values", async () => {
-        const data = await client.get<NutritionalValues>(
-          `/api/v2/nutritionplan/${args.id}/nutritional_values/`,
-          undefined,
-          nutritionalValuesResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_nutrition_plan_nutritional_values", getNutritionPlanNutritionalValuesEndpoint),
   );
 
   if (enableWriteTools) {
@@ -190,15 +157,7 @@ export function registerNutritionPlanTools(
         description: "Create a new nutrition plan",
         inputSchema: createNutritionPlanSchema,
       },
-      async (args) =>
-        runTool(logger, "create_nutrition_plan", async () => {
-          const data = await client.post<NutritionPlan>(
-            "/api/v2/nutritionplan/",
-            toJsonBody(args) as NutritionPlanRequest,
-            nutritionPlanResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "create_nutrition_plan", createNutritionPlanEndpoint),
     );
 
     server.registerTool(
@@ -207,16 +166,7 @@ export function registerNutritionPlanTools(
         description: "Update an existing nutrition plan",
         inputSchema: updateNutritionPlanSchema,
       },
-      async (args) =>
-        runTool(logger, "update_nutrition_plan", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<NutritionPlan>(
-            `/api/v2/nutritionplan/${id}/`,
-            toJsonBody(body) as PatchedNutritionPlanRequest,
-            nutritionPlanResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "update_nutrition_plan", updateNutritionPlanEndpoint),
     );
   }
 

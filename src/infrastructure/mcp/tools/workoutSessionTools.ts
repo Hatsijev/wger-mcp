@@ -2,12 +2,13 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  WorkoutSession,
-  WorkoutSessionRequest,
-  PatchedWorkoutSessionRequest,
-} from "../../../domain/models/Routine.types.js";
+  listWorkoutSessionsEndpoint,
+  getWorkoutSessionEndpoint,
+  createWorkoutSessionEndpoint,
+  updateWorkoutSessionEndpoint,
+} from "../endpoints/workoutSessionEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -15,11 +16,6 @@ import {
   isoDateStringSchema,
   timeStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  workoutSessionResponseSchema,
-} from "../responseSchemas.js";
 
 const listWorkoutSessionsSchema = z.object({
   limit: paginationLimitSchema,
@@ -60,76 +56,27 @@ export function registerWorkoutSessionTools(
 ): void {
   server.registerTool(
     "list_workout_sessions",
-    {
-      description: "List workout sessions",
-      inputSchema: listWorkoutSessionsSchema,
-    },
-    async (args) =>
-      runTool(logger, "list_workout_sessions", async () => {
-        const data = await client.get<WgerPaginatedResponse<WorkoutSession>>(
-          "/api/v2/workoutsession/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            date: args.date,
-          },
-          paginatedResponseSchema(workoutSessionResponseSchema),
-        );
-        return successResult(data);
-      }),
+    { description: "List workout sessions", inputSchema: listWorkoutSessionsSchema },
+    endpointHandler(client, logger, "list_workout_sessions", listWorkoutSessionsEndpoint),
   );
 
   server.registerTool(
     "get_workout_session",
-    {
-      description: "Get workout session by ID",
-      inputSchema: getWorkoutSessionSchema,
-    },
-    async (args) =>
-      runTool(logger, "get_workout_session", async () => {
-        const data = await client.get<WorkoutSession>(
-          `/api/v2/workoutsession/${args.id}/`,
-          undefined,
-          workoutSessionResponseSchema,
-        );
-        return successResult(data);
-      }),
+    { description: "Get workout session by ID", inputSchema: getWorkoutSessionSchema },
+    endpointHandler(client, logger, "get_workout_session", getWorkoutSessionEndpoint),
   );
 
   if (enableWriteTools) {
     server.registerTool(
       "create_workout_session",
-      {
-        description: "Create a new workout session",
-        inputSchema: createWorkoutSessionSchema,
-      },
-      async (args) =>
-        runTool(logger, "create_workout_session", async () => {
-          const data = await client.post<WorkoutSession>(
-            "/api/v2/workoutsession/",
-            toJsonBody(args) as WorkoutSessionRequest,
-            workoutSessionResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Create a new workout session", inputSchema: createWorkoutSessionSchema },
+      endpointHandler(client, logger, "create_workout_session", createWorkoutSessionEndpoint),
     );
 
     server.registerTool(
       "update_workout_session",
-      {
-        description: "Update an existing workout session",
-        inputSchema: updateWorkoutSessionSchema,
-      },
-      async (args) =>
-        runTool(logger, "update_workout_session", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<WorkoutSession>(
-            `/api/v2/workoutsession/${id}/`,
-            toJsonBody(body) as PatchedWorkoutSessionRequest,
-            workoutSessionResponseSchema,
-          );
-          return successResult(data);
-        }),
+      { description: "Update an existing workout session", inputSchema: updateWorkoutSessionSchema },
+      endpointHandler(client, logger, "update_workout_session", updateWorkoutSessionEndpoint),
     );
   }
 

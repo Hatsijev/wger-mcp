@@ -2,25 +2,23 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  IngredientInfo,
-  IngredientImage,
-  IngredientWeightUnit,
-} from "../../../domain/models/Nutrition.types.js";
+  listIngredientsEndpoint,
+  getIngredientEndpoint,
+  searchIngredientsEndpoint,
+  getIngredientValuesEndpoint,
+  listIngredientImagesEndpoint,
+  getIngredientImageEndpoint,
+  listIngredientWeightUnitsEndpoint,
+  getIngredientWeightUnitEndpoint,
+} from "../endpoints/nutritionEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
   positiveIntegerIdSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  ingredientInfoResponseSchema,
-  ingredientImageResponseSchema,
-  ingredientWeightUnitResponseSchema,
-} from "../responseSchemas.js";
 
 const listIngredientsSchema = z.object({
   limit: paginationLimitSchema,
@@ -74,20 +72,7 @@ export function registerIngredientTools(
       description: "List ingredients",
       inputSchema: listIngredientsSchema,
     },
-    async (args) =>
-      runTool(logger, "list_ingredients", async () => {
-        const data = await client.get<WgerPaginatedResponse<IngredientInfo>>(
-          "/api/v2/ingredientinfo/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            name__search: args.search,
-            language: args.language,
-          },
-          paginatedResponseSchema(ingredientInfoResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_ingredients", listIngredientsEndpoint),
   );
 
   server.registerTool(
@@ -96,15 +81,7 @@ export function registerIngredientTools(
       description: "Get ingredient by ID",
       inputSchema: getIngredientSchema,
     },
-    async (args) =>
-      runTool(logger, "get_ingredient", async () => {
-        const data = await client.get<IngredientInfo>(
-          `/api/v2/ingredientinfo/${args.id}/`,
-          undefined,
-          ingredientInfoResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_ingredient", getIngredientEndpoint),
   );
 
   server.registerTool(
@@ -113,19 +90,7 @@ export function registerIngredientTools(
       description: "Search ingredients",
       inputSchema: searchIngredientsSchema,
     },
-    async (args) =>
-      runTool(logger, "search_ingredients", async () => {
-        const data = await client.get<WgerPaginatedResponse<IngredientInfo>>(
-          "/api/v2/ingredientinfo/",
-          {
-            name__search: args.term,
-            limit: args.limit,
-            offset: args.offset,
-          },
-          paginatedResponseSchema(ingredientInfoResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "search_ingredients", searchIngredientsEndpoint),
   );
 
   server.registerTool(
@@ -134,15 +99,7 @@ export function registerIngredientTools(
       description: "Get nutritional values for an ingredient",
       inputSchema: getIngredientValuesSchema,
     },
-    async (args) =>
-      runTool(logger, "get_ingredient_values", async () => {
-        const data = await client.get<IngredientInfo>(
-          `/api/v2/ingredientinfo/${args.id}/get_values/`,
-          undefined,
-          ingredientInfoResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_ingredient_values", getIngredientValuesEndpoint),
   );
 
   server.registerTool(
@@ -151,19 +108,7 @@ export function registerIngredientTools(
       description: "List ingredient images",
       inputSchema: listIngredientImagesSchema,
     },
-    async (args) =>
-      runTool(logger, "list_ingredient_images", async () => {
-        const data = await client.get<WgerPaginatedResponse<IngredientImage>>(
-          "/api/v2/ingredient-image/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            ingredient_id: args.ingredient_id,
-          },
-          paginatedResponseSchema(ingredientImageResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_ingredient_images", listIngredientImagesEndpoint),
   );
 
   server.registerTool(
@@ -172,15 +117,7 @@ export function registerIngredientTools(
       description: "Get ingredient image by ID",
       inputSchema: getIngredientImageSchema,
     },
-    async (args) =>
-      runTool(logger, "get_ingredient_image", async () => {
-        const data = await client.get<IngredientImage>(
-          `/api/v2/ingredient-image/${args.id}/`,
-          undefined,
-          ingredientImageResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_ingredient_image", getIngredientImageEndpoint),
   );
 
   server.registerTool(
@@ -189,21 +126,7 @@ export function registerIngredientTools(
       description: "List ingredient weight units",
       inputSchema: listIngredientWeightUnitsSchema,
     },
-    async (args) =>
-      runTool(logger, "list_ingredient_weight_units", async () => {
-        const data = await client.get<
-          WgerPaginatedResponse<IngredientWeightUnit>
-        >(
-          "/api/v2/ingredientweightunit/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            ingredient: args.ingredient,
-          },
-          paginatedResponseSchema(ingredientWeightUnitResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_ingredient_weight_units", listIngredientWeightUnitsEndpoint),
   );
 
   server.registerTool(
@@ -212,15 +135,7 @@ export function registerIngredientTools(
       description: "Get ingredient weight unit by ID",
       inputSchema: getIngredientWeightUnitSchema,
     },
-    async (args) =>
-      runTool(logger, "get_ingredient_weight_unit", async () => {
-        const data = await client.get<IngredientWeightUnit>(
-          `/api/v2/ingredientweightunit/${args.id}/`,
-          undefined,
-          ingredientWeightUnitResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_ingredient_weight_unit", getIngredientWeightUnitEndpoint),
   );
 
   logger.info("Ingredient tools registered");

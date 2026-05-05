@@ -2,12 +2,13 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  WeightEntry,
-  WeightEntryRequest,
-  PatchedWeightEntryRequest,
-} from "../../../domain/models/Routine.types.js";
+  listWeightEntriesEndpoint,
+  getWeightEntryEndpoint,
+  createWeightEntryEndpoint,
+  updateWeightEntryEndpoint,
+} from "../endpoints/weightEntryEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -15,11 +16,6 @@ import {
   isoDateStringSchema,
   weightDecimalSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  weightEntryResponseSchema,
-} from "../responseSchemas.js";
 
 const listWeightEntriesSchema = z.object({
   limit: paginationLimitSchema,
@@ -55,20 +51,7 @@ export function registerWeightEntryTools(
       description: "List weight entries",
       inputSchema: listWeightEntriesSchema,
     },
-    async (args) =>
-      runTool(logger, "list_weight_entries", async () => {
-        const data = await client.get<WgerPaginatedResponse<WeightEntry>>(
-          "/api/v2/weightentry/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            date__gt: args.date__gt,
-            date__gte: args.date__gte,
-          },
-          paginatedResponseSchema(weightEntryResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_weight_entries", listWeightEntriesEndpoint),
   );
 
   server.registerTool(
@@ -77,15 +60,7 @@ export function registerWeightEntryTools(
       description: "Get weight entry by ID",
       inputSchema: getWeightEntrySchema,
     },
-    async (args) =>
-      runTool(logger, "get_weight_entry", async () => {
-        const data = await client.get<WeightEntry>(
-          `/api/v2/weightentry/${args.id}/`,
-          undefined,
-          weightEntryResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_weight_entry", getWeightEntryEndpoint),
   );
 
   if (enableWriteTools) {
@@ -95,15 +70,7 @@ export function registerWeightEntryTools(
         description: "Create a new weight entry",
         inputSchema: createWeightEntrySchema,
       },
-      async (args) =>
-        runTool(logger, "create_weight_entry", async () => {
-          const data = await client.post<WeightEntry>(
-            "/api/v2/weightentry/",
-            toJsonBody(args) as WeightEntryRequest,
-            weightEntryResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "create_weight_entry", createWeightEntryEndpoint),
     );
 
     server.registerTool(
@@ -112,16 +79,7 @@ export function registerWeightEntryTools(
         description: "Update an existing weight entry",
         inputSchema: updateWeightEntrySchema,
       },
-      async (args) =>
-        runTool(logger, "update_weight_entry", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<WeightEntry>(
-            `/api/v2/weightentry/${id}/`,
-            toJsonBody(body) as PatchedWeightEntryRequest,
-            weightEntryResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "update_weight_entry", updateWeightEntryEndpoint),
     );
   }
 

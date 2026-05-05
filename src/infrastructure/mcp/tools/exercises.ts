@@ -2,26 +2,20 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
-import {
-  ExerciseInfo,
-  Muscle,
-  Equipment,
-  ExerciseCategory,
-} from "../../../domain/models/Exercise.types.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
   positiveIntegerIdSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult } from "../toolResult.js";
+import { endpointHandler, directToolHandler } from "../EndpointExecutor.js";
 import {
-  paginatedResponseSchema,
-  exerciseInfoResponseSchema,
-  muscleResponseSchema,
-  equipmentResponseSchema,
-  exerciseCategoryResponseSchema,
-} from "../responseSchemas.js";
+  listExercisesEndpoint,
+  getExerciseEndpoint,
+  searchExercisesEndpoint,
+  listMusclesEndpoint,
+  listEquipmentEndpoint,
+  listExerciseCategoriesEndpoint,
+} from "../endpoints/exerciseEndpoints.js";
 
 const listExercisesSchema = z.object({
   limit: paginationLimitSchema,
@@ -67,21 +61,7 @@ export function registerExerciseTools(
       description: "List exercises with pagination and optional filtering",
       inputSchema: listExercisesSchema,
     },
-    async (args) =>
-      runTool(logger, "list_exercises", async () => {
-        const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
-          "/api/v2/exerciseinfo/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            category: args.category,
-            equipment: args.equipment,
-            language: args.language,
-          },
-          paginatedResponseSchema(exerciseInfoResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_exercises", listExercisesEndpoint),
   );
 
   server.registerTool(
@@ -90,15 +70,7 @@ export function registerExerciseTools(
       description: "Get a single exercise by its ID",
       inputSchema: getExerciseSchema,
     },
-    async (args) =>
-      runTool(logger, "get_exercise", async () => {
-        const data = await client.get<ExerciseInfo>(
-          `/api/v2/exerciseinfo/${args.id}/`,
-          undefined,
-          exerciseInfoResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_exercise", getExerciseEndpoint),
   );
 
   server.registerTool(
@@ -107,19 +79,7 @@ export function registerExerciseTools(
       description: "Search exercises by name or description",
       inputSchema: searchExercisesSchema,
     },
-    async (args) =>
-      runTool(logger, "search_exercises", async () => {
-        const data = await client.get<WgerPaginatedResponse<ExerciseInfo>>(
-          "/api/v2/exerciseinfo/",
-          {
-            name__search: args.term,
-            limit: args.limit,
-            offset: args.offset,
-          },
-          paginatedResponseSchema(exerciseInfoResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "search_exercises", searchExercisesEndpoint),
   );
 
   server.registerTool(
@@ -128,18 +88,7 @@ export function registerExerciseTools(
       description: "List all muscles",
       inputSchema: listMusclesSchema,
     },
-    async (args) =>
-      runTool(logger, "list_muscles", async () => {
-        const data = await client.get<WgerPaginatedResponse<Muscle>>(
-          "/api/v2/muscle/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-          },
-          paginatedResponseSchema(muscleResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_muscles", listMusclesEndpoint),
   );
 
   server.registerTool(
@@ -148,18 +97,7 @@ export function registerExerciseTools(
       description: "List all equipment",
       inputSchema: listEquipmentSchema,
     },
-    async (args) =>
-      runTool(logger, "list_equipment", async () => {
-        const data = await client.get<WgerPaginatedResponse<Equipment>>(
-          "/api/v2/equipment/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-          },
-          paginatedResponseSchema(equipmentResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_equipment", listEquipmentEndpoint),
   );
 
   server.registerTool(
@@ -168,18 +106,7 @@ export function registerExerciseTools(
       description: "List all exercise categories",
       inputSchema: listExerciseCategoriesSchema,
     },
-    async (args) =>
-      runTool(logger, "list_exercise_categories", async () => {
-        const data = await client.get<WgerPaginatedResponse<ExerciseCategory>>(
-          "/api/v2/exercisecategory/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-          },
-          paginatedResponseSchema(exerciseCategoryResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_exercise_categories", listExerciseCategoriesEndpoint),
   );
 
   server.registerTool(
@@ -187,11 +114,7 @@ export function registerExerciseTools(
     {
       description: "Check connectivity to the Wger API instance",
     },
-    async () =>
-      runTool(logger, "get_wger_status", async () => {
-        const data = await client.getStatus();
-        return successResult(data);
-      }),
+    directToolHandler(logger, "get_wger_status", () => client.getStatus()),
   );
 
   logger.info("Exercise tools registered");

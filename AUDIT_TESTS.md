@@ -1,23 +1,26 @@
 # Test Audit Report — Wger MCP Server
 
-> Audited by GLM-5.1. Cross-checked all 17 test files against `wger.yaml` (OpenAPI 3.0.3) piece by piece.
-> Date: 2026-05-05
+> Audited by GLM-5.1. Cross-checked test files against `wger.yaml` (OpenAPI 3.0.3) piece by piece.
+> Initial audit: 2026-05-05 (17 files, 192 tests)
+> Re-audit: 2026-05-05 (30 files, 290 tests)
 
 ---
 
 ## Executive Summary
 
-- **17 test files**, **192 tests**, **all passing** (`npx vitest run` — 4.33s)
-- **2 schema mismatches** found between Zod schemas and OpenAPI patterns
-- **11 tool files** have **zero test coverage** (nutrition + routine sub-entities)
-- **0 resource test files** for routines and nutrition
-- Kimi's refactoring fixed the PUT→PATCH issue and introduced proper shared schemas
+- **30 test files**, **290 tests**, **all passing** (`npx vitest run` — 9.38s)
+- Previous audit had 17 files / 192 tests — **+13 new test files, +98 new tests**
+- **Both schema bugs (rir, weight) from previous audit are FIXED**
+- **All previously missing tool tests now exist** (nutrition + routine sub-entities)
+- **Nutrition resource tests now exist** (diary + plan)
+- **1 new issue found**: `list_nutrition_plans` now uses `/api/v2/nutritionplan/` (flat) instead of `/api/v2/nutritionplaninfo/` (enriched) — behavioral change, loses `meals` array in response
+- **1 dead type**: `NutritionPlanInfo` interface no longer used by any tool or resource
 
 ---
 
 ## 1. Test Coverage Map
 
-### Covered (17 files, 192 tests)
+### Previously Covered (17 files, 192 tests — unchanged)
 
 | File                                                           | Lines | Tests | Status                 |
 | -------------------------------------------------------------- | ----- | ----- | ---------------------- |
@@ -39,97 +42,68 @@
 | `src/infrastructure/mcp/tools/__tests__/routineTools.spec.ts`  | 143   | ~12   | Correct but incomplete |
 | `src/index.spec.ts`                                            | —     | —     | Present                |
 
-### Missing Test Files (zero coverage)
+### New Test Files (13 files, +98 tests — added since initial audit)
 
-| Tool File                                                     | Tools Registered                                                 | Test File |
-| ------------------------------------------------------------- | ---------------------------------------------------------------- | --------- |
-| `src/infrastructure/mcp/tools/mealTools.ts`                   | 8 (list/get/create/update meal + meal_item + nutritional_values) | **NONE**  |
-| `src/infrastructure/mcp/tools/nutritionPlanTools.ts`          | 6 (list/get/create/update plan + nutritional_values)             | **NONE**  |
-| `src/infrastructure/mcp/tools/nutritionDiaryTools.ts`         | 6 (list/get/create/update diary + nutritional_values)            | **NONE**  |
-| `src/infrastructure/mcp/tools/ingredientTools.ts`             | 8 (list/get/search/weight_units/images)                          | **NONE**  |
-| `src/infrastructure/mcp/tools/dayTools.ts`                    | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/tools/slotTools.ts`                   | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/tools/slotEntryTools.ts`              | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/tools/workoutLogTools.ts`             | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/tools/workoutSessionTools.ts`         | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/tools/weightEntryTools.ts`            | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/tools/galleryTools.ts`                | 4 (list/get/create/update)                                       | **NONE**  |
-| `src/infrastructure/mcp/resources/nutritionDiaryResources.ts` | 4 resources                                                      | **NONE**  |
-| `src/infrastructure/mcp/resources/nutritionPlanResources.ts`  | 4 resources                                                      | **NONE**  |
+| File | Lines | Tests | Status |
+| --- | --- | --- | --- |
+| `src/infrastructure/mcp/tools/__tests__/mealTools.spec.ts` | 126 | 9 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/nutritionPlanTools.spec.ts` | 123 | 9 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/nutritionDiaryTools.spec.ts` | 123 | 9 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/ingredientTools.spec.ts` | 113 | 7 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/dayTools.spec.ts` | 121 | 9 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/slotTools.spec.ts` | 113 | 8 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/slotEntryTools.spec.ts` | 126 | 10 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/workoutLogTools.spec.ts` | 115 | 8 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/workoutSessionTools.spec.ts` | 115 | 8 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/weightEntryTools.spec.ts` | 115 | 8 | Correct |
+| `src/infrastructure/mcp/tools/__tests__/galleryTools.spec.ts` | 107 | 7 | Correct |
+| `src/infrastructure/mcp/resources/__tests__/nutritionDiaryResources.spec.ts` | 70 | 3 | Correct |
+| `src/infrastructure/mcp/resources/__tests__/nutritionPlanResources.spec.ts` | 70 | 3 | Correct |
 
-**Total untested tool registrations: ~60 tools + ~8 resources**
+### Still Missing Test Files (10 resource files — zero coverage)
+
+| Resource File | Resources Registered | Test File |
+| --- | --- | --- |
+| `src/infrastructure/mcp/resources/routineResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/dayResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/slotResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/slotEntryResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/workoutLogResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/workoutSessionResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/weightEntryResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/galleryResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/ingredientResources.ts` | ~4 resources | **NONE** |
+| `src/infrastructure/mcp/resources/mealResources.ts` | ~4 resources | **NONE** |
+
+**Total untested resource registrations: ~40 resources**
 
 ---
 
 ## 2. Schema Mismatches Found (Zod vs OpenAPI Spec)
 
-### BUG-1: `rir` / `rir_target` use `decimalAmountSchema` instead of a dedicated schema
+### BUG-1: `rir` / `rir_target` schema — **FIXED** ✅
 
-**Severity:** MEDIUM
+**Previous:** `decimalAmountSchema` (`^-?\d{1,4}(?:\.\d{0,2})?$`) was used, allowing 4+2 digits.
+**Now:** Dedicated `rirDecimalSchema` (`^-?\d{0,1}(?:\.\d{0,1})?$`) matches OpenAPI pattern exactly.
 
-**Location:** `src/infrastructure/mcp/tools/workoutLogTools.ts:49-50`
-
-```
-Code uses:  decimalAmountSchema = /^-?\d{1,4}(?:\.\d{0,2})?$/
-OpenAPI:    pattern: ^-?\d{0,1}(?:\.\d{0,1})?$
-```
-
-The OpenAPI spec restricts `rir` and `rir_target` to **1 digit + 1 decimal place** (e.g., `"9.9"`). The code's `decimalAmountSchema` allows **4 digits + 2 decimal places** (e.g., `"9999.99"`).
-
-**Impact:** Values like `"99.99"` pass Zod validation but the Wger API will reject them.
-
-**Evidence from `wger.yaml` (lines 15893-15902):**
-
-```yaml
-rir:
-  type: string
-  format: decimal
-  pattern: ^-?\d{0,1}(?:\.\d{0,1})?$
-  nullable: true
-rir_target:
-  type: string
-  format: decimal
-  pattern: ^-?\d{0,1}(?:\.\d{0,1})?$
-  nullable: true
-```
-
-**Fix:** Create a `rirSchema` with pattern `^-?\d{0,1}(?:\.\d{0,1})?$` and use it for `rir`/`rir_target`.
+Verified in `workoutLogTools.spec.ts` line 102-107: `"99.99"` rejected, `"9.9"` accepted.
 
 ---
 
-### BUG-2: `weight` in WeightEntry uses `decimalAmountSchema` (4 digits) but spec allows only 3
+### BUG-2: `weight` in WeightEntry — **FIXED** ✅
 
-**Severity:** LOW
+**Previous:** `decimalAmountSchema` (`^-?\d{1,4}(?:\.\d{0,2})?$`) was used, allowing 4+2 digits.
+**Now:** Dedicated `weightDecimalSchema` (`^-?\d{0,3}(?:\.\d{0,2})?$`) matches OpenAPI pattern exactly.
 
-**Location:** `src/infrastructure/mcp/tools/weightEntryTools.ts:37`
-
-```
-Code uses:  decimalAmountSchema = /^-?\d{1,4}(?:\.\d{0,2})?$/
-OpenAPI:    pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
-```
-
-The OpenAPI spec for `WeightEntryRequest.weight` limits to **3 digits before decimal**. The code allows **4**.
-
-**Impact:** `"9999.99"` passes Zod but the API may reject it.
-
-**Evidence from `wger.yaml` (lines 15740-15748):**
-
-```yaml
-WeightEntryRequest:
-  properties:
-    weight:
-      type: string
-      format: decimal
-      pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
-```
-
-**Fix:** Create a `weightEntrySchema` with pattern `^-?\d{0,3}(?:\.\d{0,2})?$` or generalize to a parametric decimal schema.
+Verified in `weightEntryTools.spec.ts`: values exceeding 3 digits before decimal are rejected.
 
 ---
 
-### NOT-A-BUG: `decimalAmountSchema` uses `\d{1,4}` vs spec's `\d{0,4}`
+### `datetime` in nutritionDiaryTools — **FIXED** ✅
 
-The OpenAPI pattern `^-?\d{0,4}(?:\.\d{0,2})?$` allows 0 digits (empty string, bare `-`). The code's `\d{1,4}` requires at least 1 digit — this is **more correct** than the spec and prevents empty string submission.
+Previous audit noted the code used `isoDateStringSchema` (date-only) for `datetime` which should be `format: date-time` per OpenAPI. Now uses `isoDateTimeStringSchema`.
+
+Verified in `nutritionDiaryTools.spec.ts` line 114-115: `"2024-01-01"` rejected, `"2024-01-01T10:00:00"` accepted.
 
 ---
 
@@ -153,13 +127,13 @@ All of the following were verified by reading `wger.yaml` chunk by chunk and com
 | `SlotEntryRequest`       | `weight_rounding`     | `roundingDecimalSchema`     | `pattern: ^-?\d{0,2}(?:\.\d{0,2})?$` | ✅                                   |
 | `WorkoutLogRequest`      | `repetitions`         | `decimalAmountSchema`       | `pattern: ^-?\d{0,4}(?:\.\d{0,2})?$` | ✅ (1-4 vs 0-4 is better)            |
 | `WorkoutLogRequest`      | `weight`              | `decimalAmountSchema`       | `pattern: ^-?\d{0,4}(?:\.\d{0,2})?$` | ✅                                   |
-| `WorkoutLogRequest`      | `rir`                 | `decimalAmountSchema`       | `pattern: ^-?\d{0,1}(?:\.\d{0,1})?$` | ❌ **BUG-1**                         |
+| `WorkoutLogRequest`      | `rir`                 | `rirDecimalSchema`          | `pattern: ^-?\d{0,1}(?:\.\d{0,1})?$` | ✅ **Fixed**                         |
 | `WorkoutLogRequest`      | `rest`                | `nonNegativeIntegerSchema`  | `minimum: 0`                         | ✅                                   |
 | `WorkoutLogRequest`      | `iteration`           | `nonNegativeIntegerSchema`  | `minimum: 0`                         | ✅                                   |
 | `WorkoutSessionRequest`  | `date`                | `isoDateStringSchema`       | `format: date`                       | ✅                                   |
 | `WorkoutSessionRequest`  | `time_start`          | `timeStringSchema`          | `format: time`                       | ✅                                   |
 | `WorkoutSessionRequest`  | `time_end`            | `timeStringSchema`          | `format: time`                       | ✅                                   |
-| `WeightEntryRequest`     | `weight`              | `decimalAmountSchema`       | `pattern: ^-?\d{0,3}(?:\.\d{0,2})?$` | ❌ **BUG-2**                         |
+| `WeightEntryRequest`     | `weight`              | `weightDecimalSchema`       | `pattern: ^-?\d{0,3}(?:\.\d{0,2})?$` | ✅ **Fixed**                         |
 | `MealRequest`            | `plan`                | `z.number()` required       | `required: [plan]`                   | ✅                                   |
 | `MealRequest`            | `time`                | `timeStringSchema`          | `format: time, nullable: true`       | ✅                                   |
 | `MealRequest`            | `name`                | `boundedStringSchema(25)`   | `maxLength: 25`                      | ✅                                   |
@@ -168,7 +142,7 @@ All of the following were verified by reading `wger.yaml` chunk by chunk and com
 | `NutritionPlanRequest`   | `end`                 | `isoDateStringSchema`       | `format: date, nullable: true`       | ✅                                   |
 | `NutritionPlanRequest`   | `description`         | `boundedStringSchema(80)`   | `maxLength: 80`                      | ✅                                   |
 | `LogItemRequest`         | `amount`              | `decimalAmountSchema`       | `pattern: ^-?\d{0,4}(?:\.\d{0,2})?$` | ✅                                   |
-| `LogItemRequest`         | `datetime`            | `isoDateStringSchema`       | `format: date-time`                  | ⚠️ Code uses date-only, not datetime |
+| `LogItemRequest`         | `datetime`            | `isoDateTimeStringSchema`   | `format: date-time`                  | ✅ **Fixed**                         |
 | `ImageRequest` (gallery) | `image`               | `boundedStringSchema(2000)` | `format: binary`                     | ⚠️ Known issue — should be multipart |
 
 ---
@@ -207,33 +181,49 @@ All endpoint paths in tool files were verified against `wger.yaml`:
 | `list_meals`                            | `/api/v2/meal/`                                  | `/api/v2/meal/`                                  | ✅                 |
 | `get_meal_nutritional_values`           | `/api/v2/meal/{id}/nutritional_values/`          | `/api/v2/meal/{id}/nutritional_values/`          | ✅                 |
 | `list_meal_items`                       | `/api/v2/mealitem/`                              | `/api/v2/mealitem/`                              | ✅                 |
-| `list_nutrition_plans`                  | `/api/v2/nutritionplaninfo/`                     | `/api/v2/nutritionplaninfo/`                     | ✅                 |
-| `get_nutrition_plan`                    | `/api/v2/nutritionplaninfo/{id}/`                | `/api/v2/nutritionplaninfo/{id}/`                | ✅                 |
-| `get_nutrition_plan_nutritional_values` | `/api/v2/nutritionplan/{id}/nutritional_values/` | `/api/v2/nutritionplan/{id}/nutritional_values/` | ⚠️ Mixed base path |
+| `list_nutrition_plans`                  | `/api/v2/nutritionplan/`                         | `/api/v2/nutritionplan/`                         | ✅ (changed from nutritionplaninfo) |
+| `get_nutrition_plan`                    | `/api/v2/nutritionplan/{id}/`                    | `/api/v2/nutritionplan/{id}/`                    | ✅ (changed from nutritionplaninfo) |
+| `get_nutrition_plan_nutritional_values` | `/api/v2/nutritionplan/{id}/nutritional_values/` | `/api/v2/nutritionplan/{id}/nutritional_values/` | ✅ (now validates response) |
 | `list_nutrition_diary_entries`          | `/api/v2/nutritiondiary/`                        | `/api/v2/nutritiondiary/`                        | ✅                 |
 | `create_nutrition_plan`                 | `/api/v2/nutritionplan/`                         | `/api/v2/nutritionplan/`                         | ✅                 |
 
 ---
 
-## 6. Recommendations
+## 6. Behavioral Change — `list_nutrition_plans` endpoint
 
-### Priority 1 — Schema Fixes
+**Severity:** LOW (not a bug, but a change from previous audit)
 
-1. **Create `rirDecimalSchema`** with pattern `^-?\d{0,1}(?:\.\d{0,1})?$` and use it for `rir`/`rir_target` in `workoutLogTools.ts`
-2. **Create `weightDecimalSchema`** with pattern `^-?\d{0,3}(?:\.\d{0,2})?$` and use it for `weight` in `weightEntryTools.ts`
+Previous audit noted `list_nutrition_plans` used `/api/v2/nutritionplaninfo/` (enriched endpoint returning `NutritionPlanInfo` with meals). Now uses `/api/v2/nutritionplan/` (flat endpoint returning `NutritionPlan` without meals).
 
-### Priority 2 — Missing Test Files
+- `NutritionPlanInfo` type in `Nutrition.types.ts` is now **dead code** — no tool or resource references it
+- Tools return flat `NutritionPlan` consistently — resolves the previous "Resource/Tool type inconsistency" finding
+- Resources also use `/api/v2/nutritionplan/` — consistent with tools
 
-3. **Create `mealTools.spec.ts`** — test meal/meal_item CRUD + nutritional_values endpoints
-4. **Create `nutritionPlanTools.spec.ts`** — test plan CRUD + nutritional_values
-5. **Create `nutritionDiaryTools.spec.ts`** — test diary CRUD + nutritional_values
-6. **Create `ingredientTools.spec.ts`** — test ingredient/image/weight_unit read tools
-7. **Create `dayTools.spec.ts`**, `slotTools.spec.ts`, `slotEntryTools.spec.ts`, `workoutLogTools.spec.ts`, `workoutSessionTools.spec.ts`, `weightEntryTools.spec.ts`, `galleryTools.spec.ts`
+Verified in `nutritionPlanTools.spec.ts` line 59-68 and `nutritionPlanResources.spec.ts` line 51-60.
 
-### Priority 3 — Edge Case Tests
+---
 
-8. **Test `nutritional_values` response shape** — OpenAPI says these endpoints return parent entity (`Meal`, `MealItem`, `NutritionPlan`, `LogItem`), not `NutritionalValues` directly. Code types them as `NutritionalValues`. Integration test needed to verify actual API response.
-9. **Test `datetime` field** in `nutritionDiaryTools.ts` — code uses `isoDateStringSchema` (date-only) but OpenAPI says `format: date-time`.
+## 7. Recommendations
+
+### Priority 1 — Schema Fixes (DONE ✅)
+
+1. ~~**Create `rirDecimalSchema`**~~ — Done. `rirDecimalSchema` with pattern `^-?\d{0,1}(?:\.\d{0,1})?$` now used.
+2. ~~**Create `weightDecimalSchema`**~~ — Done. `weightDecimalSchema` with pattern `^-?\d{0,3}(?:\.\d{0,2})?$` now used.
+
+### Priority 2 — Missing Test Files (MOSTLY DONE ✅)
+
+3-11. ~~All 9 missing tool test files~~ — Done. All now have `.spec.ts` files.
+12-13. Nutrition resource tests — Done. `nutritionDiaryResources.spec.ts` and `nutritionPlanResources.spec.ts` created.
+14. **Still missing**: 10 resource test files (routineResources, dayResources, slotResources, slotEntryResources, workoutLogResources, workoutSessionResources, weightEntryResources, galleryResources, ingredientResources, mealResources)
+
+### Priority 3 — Cleanup
+
+15. **Remove dead `NutritionPlanInfo` type** from `Nutrition.types.ts` (no longer referenced)
+16. **Gallery image tool** still sends JSON body but API expects `multipart/form-data` (known issue, unchanged)
+
+### Priority 4 — New Improvement ✅
+
+17. **`nutritionalValuesResponseSchema`** added to `responseSchemas.ts` — all 4 `nutritional_values` endpoints (`meal`, `meal_item`, `nutrition_plan`, `nutrition_diary`) now validate response shape against Zod schema matching `NutritionalValues` in `wger.yaml` (8 required number fields: energy, protein, carbohydrates, carbohydrates_sugar, fat, fat_saturated, fiber, sodium). Tests updated to verify 3-argument `client.get()` calls.
 
 ---
 

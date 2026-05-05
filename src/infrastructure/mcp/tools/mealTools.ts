@@ -2,16 +2,19 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WgerClient } from "../../wger/WgerClient.js";
 import { Logger } from "../../../application/ports/Logger.js";
-import { WgerPaginatedResponse } from "../../wger/types.js";
+import { endpointHandler } from "../EndpointExecutor.js";
 import {
-  Meal,
-  MealItem,
-  NutritionalValues,
-  MealRequest,
-  MealItemRequest,
-  PatchedMealRequest,
-  PatchedMealItemRequest,
-} from "../../../domain/models/Nutrition.types.js";
+  listMealsEndpoint,
+  getMealEndpoint,
+  getMealNutritionalValuesEndpoint,
+  listMealItemsEndpoint,
+  getMealItemEndpoint,
+  getMealItemNutritionalValuesEndpoint,
+  createMealEndpoint,
+  updateMealEndpoint,
+  createMealItemEndpoint,
+  updateMealItemEndpoint,
+} from "../endpoints/nutritionEndpoints.js";
 import {
   paginationLimitSchema,
   paginationOffsetSchema,
@@ -20,13 +23,6 @@ import {
   decimalAmountSchema,
   boundedStringSchema,
 } from "../sharedSchemas.js";
-import { runTool, successResult, toJsonBody } from "../toolResult.js";
-import {
-  paginatedResponseSchema,
-  mealResponseSchema,
-  mealItemResponseSchema,
-  nutritionalValuesResponseSchema,
-} from "../responseSchemas.js";
 
 const listMealsSchema = z.object({
   limit: paginationLimitSchema,
@@ -98,20 +94,7 @@ export function registerMealTools(
       description: "List meals",
       inputSchema: listMealsSchema,
     },
-    async (args) =>
-      runTool(logger, "list_meals", async () => {
-        const data = await client.get<WgerPaginatedResponse<Meal>>(
-          "/api/v2/meal/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            plan: args.plan,
-            order: args.order,
-          },
-          paginatedResponseSchema(mealResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_meals", listMealsEndpoint),
   );
 
   server.registerTool(
@@ -120,15 +103,7 @@ export function registerMealTools(
       description: "Get meal by ID",
       inputSchema: getMealSchema,
     },
-    async (args) =>
-      runTool(logger, "get_meal", async () => {
-        const data = await client.get<Meal>(
-          `/api/v2/meal/${args.id}/`,
-          undefined,
-          mealResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_meal", getMealEndpoint),
   );
 
   server.registerTool(
@@ -137,15 +112,7 @@ export function registerMealTools(
       description: "Get nutritional values for a meal",
       inputSchema: getMealNutritionalValuesSchema,
     },
-    async (args) =>
-      runTool(logger, "get_meal_nutritional_values", async () => {
-        const data = await client.get<NutritionalValues>(
-          `/api/v2/meal/${args.id}/nutritional_values/`,
-          undefined,
-          nutritionalValuesResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_meal_nutritional_values", getMealNutritionalValuesEndpoint),
   );
 
   server.registerTool(
@@ -154,20 +121,7 @@ export function registerMealTools(
       description: "List meal items",
       inputSchema: listMealItemsSchema,
     },
-    async (args) =>
-      runTool(logger, "list_meal_items", async () => {
-        const data = await client.get<WgerPaginatedResponse<MealItem>>(
-          "/api/v2/mealitem/",
-          {
-            limit: args.limit,
-            offset: args.offset,
-            meal: args.meal,
-            ingredient: args.ingredient,
-          },
-          paginatedResponseSchema(mealItemResponseSchema),
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "list_meal_items", listMealItemsEndpoint),
   );
 
   server.registerTool(
@@ -176,15 +130,7 @@ export function registerMealTools(
       description: "Get meal item by ID",
       inputSchema: getMealItemSchema,
     },
-    async (args) =>
-      runTool(logger, "get_meal_item", async () => {
-        const data = await client.get<MealItem>(
-          `/api/v2/mealitem/${args.id}/`,
-          undefined,
-          mealItemResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_meal_item", getMealItemEndpoint),
   );
 
   server.registerTool(
@@ -193,15 +139,7 @@ export function registerMealTools(
       description: "Get nutritional values for a meal item",
       inputSchema: getMealItemNutritionalValuesSchema,
     },
-    async (args) =>
-      runTool(logger, "get_meal_item_nutritional_values", async () => {
-        const data = await client.get<NutritionalValues>(
-          `/api/v2/mealitem/${args.id}/nutritional_values/`,
-          undefined,
-          nutritionalValuesResponseSchema,
-        );
-        return successResult(data);
-      }),
+    endpointHandler(client, logger, "get_meal_item_nutritional_values", getMealItemNutritionalValuesEndpoint),
   );
 
   if (enableWriteTools) {
@@ -211,15 +149,7 @@ export function registerMealTools(
         description: "Create a new meal",
         inputSchema: createMealSchema,
       },
-      async (args) =>
-        runTool(logger, "create_meal", async () => {
-          const data = await client.post<Meal>(
-            "/api/v2/meal/",
-            toJsonBody(args) as MealRequest,
-            mealResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "create_meal", createMealEndpoint),
     );
 
     server.registerTool(
@@ -228,16 +158,7 @@ export function registerMealTools(
         description: "Update an existing meal",
         inputSchema: updateMealSchema,
       },
-      async (args) =>
-        runTool(logger, "update_meal", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<Meal>(
-            `/api/v2/meal/${id}/`,
-            toJsonBody(body) as PatchedMealRequest,
-            mealResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "update_meal", updateMealEndpoint),
     );
 
     server.registerTool(
@@ -246,15 +167,7 @@ export function registerMealTools(
         description: "Create a new meal item",
         inputSchema: createMealItemSchema,
       },
-      async (args) =>
-        runTool(logger, "create_meal_item", async () => {
-          const data = await client.post<MealItem>(
-            "/api/v2/mealitem/",
-            toJsonBody(args) as MealItemRequest,
-            mealItemResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "create_meal_item", createMealItemEndpoint),
     );
 
     server.registerTool(
@@ -263,16 +176,7 @@ export function registerMealTools(
         description: "Update an existing meal item",
         inputSchema: updateMealItemSchema,
       },
-      async (args) =>
-        runTool(logger, "update_meal_item", async () => {
-          const { id, ...body } = args;
-          const data = await client.patch<MealItem>(
-            `/api/v2/mealitem/${id}/`,
-            toJsonBody(body) as PatchedMealItemRequest,
-            mealItemResponseSchema,
-          );
-          return successResult(data);
-        }),
+      endpointHandler(client, logger, "update_meal_item", updateMealItemEndpoint),
     );
   }
 
