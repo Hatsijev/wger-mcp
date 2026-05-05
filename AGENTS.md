@@ -63,6 +63,7 @@ src/
 Additional files:
 
 - `wger.yaml` — Wger OpenAPI 3.0.3 spec (~438KB, 16K+ lines). Reference for endpoint paths, request/response schemas, and parameter names.
+  **CRITICAL: This file is too large to read entirely (~438KB, exceeds the 200KB view limit). You MUST read it piece by piece using `sed -n 'START,ENDp'` via bash or `grep -n` to find line numbers first, then view specific ranges. Never rely on agent summaries or assumptions — always verify endpoint paths, HTTP methods, request schemas, response schemas, and field constraints directly from the spec.**
 - `docs/` — Human-readable API docs (`api/workouts.md`, `api/nutrition.md`), architecture docs, and ADRs.
 - `.agents/` — Agent orchestration configs, prompts, and skills for this project.
 
