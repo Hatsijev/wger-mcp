@@ -580,8 +580,8 @@
 
 | #       | Scenario                              | Expected behavior                                                 |
 | ------- | ------------------------------------- | ----------------------------------------------------------------- |
-| 6.16.8  | `{ id: 5 }`                           | Calls `GET /api/v2/meal/5/nutritional_values/` (special endpoint) |
-| 6.16.9  | Response typed as `NutritionalValues` | Returns `{ energy, protein, carbohydrates, ... }`                 |
+| 6.16.8  | `{ id: 5 }`                           | Calls `GET /api/v2/meal/5/nutritional_values/` (special endpoint)                     |
+| 6.16.9  | Response typed as `NutritionalValues` in code, but OpenAPI declares `$ref: Meal` | **MISMATCH: Code expects flat values, API returns `Meal` entity** |
 | 6.16.10 | Non-existent meal ID                  | API returns 404 → caught in try/catch                             |
 
 #### 6.16.3 list_meal_items / get_meal_item
@@ -598,8 +598,8 @@
 
 | #       | Scenario                              | Expected behavior                                                     |
 | ------- | ------------------------------------- | --------------------------------------------------------------------- |
-| 6.16.16 | `{ id: 7 }`                           | Calls `GET /api/v2/mealitem/7/nutritional_values/` (special endpoint) |
-| 6.16.17 | Response typed as `NutritionalValues` | Same shape as meal nutritional values                                 |
+| 6.16.16 | `{ id: 7 }`                           | Calls `GET /api/v2/mealitem/7/nutritional_values/` (special endpoint)                  |
+| 6.16.17 | Response typed as `NutritionalValues` in code, but OpenAPI declares `$ref: MealItem` | **MISMATCH: Same as meal**            |
 
 ### 6.17 Nutrition Read Tools — Nutrition Plan Tools
 
@@ -620,7 +620,7 @@
 | ------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | 6.17.7 | `{ id: 3 }`                                                                | Calls `GET /api/v2/nutritionplan/3/nutritional_values/` (**not** `nutritionplaninfo`) |
 | 6.17.8 | Endpoint path uses `/api/v2/nutritionplan/` (flat) not `nutritionplaninfo` | Inconsistent with list/get which use `/api/v2/nutritionplaninfo/`                     |
-| 6.17.9 | Response typed as `NutritionalValues`                                      | Returns aggregated nutritional values for the plan                                    |
+| 6.17.9 | Response typed as `NutritionalValues` in code, but OpenAPI declares `$ref: NutritionPlan` | **MISMATCH: Code expects flat values, API returns `NutritionPlan`** |
 
 ### 6.18 Nutrition Read Tools — Diary Tools
 
@@ -639,7 +639,7 @@
 | #      | Scenario                              | Expected behavior                                                           |
 | ------ | ------------------------------------- | --------------------------------------------------------------------------- |
 | 6.18.6 | `{ id: 7 }`                           | Calls `GET /api/v2/nutritiondiary/7/nutritional_values/` (special endpoint) |
-| 6.18.7 | Response typed as `NutritionalValues` | Returns nutritional values for a single diary entry                         |
+| 6.18.7 | Response typed as `NutritionalValues` in code, but OpenAPI declares `$ref: LogItem` | **MISMATCH: Same as other nutritional_values endpoints** |
 
 ### 6.19 Nutrition Write Schema Validation — create_meal
 
@@ -679,7 +679,7 @@
 - `meal`: **required**, integer
 - `ingredient`: **required**, integer
 - `weight_unit`: optional, nullable integer
-- `amount`: **required**, decimal string (`max_digits=6, decimal_places=2`, `MinValueValidator(1)`, `MaxValueValidator(1000)`)
+- `amount`: **required**, decimal string (`format: decimal`, `pattern: ^-?\d{0,4}(?:\.\d{0,2})?$`)
 
 | #       | Scenario                                                          | Expected behavior            | Gap?                                                                                           |
 | ------- | ----------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -689,10 +689,10 @@
 | 6.21.4  | Missing `ingredient`                                              | Zod rejects                  | —                                                                                              |
 | 6.21.5  | Missing `amount`                                                  | Zod rejects                  | —                                                                                              |
 | 6.21.6  | `amount: 150` (number, not string)                                | Zod rejects (expects string) | —                                                                                              |
-| 6.21.7  | `amount: "abc"`                                                   | **Zod accepts**              | **GAP: API expects decimal string with `max_digits=6, decimal_places=2` — non-numeric passes** |
-| 6.21.8  | `amount: "-5"`                                                    | **Zod accepts**              | **GAP: API `MinValueValidator(1)` rejects negative values**                                    |
-| 6.21.9  | `amount: "9999"`                                                  | **Zod accepts**              | **GAP: API `MaxValueValidator(1000)` rejects values > 1000**                                   |
-| 6.21.10 | `amount: "999999.99"`                                             | **Zod accepts**              | **GAP: `max_digits=6, decimal_places=2` pattern exceeded**                                     |
+| 6.21.7  | `amount: "abc"`                                                   | **Zod accepts**              | **GAP: API pattern `^-?\d{0,4}(?:\.\d{0,2})?$` — non-numeric passes**                    |
+| 6.21.8  | `amount: "-5"`                                                    | **Zod accepts**              | **GAP: API pattern allows negative values**                                                    |
+| 6.21.9  | `amount: "9999"`                                                  | **Zod accepts**              | **GAP: API pattern allows up to 4 digits before decimal**                                     |
+| 6.21.10 | `amount: "999999.99"`                                             | **Zod accepts**              | **GAP: API pattern `^-?\d{0,4}(?:\.\d{0,2})?$` limits to 4+2 digits**                     |
 | 6.21.11 | `weight_unit: null`                                               | Accepted (nullable)          | —                                                                                              |
 | 6.21.12 | `weight_unit: undefined`                                          | Omitted from body (optional) | —                                                                                              |
 
@@ -708,7 +708,7 @@
 | 6.22.4  | `description` 81 chars                       | Zod rejects            | —                                                                    |
 | 6.22.5  | `start: "not-a-date"`                        | **Zod accepts**        | **GAP: API expects `format: date` but Zod only checks `z.string()`** |
 | 6.22.6  | `end: "not-a-date"`                          | **Zod accepts**        | **GAP: Same as above**                                               |
-| 6.22.7  | `goal_energy: -1`                            | **Zod accepts**        | **GAP: No minimum validation on goal fields**                        |
+| 6.22.7  | `goal_energy: -1`                            | Zod accepts            | API allows `minimum: -2147483648` — negative values are valid per spec          |
 | 6.22.8  | `goal_energy: null`                          | Accepted (nullable)    | —                                                                    |
 | 6.22.9  | `start: "2025-13-45"`                        | **Zod accepts**        | **GAP: Invalid date passes schema**                                  |
 | 6.22.10 | `only_logging: "true"` (string, not boolean) | Zod rejects            | —                                                                    |
@@ -719,7 +719,7 @@
 
 - `plan`: **required**, integer
 - `ingredient`: **required**, integer
-- `amount`: **required**, decimal string (`max_digits=6, decimal_places=2`, `MinValueValidator(1)`, `MaxValueValidator(1000)`)
+- `amount`: **required**, decimal string (`format: decimal`, `pattern: ^-?\d{0,4}(?:\.\d{0,2})?$`)
 - `meal`: optional, nullable integer
 - `weight_unit`: optional, nullable integer
 - `datetime`: optional, `format: date-time`
@@ -732,8 +732,8 @@
 | 6.23.4  | Missing `ingredient`                        | Zod rejects         | —                                                        |
 | 6.23.5  | Missing `amount`                            | Zod rejects         | —                                                        |
 | 6.23.6  | `amount: "abc"`                             | **Zod accepts**     | **GAP: Same decimal validation gap as meal_item amount** |
-| 6.23.7  | `amount: "-5"`                              | **Zod accepts**     | **GAP: `MinValueValidator(1)` violated**                 |
-| 6.23.8  | `amount: "9999"`                            | **Zod accepts**     | **GAP: `MaxValueValidator(1000)` violated**              |
+| 6.23.7  | `amount: "-5"`                              | **Zod accepts**     | **GAP: API pattern `^-?\d{0,4}(?:\.\d{0,2})?$` allows negative**                |
+| 6.23.8  | `amount: "9999"`                            | **Zod accepts**     | **GAP: API pattern allows up to 4 digits before decimal**                        |
 | 6.23.9  | `datetime: "not-a-datetime"`                | **Zod accepts**     | **GAP: API expects `format: date-time`**                 |
 | 6.23.10 | `meal: null`                                | Accepted (nullable) | —                                                        |
 | 6.23.11 | `weight_unit: null`                         | Accepted (nullable) | —                                                        |
@@ -800,9 +800,9 @@
 | 6.27.1 | `list_ingredients`             | `limit`, `offset`, `search`, `language` | `code`, `code__in`, `id`, `id__in`, `license`, `license__in`, `ordering`, `uuid`                | LOW          |
 | 6.27.2 | `list_ingredient_images`       | `limit`, `offset`, `ingredient_id`      | `id`, `ordering`, `uuid`                                                                        | LOW          |
 | 6.27.3 | `list_ingredient_weight_units` | `limit`, `offset`, `ingredient`         | `id`, `ordering`                                                                                | LOW          |
-| 6.27.4 | `list_meals`                   | `limit`, `offset`, `plan`, `order`      | `name` (search)                                                                                 | LOW          |
+| 6.27.4 | `list_meals`                   | `limit`, `offset`, `plan`, `order`      | `time` (format: time), `ordering`                                                               | LOW          |
 | 6.27.5 | `list_meal_items`              | `limit`, `offset`, `meal`, `ingredient` | `amount` + comparisons, `id`, `order`, `weight_unit`                                            | MEDIUM       |
-| 6.27.6 | `list_nutrition_plans`         | `limit`, `offset`, `description`        | `end`, `id`, `only_logging`, `ordering`, `start`                                                | MEDIUM       |
+| 6.27.6 | `list_nutrition_plans`         | `limit`, `offset`, `description`        | `creation_date`, `has_goal_calories`, `ordering`                                                | LOW          |
 | 6.27.7 | `list_nutrition_diary_entries` | `limit`, `offset`, `plan`, `date`       | `amount` + comparisons, `datetime` + range comparisons, `id`, `meal`, `ordering`, `weight_unit` | MEDIUM       |
 
 ---
@@ -1232,12 +1232,13 @@
 | 18.7  | **No request timeout**                                                 | MEDIUM   | No `AbortController` or timeout in fetch options.                                                                                                                                                     |
 | 18.8  | **`_request` reads response body twice on error**                      | LOW      | `_handleErrorResponse` calls `response.text()`, then if control flow continued, `_parseJson` would call `response.json()` — but `_handleErrorResponse` throws `never`, so this is safe.               |
 | 18.9  | **`parseBoolean` treats only `"true"` (case-insensitive) as truthy**   | LOW      | `"1"`, `"yes"`, `"on"` all return `false`. May confuse users.                                                                                                                                         |
-| 18.10 | **Nutrition `amount` field lacks decimal validation**                  | MEDIUM   | `createMealItemSchema` and `createNutritionDiaryEntrySchema` use plain `z.string()` for `amount`. API enforces `max_digits=6, decimal_places=2`, min=1, max=1000. `"abc"`, `"-5"`, `"9999"` pass Zod. |
+| 18.10 | **Nutrition `amount` field lacks decimal pattern validation**          | MEDIUM   | `createMealItemSchema` and `createNutritionDiaryEntrySchema` use plain `z.string()` for `amount`. OpenAPI spec defines `pattern: ^-?\\d{0,4}(?:\\.\\d{0,2})?$`. `"abc"`, `"999999"` pass Zod. |
 | 18.11 | **Nutrition `time` field lacks format validation**                     | LOW      | `createMealSchema`/`updateMealSchema` accept any string for `time`. API expects HTML5 time format.                                                                                                    |
 | 18.12 | **Nutrition `start`/`end`/`datetime` lack date format validation**     | MEDIUM   | Same gap as routine schemas. No `format: date` / `format: date-time` enforcement in Zod for nutrition plan or diary entry fields.                                                                     |
 | 18.13 | **Nutrition plan endpoint path inconsistency**                         | LOW      | `get_nutrition_plan_nutritional_values` uses `/api/v2/nutritionplan/{id}/nutritional_values/` while list/get use `/api/v2/nutritionplaninfo/`. Mixed base paths.                                      |
 | 18.14 | **Nutrition resources vs tools type inconsistency**                    | LOW      | `nutrition-plans` resource returns `NutritionPlan` (flat); tools fetch `NutritionPlanInfo` (enriched with meals). Different response shapes for same entity.                                          |
 | 18.15 | **Missing nutrition resources for ingredient images and weight units** | LOW      | 4 tools (`list_ingredient_images`, `get_ingredient_image`, `list_ingredient_weight_units`, `get_ingredient_weight_unit`) have no corresponding MCP resources.                                         |
+| 18.16 | **`nutritional_values` endpoints typed as `NutritionalValues` but API returns parent entity** | MEDIUM   | OpenAPI spec: `meal/{id}/nutritional_values/` → `Meal`, `mealitem/{id}/nutritional_values/` → `MealItem`, `nutritionplan/{id}/nutritional_values/` → `NutritionPlan`, `nutritiondiary/{id}/nutritional_values/` → `LogItem`. Code types all 4 as `NutritionalValues`. Actual response likely includes `nutritional_values` as a nested field on the parent entity. |
 
 ---
 
@@ -1264,5 +1265,5 @@
 | Resource template scenarios   | 6       |
 | Registration completeness     | 12      |
 | Degraded conditions           | 8       |
-| Bugs discovered               | 15      |
-| **Total scenarios**           | **539** |
+| Bugs discovered               | 16      |
+| **Total scenarios**           | **540** |

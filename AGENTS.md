@@ -274,7 +274,7 @@ When implementing new domains, follow the existing file organization: create dom
 - Cross-references OpenAPI schemas with Zod schemas for mismatches.
 - Documents discovered bugs alongside test scenarios.
 
-**Output:** `TEST_SCENARIOS.md`
+**Output:** `TEST_SCENARIOS.md` (**ALWAYS in the project root `/workspaces/wger-mcp/TEST_SCENARIOS.md` — NEVER in `docs/TEST_SCENARIOS.md`**)
 
 #### Kimi — TypeScript Backend Developer
 
