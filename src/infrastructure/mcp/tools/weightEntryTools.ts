@@ -13,7 +13,7 @@ import {
   paginationOffsetSchema,
   positiveIntegerIdSchema,
   isoDateStringSchema,
-  decimalAmountSchema,
+  weightDecimalSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
 import {
@@ -34,13 +34,13 @@ const getWeightEntrySchema = z.object({
 
 const createWeightEntrySchema = z.object({
   date: isoDateStringSchema,
-  weight: decimalAmountSchema,
+  weight: weightDecimalSchema,
 });
 
 const updateWeightEntrySchema = z.object({
   id: positiveIntegerIdSchema,
   date: isoDateStringSchema.optional(),
-  weight: decimalAmountSchema.optional(),
+  weight: weightDecimalSchema.optional(),
 });
 
 export function registerWeightEntryTools(

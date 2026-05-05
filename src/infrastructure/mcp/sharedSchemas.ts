@@ -40,6 +40,20 @@ export const roundingDecimalSchema = z
     "Expected decimal with up to 2 integer and 2 fractional digits",
   );
 
+export const rirDecimalSchema = z
+  .string()
+  .regex(
+    /^-?\d{0,1}(?:\.\d{0,1})?$/,
+    "Expected RIR decimal with up to 1 integer and 1 fractional digit",
+  );
+
+export const weightDecimalSchema = z
+  .string()
+  .regex(
+    /^-?\d{0,3}(?:\.\d{0,2})?$/,
+    "Expected weight decimal with up to 3 integer and 2 fractional digits",
+  );
+
 export function boundedStringSchema(maxLength: number) {
   return z.string().max(maxLength);
 }

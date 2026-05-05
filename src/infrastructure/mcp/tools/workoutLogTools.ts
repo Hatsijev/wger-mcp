@@ -15,6 +15,7 @@ import {
   isoDateStringSchema,
   decimalAmountSchema,
   nonNegativeIntegerSchema,
+  rirDecimalSchema,
 } from "../sharedSchemas.js";
 import { runTool, successResult, toJsonBody } from "../toolResult.js";
 import {
@@ -46,8 +47,8 @@ const createWorkoutLogSchema = z.object({
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   weight: decimalAmountSchema.nullable().optional(),
   weight_target: decimalAmountSchema.nullable().optional(),
-  rir: decimalAmountSchema.nullable().optional(),
-  rir_target: decimalAmountSchema.nullable().optional(),
+  rir: rirDecimalSchema.nullable().optional(),
+  rir_target: rirDecimalSchema.nullable().optional(),
   rest: nonNegativeIntegerSchema.nullable().optional(),
   rest_target: nonNegativeIntegerSchema.nullable().optional(),
 });
@@ -66,8 +67,8 @@ const updateWorkoutLogSchema = z.object({
   weight_unit: positiveIntegerIdSchema.nullable().optional(),
   weight: decimalAmountSchema.nullable().optional(),
   weight_target: decimalAmountSchema.nullable().optional(),
-  rir: decimalAmountSchema.nullable().optional(),
-  rir_target: decimalAmountSchema.nullable().optional(),
+  rir: rirDecimalSchema.nullable().optional(),
+  rir_target: rirDecimalSchema.nullable().optional(),
   rest: nonNegativeIntegerSchema.nullable().optional(),
   rest_target: nonNegativeIntegerSchema.nullable().optional(),
 });
