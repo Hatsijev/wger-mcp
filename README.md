@@ -1,5 +1,10 @@
 # Wger MCP Server
 
+> [!WARNING]
+> This project is archived and no longer maintained. I stopped using Wger because it did not fit my needs and I could
+> not see a clear direction for the product. The code stays available as is, under the GPL-3.0 license. Issues and pull
+> requests are not accepted, but you are free to fork it.
+
 A Model Context Protocol (MCP) server for the self-hosted [Wger](https://wger.de) workout and fitness tracker.
 
 ## Overview
